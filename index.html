@@ -428,43 +428,53 @@ function fileToBase64(file) {
 }
 
 // ── ANALYSE ──
-const GROQ_PROMPT = `Analyse ce planning de travail de la patisserie Rob.
+const GROQ_PROMPT = `Tu es un expert en lecture de tableaux de planning de travail. Analyse l'image de ce planning et extrait les horaires.
 
-COMMENT LIRE UNE CASE EMPLOYE/JOUR :
-1. Cadre JAUNE en haut = les vraies heures du shift, format "HH:MM/HH:MM" (ex: "07:00/13:00"). Ce sont les SEULES heures a utiliser pour start/end.
-2. Cadre BLEU en dessous = type "Fermeture". Cadre VERT = type "Ouverture".
-3. La ligne "00:00/24:00" dans le cadre bleu/vert = IGNORER COMPLETEMENT, ce n'est pas un horaire de shift.
-4. Case grise ou completement vide = repos (start: null, end: null, type: "repos").
-5. Autre couleur (rouge, rose, violet, orange) = absence, lis le texte ecrit (ex: "Vacances Employes ANCEM", "Credit Temps CRDT", "MAL 1/2T initiative").
+STRUCTURE DU TABLEAU :
+- Colonnes = jours de la semaine (lundi a samedi)
+- Lignes = employes
+- Chaque case peut contenir 0, 1 ou 2 blocs colores superposes
 
-IMPORTANT : Tu DOIS extraire les 6 jours pour CHAQUE employe. Ne saute aucun jour, meme si la case est vide (= repos).
+COMMENT LIRE CHAQUE CASE :
+Une case remplie contient TOUJOURS deux elements superposes :
+  [1] Un rectangle JAUNE avec les heures ex: "07:00/13:00" ou "13:15/19:15" -> ce sont les heures du shift a extraire
+  [2] Un rectangle BLEU (= fermeture) ou VERT (= ouverture) en dessous avec le texte "Ferm" ou "Ouv" + "00:00/24:00" + "Fermeture" ou "Ouverture"
 
-Reponds UNIQUEMENT en JSON valide, sans texte avant ou apres, sans backticks, format exact :
+REGLE CRITIQUE : Le "00:00/24:00" dans le rectangle bleu/vert = DUREE DE JOURNEE, PAS des heures de travail. IGNORE completement cette valeur. Seules les heures dans le rectangle JAUNE comptent.
+
+EXEMPLES CONCRETS :
+- Rectangle jaune "07:00/13:00" + rectangle vert "Ouv" -> start:"07:00", end:"13:00", type:"Ouverture"
+- Rectangle jaune "13:15/19:15" + rectangle bleu "Ferm" -> start:"13:15", end:"19:15", type:"Fermeture"
+- Rectangle jaune "10:15/19:15" + rectangle bleu "Ferm" -> start:"10:15", end:"19:15", type:"Fermeture"
+- Case grise ou vide -> start:null, end:null, type:"repos"
+- Rectangle rose/rouge avec texte "Credit Temps CRDT" -> start:null, end:null, type:"CRDT"
+- Rectangle rose/rouge avec texte "Vacances Employes" -> start:null, end:null, type:"Vacances"
+- Rectangle avec "MAL" -> start:null, end:null, type:"MAL"
+
+OBLIGATION : Pour chaque employe, tu DOIS renseigner les 6 jours. Aucun jour ne peut etre omis.
+
+Retourne UNIQUEMENT du JSON brut sans markdown ni backticks, structure :
 {
-  "label": "27/04/2026 - 02/05/2026",
-  "days": ["2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02"],
+  "label": "JJ/MM/AAAA - JJ/MM/AAAA",
+  "days": ["AAAA-MM-JJ","AAAA-MM-JJ","AAAA-MM-JJ","AAAA-MM-JJ","AAAA-MM-JJ","AAAA-MM-JJ"],
   "employees": [
     {
-      "lastName": "GIBSON",
-      "firstName": "CORDELIA",
+      "lastName": "NOM",
+      "firstName": "PRENOM",
       "shifts": [
-        { "date": "2026-04-27", "start": "13:15", "end": "19:15", "type": "Fermeture" },
-        { "date": "2026-04-28", "start": null, "end": null, "type": "repos" },
-        { "date": "2026-04-29", "start": "08:00", "end": "12:00", "type": "Ouverture" },
-        { "date": "2026-04-30", "start": "13:15", "end": "19:15", "type": "Fermeture" },
-        { "date": "2026-05-01", "start": null, "end": null, "type": "repos" },
-        { "date": "2026-05-02", "start": "07:00", "end": "13:00", "type": "Ouverture" }
+        { "date": "AAAA-MM-JJ", "start": "HH:MM", "end": "HH:MM", "type": "Ouverture" },
+        { "date": "AAAA-MM-JJ", "start": null, "end": null, "type": "repos" }
       ]
     }
   ]
-}`;
+}` ;
 
 async function callGemini(imageBase64, imageType) {
   const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getKey()}` },
     body: JSON.stringify({
-      model: 'meta-llama/llama-4-maverick-17b-128e-instruct',
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
       max_tokens: 8000,
       temperature: 0,
       messages: [{ role: 'user', content: [
