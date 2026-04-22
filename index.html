@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planning Rob</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --surface2: #1c2030;
+    --border: #252a3a;
+    --accent: #4f8ef7;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --purple: #a78bfa;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glass: rgba(255,255,255,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Syne', sans-serif; min-height: 100vh;
+  }
+  body::before {
+    content: ''; position: fixed; top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(79,142,247,0.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: ''; position: fixed; bottom: -200px; right: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(167,139,250,0.05) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    max-width: 960px; margin: 0 auto; padding: 24px 16px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 28px;
+  }
+  .logo { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { color: var(--accent); }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .badge {
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .key-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); padding: 5px 12px; border-radius: 20px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+  }
+  .key-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .key-btn.active { border-color: var(--green); color: var(--green); }
+  .key-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .key-btn.active .key-dot { background: var(--green); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.72); z-index: 100;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; width: 90%; max-width: 420px;
+  }
+  .modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+  .modal-input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 10px; padding: 11px 14px;
+    font-family: 'DM Mono', monospace; font-size: 13px; margin-bottom: 14px;
+    outline: none; transition: border-color 0.15s;
+  }
+  .modal-input:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 8px; }
+  .btn-save {
+    flex: 1; background: var(--accent); color: white; border: none;
+    border-radius: 10px; padding: 11px; font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 14px; cursor: pointer; transition: background 0.15s;
+  }
+  .btn-save:hover { background: #3a7de8; }
+  .btn-cancel {
+    background: var(--surface2); color: var(--muted); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 16px; font-family: 'Syne', sans-serif;
+    font-size: 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-cancel:hover { color: var(--text); }
+  .btn-clear {
+    background: rgba(248,113,113,0.1); color: var(--red);
+    border: 1px solid rgba(248,113,113,0.2); border-radius: 10px;
+    padding: 11px 16px; font-family: 'Syne', sans-serif; font-size: 14px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-clear:hover { background: rgba(248,113,113,0.2); }
+
+  /* ── UPLOAD ── */
+  .upload-section { margin-bottom: 20px; }
+  .no-key-banner {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; color: var(--muted); line-height: 1.5;
+  }
+  .no-key-banner .bicon { font-size: 20px; flex-shrink: 0; }
+
+  .upload-zone {
+    border: 1.5px dashed var(--border); border-radius: 14px;
+    padding: 30px 20px; text-align: center; cursor: pointer;
+    transition: all 0.2s; background: var(--glass);
+  }
+  .upload-zone:hover { border-color: var(--accent); background: rgba(79,142,247,0.05); }
+  .upload-zone.drag-over { border-color: var(--accent); background: rgba(79,142,247,0.08); }
+  .upload-zone input { display: none; }
+  .upload-icon { font-size: 30px; margin-bottom: 9px; display: block; }
+  .upload-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .upload-sub { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  #preview-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .thumb {
+    position: relative; width: 70px; height: 70px;
+    border-radius: 9px; overflow: hidden; border: 1.5px solid var(--border);
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb-remove {
+    position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,0.75);
+    color: white; border: none; border-radius: 50%; width: 16px; height: 16px;
+    font-size: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  .analyze-btn {
+    width: 100%; padding: 12px; background: var(--accent); color: white;
+    border: none; border-radius: 11px; font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 12px;
+  }
+  .analyze-btn:hover:not(:disabled) { background: #3a7de8; transform: translateY(-1px); }
+  .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── STATUS ── */
+  #status {
+    text-align: center; font-size: 12px; color: var(--muted);
+    font-family: 'DM Mono', monospace; margin: 14px 0; min-height: 18px;
+  }
+  #status.loading { color: var(--accent); }
+  #status.error { color: var(--red); }
+  #status.success { color: var(--green); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid rgba(79,142,247,0.3); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+
+  /* ── WEEK NAV ── */
+  #week-nav {
+    display: none; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .week-title { font-size: 16px; font-weight: 700; }
+  .week-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 5px 13px; border-radius: 8px;
+    cursor: pointer; font-family: 'Syne', sans-serif; font-size: 13px; transition: all 0.15s;
+  }
+  .week-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .week-btn:disabled { opacity: 0.3; cursor: default; border-color: var(--border); color: var(--muted); }
+
+  /* ── PLANNING ── */
+  #planning { display: none; }
+
+  .my-week {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-bottom: 18px;
+  }
+  .my-week-header {
+    background: linear-gradient(135deg, rgba(79,142,247,0.13), rgba(167,139,250,0.07));
+    border-bottom: 1px solid var(--border); padding: 13px 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .my-week-header h2 { font-size: 14px; font-weight: 700; }
+  .week-range { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  .days-row {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 1px; background: var(--border);
+  }
+  .day-col { background: var(--surface); padding: 11px 9px; }
+  .day-label {
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
+    text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;
+  }
+  .day-date { font-size: 18px; font-weight: 800; margin-bottom: 8px; line-height: 1; }
+  .day-date.today { color: var(--accent); }
+
+  .shift-card { border-radius: 7px; padding: 7px 8px; margin-bottom: 4px; }
+  .shift-card.ouverture { background: rgba(79,142,247,0.13); border-left: 3px solid var(--accent); }
+  .shift-card.fermeture { background: rgba(251,191,36,0.10); border-left: 3px solid var(--yellow); }
+  .shift-card.off { background: var(--glass); border-left: 3px solid var(--border); }
+  .shift-time { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; }
+  .shift-type { font-size: 9px; color: var(--muted); margin-top: 2px; text-transform: uppercase; }
+  .off-label { font-size: 11px; color: var(--muted); font-style: italic; }
+
+  .colleagues-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .colleagues-header {
+    padding: 13px 18px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .colleagues-header h2 { font-size: 14px; font-weight: 700; }
+
+  .col-days-header, .colleague-row {
+    display: grid; grid-template-columns: 130px repeat(6, 1fr);
+    gap: 1px; background: var(--border);
+  }
+  .cdh-name { background: var(--surface2); padding: 7px 12px; }
+  .cdh-day {
+    background: var(--surface2); padding: 7px 6px; text-align: center;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase;
+  }
+  .cdh-day .cdh-date { font-size: 13px; color: var(--text); font-weight: 700; display: block; }
+
+  .col-name {
+    background: var(--surface2); padding: 9px 12px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .col-name .fname { font-size: 12px; font-weight: 700; line-height: 1.2; }
+  .col-name .lname { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .col-day { background: var(--surface); padding: 6px; min-height: 52px; }
+  .mini-shift { border-radius: 5px; padding: 3px 6px; margin-bottom: 3px; font-size: 10px; }
+  .mini-shift.ouv { background: rgba(79,142,247,0.11); color: #93c5fd; }
+  .mini-shift.ferm { background: rgba(251,191,36,0.09); color: #fcd34d; }
+  .mini-shift.off { color: var(--muted); font-style: italic; }
+  .mini-shift.special { background: rgba(167,139,250,0.10); color: #c4b5fd; }
+  .mini-time { font-family: 'DM Mono', monospace; font-size: 10px; }
+
+  .empty-state { text-align: center; padding: 56px 20px; color: var(--muted); }
+  .empty-icon { font-size: 42px; margin-bottom: 12px; display: block; }
+
+  @media (max-width: 640px) {
+    .days-row { grid-template-columns: repeat(3, 1fr); }
+    .colleagues-section { overflow-x: auto; }
+    .col-days-header, .colleague-row { min-width: 560px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="logo">Rob<span>.</span>Planning</div>
+    <div class="header-right">
+      <div class="badge">Pâtisserie 31300</div>
+      <button class="key-btn" id="key-btn" onclick="openModal()">
+        <span class="key-dot"></span>
+        <span id="key-label">Clé API</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3>🔑 Clé API Groq</h3>
+      <p>Réservé aux gérants. La clé est stockée uniquement sur cet appareil et ne transite jamais vers un serveur.</p>
+      <input type="password" class="modal-input" id="key-input" placeholder="gsk_…" autocomplete="off" spellcheck="false">
+      <div class="modal-actions">
+        <button class="btn-save" onclick="saveKey()">Enregistrer</button>
+        <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+        <button class="btn-clear" onclick="clearKey()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="upload-section" id="upload-section"></div>
+
+  <div id="status"></div>
+
+  <div id="week-nav">
+    <button class="week-btn" id="prev-btn" onclick="changeWeek(-1)" disabled>← Préc.</button>
+    <div class="week-title" id="week-title"></div>
+    <button class="week-btn" id="next-btn" onclick="changeWeek(1)" disabled>Suiv. →</button>
+  </div>
+
+  <div id="planning">
+    <div class="empty-state">
+      <span class="empty-icon">🗓️</span>
+      <p style="font-size:14px">Le planning apparaîtra ici après analyse</p>
+    </div>
+  </div>
+
+</div>
+<script>
+const MY_NAME = "ESTEBAN";
+const DAYS = ["Lu","Ma","Me","Je","Ve","Sa"];
+const STORAGE_KEY = "rob_groq_key";
+const PLANNING_KEY = "rob_planning_data";
+
+let uploadedFiles = [];
+let allWeeks = [];
+let currentWeekIdx = 0;
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateKeyUI();
+  renderUploadSection();
+  const saved = localStorage.getItem(PLANNING_KEY);
+  if (saved) {
+    try {
+      allWeeks = JSON.parse(saved);
+      if (allWeeks.length) { currentWeekIdx = 0; renderWeek(0); setStatus('success', `Planning en mémoire · ${allWeeks.length} semaine(s)`); }
+    } catch(e) { localStorage.removeItem(PLANNING_KEY); }
+  }
+});
+
+// ── CLÉ ──
+function getKey() { return localStorage.getItem(STORAGE_KEY) || ''; }
+function hasKey() { return !!getKey(); }
+
+function updateKeyUI() {
+  const btn = document.getElementById('key-btn');
+  document.getElementById('key-label').textContent = hasKey() ? 'Gérant ✓' : 'Clé API';
+  btn.classList.toggle('active', hasKey());
+}
+
+function openModal() {
+  document.getElementById('key-input').value = getKey();
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function saveKey() {
+  const v = document.getElementById('key-input').value.trim();
+  if (v) localStorage.setItem(STORAGE_KEY, v);
+  closeModal(); updateKeyUI(); renderUploadSection();
+}
+function clearKey() {
+  localStorage.removeItem(STORAGE_KEY);
+  closeModal(); updateKeyUI(); renderUploadSection();
+}
+document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
+
+// ── SECTION UPLOAD ──
+function renderUploadSection() {
+  const sec = document.getElementById('upload-section');
+  if (!hasKey()) {
+    sec.innerHTML = `<div class="no-key-banner">
+      <span class="bicon">👁️</span>
+      <div>Mode consultation — <strong>aucune clé API configurée</strong>.<br>
+      Pour importer un nouveau planning, un gérant doit configurer la clé Groq via le bouton en haut à droite.</div>
+    </div>`;
+    return;
+  }
+  sec.innerHTML = `
+    <div class="upload-zone" id="drop-zone">
+      <input type="file" id="file-input" accept="image/*" multiple>
+      <span class="upload-icon">📋</span>
+      <div class="upload-title">Dépose la photo du planning ici</div>
+      <div class="upload-sub">ou clique · JPG, PNG · plusieurs semaines OK</div>
+    </div>
+    <div id="preview-strip"></div>
+    <button class="analyze-btn" id="analyze-btn" disabled onclick="analyzeImages()">
+      <span>✨</span> Analyser le planning
+    </button>`;
+
+  const dz = document.getElementById('drop-zone');
+  const fi = document.getElementById('file-input');
+  dz.addEventListener('click', () => fi.click());
+  fi.addEventListener('change', e => addFiles(Array.from(e.target.files)));
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); addFiles(Array.from(e.dataTransfer.files)); });
+  uploadedFiles = [];
+}
+
+// ── FILES ──
+function addFiles(files) {
+  files.forEach(f => {
+    if (!f.type.startsWith('image/')) return;
+    uploadedFiles.push(f); addThumb(f, uploadedFiles.length - 1);
+  });
+  const btn = document.getElementById('analyze-btn');
+  if (btn) btn.disabled = !uploadedFiles.filter(Boolean).length;
+}
+
+function addThumb(file, idx) {
+  const strip = document.getElementById('preview-strip');
+  if (!strip) return;
+  const div = document.createElement('div'); div.className = 'thumb'; div.id = `thumb-${idx}`;
+  const img = document.createElement('img'); img.src = URL.createObjectURL(file);
+  const btn = document.createElement('button'); btn.className = 'thumb-remove'; btn.innerHTML = '✕';
+  btn.onclick = e => { e.stopPropagation(); removeFile(idx); };
+  div.appendChild(img); div.appendChild(btn);
+  strip.appendChild(div);
+}
+
+function removeFile(idx) {
+  uploadedFiles[idx] = null;
+  document.getElementById(`thumb-${idx}`)?.remove();
+  const btn = document.getElementById('analyze-btn');
+  if (btn) btn.disabled = !uploadedFiles.filter(Boolean).length;
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file);
+  });
+}
+
+// ── ANALYSE ──
+async function analyzeImages() {
+  const files = uploadedFiles.filter(Boolean);
+  if (!files.length || !hasKey()) return;
+
+  setStatus('loading', 'Lecture des photos en cours…');
+  document.getElementById('analyze-btn').disabled = true;
+
+  try {
+    const images = await Promise.all(files.map(async f => ({ base64: await fileToBase64(f), type: f.type })));
+
+    const content = [];
+    images.forEach(img => {
+      content.push({ type: 'image_url', image_url: { url: `data:${img.type};base64,${img.base64}` } });
+    });
+    content.push({ type: 'text', text: `Analyse ces plannings de travail de la pâtisserie Rob. Pour CHAQUE semaine visible, extrait toutes les informations.
+
+Réponds UNIQUEMENT en JSON valide, sans texte autour, sans backticks markdown, format exact:
+{
+  "weeks": [
+    {
+      "label": "20/04/2026 - 25/04/2026",
+      "days": ["2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25"],
+      "employees": [
+        {
+          "lastName": "RODRIGUEZ VIEJO",
+          "firstName": "ESTEBAN",
+          "shifts": [
+            { "date": "2026-04-20", "start": null, "end": null, "type": "repos" },
+            { "date": "2026-04-21", "start": "07:00", "end": "13:00", "type": "Ouverture" }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Règles: case grise/vide = repos (start/end null, type "repos"). Extrais tous les employés. Heures au format HH:MM. type = "Ouverture", "Fermeture", ou mention spéciale (CRDT, MAL, Vacances…).` });
+
+    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getKey()}` },
+      body: JSON.stringify({
+        model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+        max_tokens: 4000, temperature: 0,
+        messages: [{ role: 'user', content }]
+      })
+    });
+
+    if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || `Erreur Groq ${resp.status}`); }
+
+    const data = await resp.json();
+    const raw = data.choices?.[0]?.message?.content || '';
+    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+    allWeeks = parsed.weeks || [];
+    if (!allWeeks.length) throw new Error('Aucune semaine trouvée.');
+
+    localStorage.setItem(PLANNING_KEY, JSON.stringify(allWeeks));
+    currentWeekIdx = 0; renderWeek(0);
+    setStatus('success', `✓ ${allWeeks.length} semaine(s) importée(s) et sauvegardées`);
+
+  } catch(err) {
+    setStatus('error', '⚠ ' + err.message);
+    document.getElementById('analyze-btn').disabled = false;
+  }
+}
+
+// ── RENDER ──
+function renderWeek(idx) {
+  const week = allWeeks[idx]; if (!week) return;
+
+  document.getElementById('week-nav').style.display = 'flex';
+  document.getElementById('week-title').textContent = week.label;
+  document.getElementById('prev-btn').disabled = idx === 0;
+  document.getElementById('next-btn').disabled = idx === allWeeks.length - 1;
+
+  const me = week.employees?.find(e => e.firstName?.toUpperCase().includes(MY_NAME) || e.lastName?.toUpperCase().includes(MY_NAME));
+  const colleagues = (week.employees || []).filter(e => e !== me);
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  const planning = document.getElementById('planning');
+  planning.style.display = 'block';
+  planning.innerHTML = '';
+
+  // MON PLANNING
+  const mySection = document.createElement('div'); mySection.className = 'my-week';
+  mySection.innerHTML = `<div class="my-week-header"><span style="font-size:17px">👤</span><h2>Mes horaires</h2><span class="week-range">${week.label}</span></div>`;
+
+  if (me) {
+    const dr = document.createElement('div'); dr.className = 'days-row';
+    (week.days || []).forEach((dateStr, i) => {
+      const shift = me.shifts?.find(s => s.date === dateStr);
+      const d = new Date(dateStr + 'T12:00:00');
+      const col = document.createElement('div'); col.className = 'day-col';
+      col.innerHTML = `<div class="day-label">${DAYS[i]||''}</div><div class="day-date${dateStr===todayStr?' today':''}">${d.getDate()}</div>`;
+      if (shift?.start && shift.type !== 'repos') {
+        const tc = shift.type?.toLowerCase().includes('ouv') ? 'ouverture' : 'fermeture';
+        col.innerHTML += `<div class="shift-card ${tc}"><div class="shift-time">${shift.start}–${shift.end}</div><div class="shift-type">${shift.type||''}</div></div>`;
+      } else {
+        col.innerHTML += `<div class="shift-card off"><div class="off-label">Repos</div></div>`;
+      }
+      dr.appendChild(col);
+    });
+    mySection.appendChild(dr);
+  } else {
+    mySection.innerHTML += `<div style="padding:16px;color:var(--muted);font-size:13px;">Nom "${MY_NAME}" introuvable dans ce planning.</div>`;
+  }
+  planning.appendChild(mySection);
+
+  // COLLÈGUES
+  if (colleagues.length) {
+    const cs = document.createElement('div'); cs.className = 'colleagues-section';
+    cs.innerHTML = `<div class="colleagues-header"><span style="font-size:15px">👥</span><h2>Collègues</h2></div>`;
+
+    const hdr = document.createElement('div'); hdr.className = 'col-days-header';
+    hdr.innerHTML = `<div class="cdh-name"></div>`;
+    (week.days || []).forEach((ds, i) => {
+      const d = new Date(ds + 'T12:00:00');
+      hdr.innerHTML += `<div class="cdh-day">${DAYS[i]||''}<span class="cdh-date">${d.getDate()}</span></div>`;
+    });
+    cs.appendChild(hdr);
+
+    colleagues.forEach(emp => {
+      const row = document.createElement('div'); row.className = 'colleague-row';
+      row.innerHTML = `<div class="col-name"><span class="fname">${emp.firstName||''}</span><span class="lname">${emp.lastName||''}</span></div>`;
+      (week.days || []).forEach(ds => {
+        const shift = emp.shifts?.find(s => s.date === ds);
+        const cell = document.createElement('div'); cell.className = 'col-day';
+        if (shift?.start && shift.type !== 'repos') {
+          const tc = shift.type?.toLowerCase().includes('ouv') ? 'ouv' : shift.type?.toLowerCase().includes('ferm') ? 'ferm' : 'special';
+          cell.innerHTML = `<div class="mini-shift ${tc}"><div class="mini-time">${shift.start}–${shift.end}</div><div style="font-size:9px;color:var(--muted);margin-top:1px">${shift.type||''}</div></div>`;
+        } else {
+          cell.innerHTML = `<div class="mini-shift off">–</div>`;
+        }
+        row.appendChild(cell);
+      });
+      cs.appendChild(row);
+    });
+    planning.appendChild(cs);
+  }
+}
+
+function changeWeek(dir) {
+  currentWeekIdx = Math.max(0, Math.min(allWeeks.length - 1, currentWeekIdx + dir));
+  renderWeek(currentWeekIdx);
+}
+
+function setStatus(type, msg) {
+  const el = document.getElementById('status'); el.className = type;
+  el.innerHTML = type === 'loading' ? `<span class="spinner"></span>${msg}` : msg;
+}
+</script>
+</body>
+</html>
