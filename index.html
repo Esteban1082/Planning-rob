@@ -442,21 +442,30 @@ async function analyzeImages() {
     images.forEach(img => {
       content.push({ type: 'image_url', image_url: { url: `data:${img.type};base64,${img.base64}` } });
     });
-    content.push({ type: 'text', text: `Analyse ces plannings de travail de la pâtisserie Rob. Pour CHAQUE semaine visible, extrait toutes les informations.
+    content.push({ type: 'text', text: `Analyse ces plannings de travail de la pâtisserie Rob.
+
+COMMENT LIRE UNE CASE :
+- Chaque case employé/jour contient UN cadre JAUNE en haut avec les vraies heures de travail au format "HH:MM/HH:MM" (ex: "13:15/19:15" = shift de 13h15 à 19h15). Ce sont les seules heures qui comptent.
+- En dessous du jaune il y a un cadre BLEU (= Fermeture) ou VERT (= Ouverture) qui contient "Ferm" ou "Ouv", puis une ligne "00:00/24:00" (à IGNORER, c'est juste la journée entière), puis le mot "Fermeture" ou "Ouverture" répété. NE PAS utiliser les heures "00:00/24:00", elles ne représentent pas le shift.
+- Case grise ou vide = repos.
+- Autre couleur (rouge, rose, violet…) = absence spéciale, lis le texte écrit dedans (ex: "Vacances Employés", "Crédit Temps CRDT", "MAL ½T initiative"…).
+
+RÉSUMÉ : start et end = les heures du cadre JAUNE uniquement. type = "Ouverture" si cadre vert, "Fermeture" si cadre bleu, ou le texte de l'absence si autre couleur.
 
 Réponds UNIQUEMENT en JSON valide, sans texte autour, sans backticks markdown, format exact:
 {
   "weeks": [
     {
-      "label": "20/04/2026 - 25/04/2026",
-      "days": ["2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25"],
+      "label": "27/04/2026 - 02/05/2026",
+      "days": ["2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02"],
       "employees": [
         {
           "lastName": "RODRIGUEZ VIEJO",
           "firstName": "ESTEBAN",
           "shifts": [
-            { "date": "2026-04-20", "start": null, "end": null, "type": "repos" },
-            { "date": "2026-04-21", "start": "07:00", "end": "13:00", "type": "Ouverture" }
+            { "date": "2026-04-27", "start": null, "end": null, "type": "repos" },
+            { "date": "2026-04-28", "start": "07:00", "end": "13:00", "type": "Ouverture" },
+            { "date": "2026-04-29", "start": "13:15", "end": "19:15", "type": "Fermeture" }
           ]
         }
       ]
@@ -464,7 +473,7 @@ Réponds UNIQUEMENT en JSON valide, sans texte autour, sans backticks markdown, 
   ]
 }
 
-Règles: case grise/vide = repos (start/end null, type "repos"). Extrais tous les employés. Heures au format HH:MM. type = "Ouverture", "Fermeture", ou mention spéciale (CRDT, MAL, Vacances…).` });
+Extrais TOUS les employés visibles sur le planning.` });
 
     const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
