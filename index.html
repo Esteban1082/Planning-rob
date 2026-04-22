@@ -460,7 +460,7 @@ Reponds UNIQUEMENT en JSON valide, sans texte avant ou apres, sans backticks, fo
 }`;
 
 async function callGemini(imageBase64, imageType) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${getKey()}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${getKey()}`;
   const resp = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
