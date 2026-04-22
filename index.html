@@ -283,8 +283,8 @@
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <h3>🔑 Clé API Groq</h3>
-      <p>Réservé aux gérants. La clé est stockée uniquement sur cet appareil et ne transite jamais vers un serveur.</p>
-      <input type="password" class="modal-input" id="key-input" placeholder="gsk_…" autocomplete="off" spellcheck="false">
+      <p>Réservé aux gérants. Réservé aux gérants. Clé dispo sur aistudio.google.com (gratuit). Stockée uniquement sur cet appareil.</p>
+      <input type="password" class="modal-input" id="key-input" placeholder="AIza…" autocomplete="off" spellcheck="false">
       <div class="modal-actions">
         <button class="btn-save" onclick="saveKey()">Enregistrer</button>
         <button class="btn-cancel" onclick="closeModal()">Annuler</button>
@@ -459,23 +459,24 @@ Reponds UNIQUEMENT en JSON valide, sans texte avant ou apres, sans backticks, fo
   ]
 }`;
 
-async function callGroq(imageBase64, imageType) {
-  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+async function callGemini(imageBase64, imageType) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${getKey()}`;
+  const resp = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getKey()}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-      max_tokens: 8000,
-      temperature: 0,
-      messages: [{ role: 'user', content: [
-        { type: 'image_url', image_url: { url: `data:${imageType};base64,${imageBase64}` } },
-        { type: 'text', text: GROQ_PROMPT }
-      ]}]
+      contents: [{ parts: [
+        { inline_data: { mime_type: imageType, data: imageBase64 } },
+        { text: GROQ_PROMPT }
+      ]}],
+      generationConfig: { temperature: 0, maxOutputTokens: 8192 }
     })
   });
-  if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || `Erreur Groq ${resp.status}`); }
+  if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || `Erreur Gemini ${resp.status}`); }
   const data = await resp.json();
-  return data.choices?.[0]?.message?.content || '';
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!text) throw new Error('Gemini na retourne aucun texte');
+  return text;
 }
 
 function parseWeekJSON(raw) {
@@ -528,7 +529,7 @@ async function analyzeImages() {
     allWeeks = [];
     for (let i = 0; i < images.length; i++) {
       setStatus('loading', `Analyse image ${i+1}/${images.length}...`);
-      const raw = await callGroq(images[i].base64, images[i].type);
+      const raw = await callGemini(images[i].base64, images[i].type);
       let weeks = [];
       try { weeks = parseWeekJSON(raw); } catch(e) {
         console.error('Parse error image', i+1, e, '\nRaw:', raw);
