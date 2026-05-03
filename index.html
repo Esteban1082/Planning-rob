@@ -4,264 +4,232 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planning Rob</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0f14;
-    --surface: #141720;
-    --surface2: #1c2030;
-    --border: #252a3a;
-    --accent: #4f8ef7;
-    --green: #34d399;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --purple: #a78bfa;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --glass: rgba(255,255,255,0.04);
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #f8f9fb;
+    --border: #e4e7ed;
+    --border2: #d0d5de;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --green: #10b981;
+    --green-light: #ecfdf5;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --purple-light: #f5f3ff;
+    --text: #111827;
+    --text2: #374151;
+    --muted: #9ca3af;
+    --muted2: #6b7280;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'Syne', sans-serif; min-height: 100vh;
-  }
-  body::before {
-    content: ''; position: fixed; top: -200px; left: -200px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(79,142,247,0.07) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-  }
-  body::after {
-    content: ''; position: fixed; bottom: -200px; right: -200px;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(167,139,250,0.05) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-  }
-
-  .app {
-    position: relative; z-index: 1;
-    max-width: 960px; margin: 0 auto; padding: 24px 16px 80px;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Inter', sans-serif; min-height:100vh; }
+  .app { max-width:1000px; margin:0 auto; padding:20px 16px 60px; }
 
   /* ── HEADER ── */
   header {
-    display: flex; align-items: center;
-    justify-content: space-between; margin-bottom: 28px;
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px;
   }
-  .logo { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-  .logo span { color: var(--accent); }
-  .header-right { display: flex; align-items: center; gap: 10px; }
-  .badge {
-    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
-    background: var(--surface); border: 1px solid var(--border);
-    padding: 4px 10px; border-radius: 20px;
+  .logo-block { display:flex; align-items:center; gap:12px; }
+  .logo { font-size:18px; font-weight:800; letter-spacing:-0.5px; color:var(--text); }
+  .logo span { color:var(--accent); }
+  .logo-badge {
+    font-family:'DM Mono',monospace; font-size:11px; color:var(--muted2);
+    background:var(--surface); border:1px solid var(--border);
+    padding:3px 9px; border-radius:20px;
   }
-  .key-btn {
-    background: var(--surface); border: 1px solid var(--border);
-    color: var(--muted); padding: 5px 12px; border-radius: 20px;
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+  .header-actions { display:flex; align-items:center; gap:8px; }
+  .icon-btn {
+    background:var(--surface); border:1px solid var(--border); color:var(--muted2);
+    padding:6px 12px; border-radius:8px; font-size:12px; font-weight:500;
+    cursor:pointer; transition:all 0.15s; box-shadow:var(--shadow);
+    display:flex; align-items:center; gap:5px;
   }
-  .key-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .key-btn.active { border-color: var(--green); color: var(--green); }
-  .key-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
-  .key-btn.active .key-dot { background: var(--green); }
-
-  /* ── MODAL ── */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.72); z-index: 100;
-    align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 28px; width: 90%; max-width: 420px;
-  }
-  .modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-  .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
-  .modal-input {
-    width: 100%; background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); border-radius: 10px; padding: 11px 14px;
-    font-family: 'DM Mono', monospace; font-size: 13px; margin-bottom: 14px;
-    outline: none; transition: border-color 0.15s;
-  }
-  .modal-input:focus { border-color: var(--accent); }
-  .modal-actions { display: flex; gap: 8px; }
-  .btn-save {
-    flex: 1; background: var(--accent); color: white; border: none;
-    border-radius: 10px; padding: 11px; font-family: 'Syne', sans-serif;
-    font-weight: 700; font-size: 14px; cursor: pointer; transition: background 0.15s;
-  }
-  .btn-save:hover { background: #3a7de8; }
-  .btn-cancel {
-    background: var(--surface2); color: var(--muted); border: 1px solid var(--border);
-    border-radius: 10px; padding: 11px 16px; font-family: 'Syne', sans-serif;
-    font-size: 14px; cursor: pointer; transition: all 0.15s;
-  }
-  .btn-cancel:hover { color: var(--text); }
-  .btn-clear {
-    background: rgba(248,113,113,0.1); color: var(--red);
-    border: 1px solid rgba(248,113,113,0.2); border-radius: 10px;
-    padding: 11px 16px; font-family: 'Syne', sans-serif; font-size: 14px;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .btn-clear:hover { background: rgba(248,113,113,0.2); }
-
-  /* ── UPLOAD ── */
-  .upload-section { margin-bottom: 20px; }
-  .no-key-banner {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px 18px;
-    display: flex; align-items: center; gap: 12px;
-    font-size: 13px; color: var(--muted); line-height: 1.5;
-  }
-  .no-key-banner .bicon { font-size: 20px; flex-shrink: 0; }
-
-  .upload-zone {
-    border: 1.5px dashed var(--border); border-radius: 14px;
-    padding: 30px 20px; text-align: center; cursor: pointer;
-    transition: all 0.2s; background: var(--glass);
-  }
-  .upload-zone:hover { border-color: var(--accent); background: rgba(79,142,247,0.05); }
-  .upload-zone.drag-over { border-color: var(--accent); background: rgba(79,142,247,0.08); }
-  .upload-zone input { display: none; }
-  .upload-icon { font-size: 30px; margin-bottom: 9px; display: block; }
-  .upload-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-  .upload-sub { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
-
-  #preview-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-  .thumb {
-    position: relative; width: 70px; height: 70px;
-    border-radius: 9px; overflow: hidden; border: 1.5px solid var(--border);
-  }
-  .thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .thumb-remove {
-    position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,0.75);
-    color: white; border: none; border-radius: 50%; width: 16px; height: 16px;
-    font-size: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  }
-
-  .analyze-btn {
-    width: 100%; padding: 12px; background: var(--accent); color: white;
-    border: none; border-radius: 11px; font-family: 'Syne', sans-serif;
-    font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    margin-top: 12px;
-  }
-  .analyze-btn:hover:not(:disabled) { background: #3a7de8; transform: translateY(-1px); }
-  .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .icon-btn:hover { border-color:var(--accent); color:var(--accent); }
 
   /* ── STATUS ── */
   #status {
-    text-align: center; font-size: 12px; color: var(--muted);
-    font-family: 'DM Mono', monospace; margin: 14px 0; min-height: 18px;
+    font-size:11px; color:var(--muted2); font-family:'DM Mono',monospace;
+    margin-bottom:14px; min-height:16px; text-align:center;
   }
-  #status.loading { color: var(--accent); }
-  #status.error { color: var(--red); }
-  #status.success { color: var(--green); }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  #status.error { color:var(--red); }
+  #status.success { color:var(--green); }
+  #status.loading { color:var(--accent); }
+  @keyframes spin { to { transform:rotate(360deg); } }
   .spinner {
-    display: inline-block; width: 12px; height: 12px;
-    border: 2px solid rgba(79,142,247,0.3); border-top-color: var(--accent);
-    border-radius: 50%; animation: spin 0.8s linear infinite;
-    vertical-align: middle; margin-right: 6px;
+    display:inline-block; width:11px; height:11px;
+    border:2px solid rgba(59,130,246,0.25); border-top-color:var(--accent);
+    border-radius:50%; animation:spin 0.8s linear infinite;
+    vertical-align:middle; margin-right:5px;
   }
 
   /* ── WEEK NAV ── */
-  #week-nav {
-    display: none; align-items: center; justify-content: space-between;
-    margin-bottom: 18px;
-  }
-  .week-title { font-size: 16px; font-weight: 700; }
+  #week-nav { display:none; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .week-title { font-size:14px; font-weight:700; color:var(--text2); }
   .week-btn {
-    background: var(--surface); border: 1px solid var(--border);
-    color: var(--text); padding: 5px 13px; border-radius: 8px;
-    cursor: pointer; font-family: 'Syne', sans-serif; font-size: 13px; transition: all 0.15s;
+    background:var(--surface); border:1px solid var(--border); color:var(--text2);
+    padding:5px 12px; border-radius:7px; cursor:pointer; font-size:13px; font-weight:500;
+    transition:all 0.15s; box-shadow:var(--shadow);
   }
-  .week-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .week-btn:disabled { opacity: 0.3; cursor: default; border-color: var(--border); color: var(--muted); }
+  .week-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .week-btn:disabled { opacity:0.3; cursor:default; }
 
-  /* ── PLANNING ── */
-  #planning { display: none; }
-
-  .my-week {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden; margin-bottom: 18px;
+  /* ── PLANNING CARD ── */
+  #planning { display:none; }
+  .planning-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; overflow:hidden; box-shadow:var(--shadow);
   }
-  .my-week-header {
-    background: linear-gradient(135deg, rgba(79,142,247,0.13), rgba(167,139,250,0.07));
-    border-bottom: 1px solid var(--border); padding: 13px 18px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .my-week-header h2 { font-size: 14px; font-weight: 700; }
-  .week-range { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
 
-  .days-row {
-    display: grid; grid-template-columns: repeat(6, 1fr);
-    gap: 1px; background: var(--border);
+  /* GRID */
+  .grid-header, .grid-row {
+    display:grid;
+    grid-template-columns: 148px repeat(6,1fr);
+    border-bottom:1px solid var(--border);
   }
-  .day-col { background: var(--surface); padding: 11px 9px; }
-  .day-label {
-    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
-    text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;
+  .grid-header { background:var(--surface2); }
+  .grid-row:last-child { border-bottom:none; }
+  .grid-row:hover { background:#fafbfc; }
+
+  .gh-name {
+    padding:10px 13px; display:flex; align-items:flex-end;
+    border-right:1px solid var(--border);
   }
-  .day-date { font-size: 18px; font-weight: 800; margin-bottom: 8px; line-height: 1; }
-  .day-date.today { color: var(--accent); }
-
-  .shift-card { border-radius: 7px; padding: 7px 8px; margin-bottom: 4px; }
-  .shift-card.ouverture { background: rgba(79,142,247,0.13); border-left: 3px solid var(--accent); }
-  .shift-card.fermeture { background: rgba(251,191,36,0.10); border-left: 3px solid var(--yellow); }
-  .shift-card.off { background: var(--glass); border-left: 3px solid var(--border); }
-  .shift-time { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; }
-  .shift-type { font-size: 9px; color: var(--muted); margin-top: 2px; text-transform: uppercase; }
-  .off-label { font-size: 11px; color: var(--muted); font-style: italic; }
-
-  .colleagues-section {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden;
+  .gh-name span { font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; font-family:'DM Mono',monospace; }
+  .gh-day {
+    padding:9px 6px; text-align:center;
+    border-left:1px solid var(--border);
   }
-  .colleagues-header {
-    padding: 13px 18px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 8px;
+  .gh-day-label { font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-family:'DM Mono',monospace; }
+  .gh-day-date { font-size:18px; font-weight:800; color:var(--text); line-height:1.15; margin-top:1px; }
+  .gh-day-date.today { color:var(--accent); }
+
+  .gr-name {
+    padding:9px 13px; display:flex; flex-direction:column; justify-content:center;
+    border-right:1px solid var(--border); background:var(--surface2);
   }
-  .colleagues-header h2 { font-size: 14px; font-weight: 700; }
+  .gr-name .fn { font-size:12px; font-weight:600; color:var(--text); }
+  .gr-name .ln { font-size:10px; color:var(--muted2); font-family:'DM Mono',monospace; margin-top:1px; }
 
-  .col-days-header, .colleague-row {
-    display: grid; grid-template-columns: 130px repeat(6, 1fr);
-    gap: 1px; background: var(--border);
+  .gr-cell {
+    padding:5px 5px; border-left:1px solid var(--border);
+    min-height:52px; cursor:pointer; transition:background 0.1s;
   }
-  .cdh-name { background: var(--surface2); padding: 7px 12px; }
-  .cdh-day {
-    background: var(--surface2); padding: 7px 6px; text-align: center;
-    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase;
+  .gr-cell:hover { background:rgba(59,130,246,0.05); }
+
+  /* FOOTER GRID */
+  .grid-footer {
+    padding:8px 18px; border-top:1px solid var(--border);
+    background:var(--surface2); display:flex; align-items:center; gap:6px;
   }
-  .cdh-day .cdh-date { font-size: 13px; color: var(--text); font-weight: 700; display: block; }
-
-  .col-name {
-    background: var(--surface2); padding: 9px 12px;
-    display: flex; flex-direction: column; justify-content: center;
+  .edit-hint { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; flex:1; }
+  .btn-add-emp {
+    background:var(--surface); border:1px solid var(--border); color:var(--muted2);
+    padding:4px 10px; border-radius:6px; font-size:11px; font-weight:500;
+    cursor:pointer; transition:all 0.15s;
   }
-  .col-name .fname { font-size: 12px; font-weight: 700; line-height: 1.2; }
-  .col-name .lname { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .btn-add-emp:hover { border-color:var(--green); color:var(--green); }
 
-  .col-day { background: var(--surface); padding: 6px; min-height: 52px; }
-  .mini-shift { border-radius: 5px; padding: 3px 6px; margin-bottom: 3px; font-size: 10px; }
-  .mini-shift.ouv { background: rgba(79,142,247,0.11); color: #93c5fd; }
-  .mini-shift.ferm { background: rgba(251,191,36,0.09); color: #fcd34d; }
-  .mini-shift.off { color: var(--muted); font-style: italic; }
-  .mini-shift.special { background: rgba(167,139,250,0.10); color: #c4b5fd; }
-  .mini-time { font-family: 'DM Mono', monospace; font-size: 10px; }
+  /* SHIFT CHIPS */
+  .chip { border-radius:6px; padding:4px 7px; margin-bottom:2px; }
+  .chip.ouv  { background:var(--green-light); border-left:3px solid var(--green); }
+  .chip.ferm { background:var(--accent-light); border-left:3px solid var(--accent); }
+  .chip.off  { background:#f9fafb; border-left:3px solid #e5e7eb; }
+  .chip.special { background:var(--purple-light); border-left:3px solid var(--purple); }
+  .chip-time { font-family:'DM Mono',monospace; font-size:11px; font-weight:500; color:var(--text); line-height:1.2; }
+  .chip-type { font-size:9px; color:var(--muted2); margin-top:1px; text-transform:uppercase; letter-spacing:0.3px; }
+  .chip-off-label { font-size:11px; color:var(--muted); font-style:italic; }
+  .chip-label { font-size:10px; color:var(--purple); font-weight:500; }
 
-  .empty-state { text-align: center; padding: 56px 20px; color: var(--muted); }
-  .empty-icon { font-size: 42px; margin-bottom: 12px; display: block; }
+  /* ── EMPTY STATE ── */
+  .empty-state { text-align:center; padding:60px 20px; }
+  .empty-icon { font-size:44px; margin-bottom:14px; display:block; }
+  .empty-title { font-size:15px; font-weight:600; color:var(--text2); margin-bottom:6px; }
+  .empty-sub { font-size:13px; color:var(--muted2); }
 
-  @media (max-width: 640px) {
-    .days-row { grid-template-columns: repeat(3, 1fr); }
-    .colleagues-section { overflow-x: auto; }
-    .col-days-header, .colleague-row { min-width: 560px; }
+  /* ── MODALS ── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,0.35); z-index:100;
+    align-items:center; justify-content:center;
+    backdrop-filter:blur(3px);
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; padding:28px; width:90%; max-width:460px;
+    box-shadow:var(--shadow-md);
+  }
+  .modal h3 { font-size:17px; font-weight:700; margin-bottom:4px; }
+  .modal-sub { font-size:12px; color:var(--muted2); font-family:'DM Mono',monospace; margin-bottom:20px; }
+  .field-label { font-size:12px; color:var(--muted2); font-weight:500; margin-bottom:5px; display:block; }
+  .modal-input {
+    width:100%; background:var(--surface2); border:1px solid var(--border);
+    color:var(--text); border-radius:9px; padding:10px 13px;
+    font-family:'DM Mono',monospace; font-size:13px; margin-bottom:13px;
+    outline:none; transition:border-color 0.15s;
+  }
+  .modal-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.12); }
+  .json-textarea {
+    width:100%; background:var(--surface2); border:1px solid var(--border);
+    color:var(--text); border-radius:9px; padding:12px;
+    font-family:'DM Mono',monospace; font-size:11px; height:190px;
+    resize:vertical; outline:none; transition:border-color 0.15s;
+    margin-bottom:13px; line-height:1.6;
+  }
+  .json-textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.12); }
+  .modal-actions { display:flex; gap:8px; }
+  .btn-primary {
+    flex:1; background:var(--accent); color:white; border:none;
+    border-radius:9px; padding:11px; font-family:'Inter',sans-serif;
+    font-weight:600; font-size:14px; cursor:pointer; transition:all 0.15s;
+  }
+  .btn-primary:hover { background:#2563eb; }
+  .btn-secondary {
+    background:var(--surface2); color:var(--muted2); border:1px solid var(--border);
+    border-radius:9px; padding:11px 16px; font-family:'Inter',sans-serif;
+    font-size:14px; cursor:pointer;
+  }
+  .btn-secondary:hover { border-color:var(--border2); color:var(--text2); }
+  .btn-danger {
+    background:#fef2f2; color:var(--red); border:1px solid #fecaca;
+    border-radius:9px; padding:11px 16px; font-family:'Inter',sans-serif;
+    font-size:14px; cursor:pointer;
+  }
+  .btn-danger:hover { background:#fee2e2; }
+
+  .type-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px; }
+  .type-btn {
+    background:var(--surface2); border:1.5px solid var(--border); color:var(--muted2);
+    padding:10px 12px; border-radius:9px; font-family:'Inter',sans-serif;
+    font-size:13px; font-weight:500; cursor:pointer; transition:all 0.15s; text-align:center;
+  }
+  .type-btn:hover { border-color:var(--border2); color:var(--text2); }
+  .type-btn.active.ouv     { background:var(--green-light); border-color:var(--green); color:var(--green); }
+  .type-btn.active.ferm    { background:var(--accent-light); border-color:var(--accent); color:var(--accent); }
+  .type-btn.active.repos   { background:#f9fafb; border-color:#9ca3af; color:var(--text2); }
+  .type-btn.active.special { background:var(--purple-light); border-color:var(--purple); color:var(--purple); }
+  .time-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  /* IMPORT MODAL DROPZONE */
+  .drop-zone {
+    border:2px dashed var(--border2); border-radius:10px; padding:28px;
+    text-align:center; cursor:pointer; transition:all 0.15s; margin-bottom:13px;
+  }
+  .drop-zone:hover, .drop-zone.drag-over { border-color:var(--accent); background:var(--accent-light); }
+  .drop-zone-icon { font-size:28px; margin-bottom:8px; }
+  .drop-zone-text { font-size:13px; font-weight:600; color:var(--text2); margin-bottom:3px; }
+  .drop-zone-sub { font-size:11px; color:var(--muted2); }
+  .or-divider { text-align:center; font-size:12px; color:var(--muted); margin:10px 0; font-family:'DM Mono',monospace; }
+
+  @media (max-width:640px) {
+    .planning-card { overflow-x:auto; }
+    .grid-header, .grid-row { min-width:580px; }
   }
 </style>
 </head>
@@ -269,31 +237,15 @@
 <div class="app">
 
   <header>
-    <div class="logo">Rob<span>.</span>Planning</div>
-    <div class="header-right">
-      <div class="badge">Pâtisserie 31300</div>
-      <button class="key-btn" id="key-btn" onclick="openModal()">
-        <span class="key-dot"></span>
-        <span id="key-label">Clé API</span>
-      </button>
+    <div class="logo-block">
+      <div class="logo">Rob<span>.</span>Planning</div>
+      <div class="logo-badge">Pâtisserie 31300</div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openImport()">⬆ Importer</button>
+      <button class="icon-btn" onclick="openSettings()">⚙</button>
     </div>
   </header>
-
-  <!-- MODAL -->
-  <div class="modal-overlay" id="modal">
-    <div class="modal">
-      <h3>🔑 Clé API Groq</h3>
-      <p>Réservé aux gérants. Réservé aux gérants. Réservé aux gérants. La clé est stockée uniquement sur cet appareil et ne transite jamais vers un serveur.</p>
-      <input type="password" class="modal-input" id="key-input" placeholder="gsk_…" autocomplete="off" spellcheck="false">
-      <div class="modal-actions">
-        <button class="btn-save" onclick="saveKey()">Enregistrer</button>
-        <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-        <button class="btn-clear" onclick="clearKey()">Supprimer</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="upload-section" id="upload-section"></div>
 
   <div id="status"></div>
 
@@ -306,344 +258,302 @@
   <div id="planning">
     <div class="empty-state">
       <span class="empty-icon">🗓️</span>
-      <p style="font-size:14px">Le planning apparaîtra ici après analyse</p>
+      <div class="empty-title">Aucun planning chargé</div>
+      <div class="empty-sub">Cliquer sur <strong>⬆ Importer</strong> pour ajouter un planning</div>
     </div>
   </div>
 
 </div>
+
+<!-- MODAL SETTINGS -->
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal">
+    <h3>⚙️ Configuration</h3>
+    <div class="modal-sub">Serveur de données PoupiOS</div>
+    <label class="field-label">IP de PoupiOS</label>
+    <input type="text" class="modal-input" id="input-poupi" placeholder="192.168.129.131">
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveSettings()">Enregistrer</button>
+      <button class="btn-secondary" onclick="closeSettings()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IMPORT -->
+<div class="modal-overlay" id="modal-import">
+  <div class="modal">
+    <h3>⬆ Importer un planning</h3>
+    <div class="modal-sub">JSON généré par Claude depuis la photo</div>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-json').click()">
+      <div class="drop-zone-icon">📂</div>
+      <div class="drop-zone-text">Glisser un fichier JSON ici</div>
+      <div class="drop-zone-sub">ou cliquer pour parcourir</div>
+      <input type="file" id="file-json" accept=".json" style="display:none" onchange="importFile(event)">
+    </div>
+    <div class="or-divider">— ou coller le JSON directement —</div>
+    <textarea class="json-textarea" id="json-input" placeholder='{"weeks":[...]}'></textarea>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="importJSON()">Importer</button>
+      <button class="btn-secondary" onclick="closeImport()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIT SHIFT -->
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal">
+    <h3 id="edit-title">Modifier le shift</h3>
+    <div class="modal-sub" id="edit-sub"></div>
+    <label class="field-label">Type de shift</label>
+    <div class="type-grid">
+      <button class="type-btn ouv"     id="tbtn-ouv"     onclick="selectType('Ouverture')">🟢 Ouverture</button>
+      <button class="type-btn ferm"    id="tbtn-ferm"    onclick="selectType('Fermeture')">🔵 Fermeture</button>
+      <button class="type-btn repos"   id="tbtn-repos"   onclick="selectType('repos')">— Repos</button>
+      <button class="type-btn special" id="tbtn-special" onclick="selectType('special')">⭐ Autre</button>
+    </div>
+    <div id="edit-time-section">
+      <div class="time-row">
+        <div><label class="field-label">Début</label><input type="time" class="modal-input" id="edit-start"></div>
+        <div><label class="field-label">Fin</label><input type="time" class="modal-input" id="edit-end"></div>
+      </div>
+    </div>
+    <div id="edit-special-section" style="display:none">
+      <label class="field-label">Libellé</label>
+      <input type="text" class="modal-input" id="edit-special-label" placeholder="CRDT, Vacances VAE, Récup. Jour…">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveShift()">Enregistrer</button>
+      <button class="btn-secondary" onclick="closeEdit()">Annuler</button>
+      <button class="btn-danger" onclick="deleteShift()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADD EMPLOYEE -->
+<div class="modal-overlay" id="modal-add-emp">
+  <div class="modal">
+    <h3>👤 Ajouter un employé</h3>
+    <div class="modal-sub" id="add-emp-sub">Semaine en cours</div>
+    <label class="field-label">Prénom</label>
+    <input type="text" class="modal-input" id="emp-firstname" placeholder="Prénom">
+    <label class="field-label">Nom</label>
+    <input type="text" class="modal-input" id="emp-lastname" placeholder="NOM">
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="confirmAddEmployee()">Ajouter</button>
+      <button class="btn-secondary" onclick="document.getElementById('modal-add-emp').classList.remove('open')">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const MY_NAME = "ESTEBAN";
 const DAYS = ["Lu","Ma","Me","Je","Ve","Sa"];
-const STORAGE_KEY = "rob_groq_key";
-const PLANNING_KEY = "rob_planning_data";
+const STORAGE_SETTINGS = "rob_settings";
+const STORAGE_CACHE = "rob_planning_cache";
 
-let uploadedFiles = [];
-let allWeeks = [];
-let currentWeekIdx = 0;
+let allWeeks = [], currentWeekIdx = 0, editCtx = null, currentType = 'repos';
 
-window.addEventListener('DOMContentLoaded', () => {
-  updateKeyUI();
-  renderUploadSection();
-  const saved = localStorage.getItem(PLANNING_KEY);
-  if (saved) {
-    try {
-      allWeeks = JSON.parse(saved);
-      if (allWeeks.length) { currentWeekIdx = 0; renderWeek(0); setStatus('success', `Planning en mémoire · ${allWeeks.length} semaine(s)`); }
-    } catch(e) { localStorage.removeItem(PLANNING_KEY); }
-  }
+// ── SETTINGS ──────────────────────────────────────────────────────────────
+function getSettings() {
+  try { return { poupiIP:'192.168.129.131',...JSON.parse(localStorage.getItem(STORAGE_SETTINGS)||'{}') }; }
+  catch(e) { return { poupiIP:'192.168.129.131' }; }
+}
+function saveSettings() {
+  localStorage.setItem(STORAGE_SETTINGS, JSON.stringify({ poupiIP:document.getElementById('input-poupi').value.trim()||'192.168.129.131' }));
+  closeSettings(); setStatus('success','Configuration sauvegardée');
+}
+function openSettings() { document.getElementById('input-poupi').value=getSettings().poupiIP; document.getElementById('modal-settings').classList.add('open'); }
+function closeSettings() { document.getElementById('modal-settings').classList.remove('open'); }
+document.getElementById('modal-settings').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-settings')) closeSettings(); });
+
+// ── IMPORT ────────────────────────────────────────────────────────────────
+function openImport() { document.getElementById('json-input').value=''; document.getElementById('modal-import').classList.add('open'); }
+function closeImport() { document.getElementById('modal-import').classList.remove('open'); }
+document.getElementById('modal-import').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-import')) closeImport(); });
+
+// Drag & drop
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover',e=>{ e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{ e.preventDefault(); dz.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{ closeImport(); processJSON(ev.target.result); }; r.readAsText(f); });
+
+function importFile(e) {
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader(); r.onload=ev=>{ closeImport(); processJSON(ev.target.result); }; r.readAsText(file); e.target.value='';
+}
+function importJSON() { const raw=document.getElementById('json-input').value.trim(); if(!raw) return; closeImport(); processJSON(raw); }
+
+function processJSON(raw) {
+  try {
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    let weeks=Array.isArray(parsed)?parsed:parsed.weeks?parsed.weeks:parsed.label?[parsed]:null;
+    if(!weeks?.length) throw new Error('Format non reconnu');
+    const newLabels=new Set(weeks.map(w=>w.label));
+    allWeeks=[...allWeeks.filter(w=>!newLabels.has(w.label)),...weeks].sort((a,b)=>(a.days?.[0]||'')>(b.days?.[0]||'')?1:-1);
+    persist();
+    currentWeekIdx=Math.max(0,allWeeks.findIndex(w=>newLabels.has(w.label)));
+    renderWeek(currentWeekIdx);
+    setStatus('success',`✓ ${weeks.length} semaine(s) importée(s)`);
+  } catch(err) { setStatus('error','⚠ JSON invalide : '+err.message); }
+}
+
+// ── PERSISTENCE ────────────────────────────────────────────────────────────
+function persist() {
+  localStorage.setItem(STORAGE_CACHE,JSON.stringify(allWeeks));
+  saveToServer();
+}
+async function saveToServer() {
+  try { await fetch(`http://${getSettings().poupiIP}/planning/save`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(allWeeks),signal:AbortSignal.timeout(5000)}); } catch(e){}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async ()=>{
+  try {
+    setStatus('loading','Chargement...');
+    const resp=await fetch(`http://${getSettings().poupiIP}/planning/data`,{signal:AbortSignal.timeout(4000)});
+    if(resp.ok){ const data=await resp.json(); if(Array.isArray(data)&&data.length){ allWeeks=data; localStorage.setItem(STORAGE_CACHE,JSON.stringify(data)); currentWeekIdx=0; renderWeek(0); setStatus('success',`${data.length} semaine(s) chargée(s)`); return; } }
+  } catch(e){}
+  try {
+    const cached=JSON.parse(localStorage.getItem(STORAGE_CACHE)||'[]');
+    if(cached.length){ allWeeks=cached; currentWeekIdx=0; renderWeek(0); setStatus('success',`Cache local — ${cached.length} semaine(s)`); return; }
+  } catch(e){}
+  setStatus('','');
 });
 
-// ── CLÉ ──
-function getKey() { return localStorage.getItem(STORAGE_KEY) || ''; }
-function hasKey() { return !!getKey(); }
+// ── EDIT SHIFT ────────────────────────────────────────────────────────────
+function openEdit(weekIdx, empIdx, dateStr) {
+  editCtx={weekIdx,empIdx,dateStr};
+  const week=allWeeks[weekIdx], emp=week.employees[empIdx];
+  const shift=emp.shifts?.find(s=>s.date===dateStr)||{type:'repos'};
+  const d=new Date(dateStr+'T12:00:00');
+  document.getElementById('edit-title').textContent=`${emp.firstName} ${emp.lastName}`;
+  document.getElementById('edit-sub').textContent=`${DAYS[week.days.indexOf(dateStr)]||''} ${d.getDate()}/${String(d.getMonth()+1).padStart(2,'0')}`;
+  const type=shift.type||'repos', tl=type.toLowerCase();
+  if(tl==='ouverture'||tl.startsWith('ouv')||type==='Atelier') selectType('Ouverture');
+  else if(tl==='fermeture'||tl.startsWith('ferm')) selectType('Fermeture');
+  else if(type==='repos') selectType('repos');
+  else selectType('special');
+  document.getElementById('edit-start').value=shift.start||'';
+  document.getElementById('edit-end').value=shift.end||'';
+  const isOF=(tl==='ouverture'||tl.startsWith('ouv')||tl==='fermeture'||tl.startsWith('ferm')||type==='Atelier');
+  document.getElementById('edit-special-label').value=(!isOF&&type!=='repos')?type:'';
+  document.getElementById('modal-edit').classList.add('open');
+}
+function closeEdit(){ document.getElementById('modal-edit').classList.remove('open'); editCtx=null; }
+document.getElementById('modal-edit').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-edit')) closeEdit(); });
 
-function updateKeyUI() {
-  const btn = document.getElementById('key-btn');
-  document.getElementById('key-label').textContent = hasKey() ? 'Gérant ✓' : 'Clé API';
-  btn.classList.toggle('active', hasKey());
+function selectType(t) {
+  currentType=t;
+  ['tbtn-ouv','tbtn-ferm','tbtn-repos','tbtn-special'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  const map={'Ouverture':'tbtn-ouv','Fermeture':'tbtn-ferm','repos':'tbtn-repos','special':'tbtn-special'};
+  document.getElementById(map[t])?.classList.add('active');
+  document.getElementById('edit-time-section').style.display=(t==='Ouverture'||t==='Fermeture')?'block':'none';
+  document.getElementById('edit-special-section').style.display=t==='special'?'block':'none';
+}
+function saveShift(){
+  if(!editCtx) return;
+  const {weekIdx,empIdx,dateStr}=editCtx;
+  const emp=allWeeks[weekIdx].employees[empIdx];
+  if(!emp.shifts) emp.shifts=[];
+  let shift={date:dateStr};
+  if(currentType==='repos') shift.type='repos';
+  else if(currentType==='special') shift.type=document.getElementById('edit-special-label').value.trim()||'Absent';
+  else { shift.type=currentType; shift.start=document.getElementById('edit-start').value; shift.end=document.getElementById('edit-end').value; }
+  const idx=emp.shifts.findIndex(s=>s.date===dateStr);
+  if(idx>=0) emp.shifts[idx]=shift; else emp.shifts.push(shift);
+  persist(); closeEdit(); renderWeek(weekIdx); setStatus('success','✓ Shift modifié');
+}
+function deleteShift(){
+  if(!editCtx) return;
+  const {weekIdx,empIdx,dateStr}=editCtx;
+  const emp=allWeeks[weekIdx].employees[empIdx];
+  if(emp.shifts) emp.shifts=emp.shifts.filter(s=>s.date!==dateStr);
+  persist(); closeEdit(); renderWeek(weekIdx); setStatus('success','Shift supprimé');
 }
 
-function openModal() {
-  document.getElementById('key-input').value = getKey();
-  document.getElementById('modal').classList.add('open');
+// ── ADD EMPLOYEE ──────────────────────────────────────────────────────────
+function openAddEmployee(){
+  document.getElementById('emp-firstname').value='';
+  document.getElementById('emp-lastname').value='';
+  document.getElementById('add-emp-sub').textContent=allWeeks[currentWeekIdx]?.label||'Semaine en cours';
+  document.getElementById('modal-add-emp').classList.add('open');
 }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-function saveKey() {
-  const v = document.getElementById('key-input').value.trim();
-  if (v) localStorage.setItem(STORAGE_KEY, v);
-  closeModal(); updateKeyUI(); renderUploadSection();
+document.getElementById('modal-add-emp').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-add-emp')) document.getElementById('modal-add-emp').classList.remove('open'); });
+function confirmAddEmployee(){
+  const fn=document.getElementById('emp-firstname').value.trim();
+  const ln=document.getElementById('emp-lastname').value.trim();
+  if(!fn&&!ln) return;
+  const week=allWeeks[currentWeekIdx]; if(!week) return;
+  week.employees=week.employees||[];
+  week.employees.push({firstName:fn,lastName:ln,shifts:(week.days||[]).map(d=>({date:d,type:'repos'}))});
+  persist(); document.getElementById('modal-add-emp').classList.remove('open');
+  renderWeek(currentWeekIdx); setStatus('success',`✓ ${fn} ${ln} ajouté(e)`);
 }
-function clearKey() {
-  localStorage.removeItem(STORAGE_KEY);
-  closeModal(); updateKeyUI(); renderUploadSection();
-}
-document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
 
-// ── SECTION UPLOAD ──
-function renderUploadSection() {
-  const sec = document.getElementById('upload-section');
-  if (!hasKey()) {
-    sec.innerHTML = `<div class="no-key-banner">
-      <span class="bicon">👁️</span>
-      <div>Mode consultation — <strong>aucune clé API configurée</strong>.<br>
-      Pour importer un nouveau planning, un gérant doit configurer la clé Groq via le bouton en haut à droite.</div>
-    </div>`;
-    return;
+// ── BUILD CHIP ────────────────────────────────────────────────────────────
+function buildChip(shift) {
+  if(!shift||shift.type==='repos') return `<div class="chip off"><span class="chip-off-label">–</span></div>`;
+  const t=shift.type||'', tl=t.toLowerCase();
+  if(tl==='ouverture'||tl.startsWith('ouv')||t==='Atelier'){
+    return `<div class="chip ouv"><div class="chip-time">${shift.start||''}–${shift.end||''}</div><div class="chip-type">${t}</div></div>`;
   }
-  sec.innerHTML = `
-    <div class="upload-zone" id="drop-zone">
-      <input type="file" id="file-input" accept="image/*" multiple>
-      <span class="upload-icon">📋</span>
-      <div class="upload-title">Dépose la photo du planning ici</div>
-      <div class="upload-sub">ou clique · JPG, PNG · plusieurs semaines OK</div>
-    </div>
-    <div id="preview-strip"></div>
-    <button class="analyze-btn" id="analyze-btn" disabled onclick="analyzeImages()">
-      <span>✨</span> Analyser le planning
-    </button>`;
-
-  const dz = document.getElementById('drop-zone');
-  const fi = document.getElementById('file-input');
-  dz.addEventListener('click', () => fi.click());
-  fi.addEventListener('change', e => addFiles(Array.from(e.target.files)));
-  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); addFiles(Array.from(e.dataTransfer.files)); });
-  uploadedFiles = [];
+  if(tl==='fermeture'||tl.startsWith('ferm')){
+    return `<div class="chip ferm"><div class="chip-time">${shift.start||''}–${shift.end||''}</div><div class="chip-type">Fermeture</div></div>`;
+  }
+  const timeStr=shift.start?`<div class="chip-time">${shift.start}–${shift.end}</div>`:'';
+  return `<div class="chip special">${timeStr}<div class="chip-label">${t}</div></div>`;
 }
 
-// ── FILES ──
-function addFiles(files) {
-  files.forEach(f => {
-    if (!f.type.startsWith('image/')) return;
-    uploadedFiles.push(f); addThumb(f, uploadedFiles.length - 1);
+// ── RENDER ────────────────────────────────────────────────────────────────
+function renderWeek(idx){
+  const week=allWeeks[idx]; if(!week) return;
+  document.getElementById('week-nav').style.display='flex';
+  document.getElementById('week-title').textContent=week.label;
+  document.getElementById('prev-btn').disabled=idx===0;
+  document.getElementById('next-btn').disabled=idx===allWeeks.length-1;
+
+  const todayStr=new Date().toISOString().split('T')[0];
+  const planning=document.getElementById('planning');
+  planning.style.display='block'; planning.innerHTML='';
+
+  const card=document.createElement('div'); card.className='planning-card';
+
+  // GRID HEADER
+  const gh=document.createElement('div'); gh.className='grid-header';
+  gh.innerHTML=`<div class="gh-name"><span>Employé</span></div>`;
+  (week.days||[]).forEach((ds,i)=>{
+    const d=new Date(ds+'T12:00:00');
+    gh.innerHTML+=`<div class="gh-day"><div class="gh-day-label">${DAYS[i]||''}</div><div class="gh-day-date${ds===todayStr?' today':''}">${d.getDate()}</div></div>`;
   });
-  const btn = document.getElementById('analyze-btn');
-  if (btn) btn.disabled = !uploadedFiles.filter(Boolean).length;
-}
+  card.appendChild(gh);
 
-function addThumb(file, idx) {
-  const strip = document.getElementById('preview-strip');
-  if (!strip) return;
-  const div = document.createElement('div'); div.className = 'thumb'; div.id = `thumb-${idx}`;
-  const img = document.createElement('img'); img.src = URL.createObjectURL(file);
-  const btn = document.createElement('button'); btn.className = 'thumb-remove'; btn.innerHTML = '✕';
-  btn.onclick = e => { e.stopPropagation(); removeFile(idx); };
-  div.appendChild(img); div.appendChild(btn);
-  strip.appendChild(div);
-}
-
-function removeFile(idx) {
-  uploadedFiles[idx] = null;
-  document.getElementById(`thumb-${idx}`)?.remove();
-  const btn = document.getElementById('analyze-btn');
-  if (btn) btn.disabled = !uploadedFiles.filter(Boolean).length;
-}
-
-function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file);
+  // EMPLOYEE ROWS — ordre original conservé
+  (week.employees||[]).forEach((emp,empIdx)=>{
+    const row=document.createElement('div'); row.className='grid-row';
+    const nameDiv=document.createElement('div'); nameDiv.className='gr-name';
+    nameDiv.innerHTML=`<span class="fn">${emp.firstName||''}</span><span class="ln">${emp.lastName||''}</span>`;
+    row.appendChild(nameDiv);
+    (week.days||[]).forEach(ds=>{
+      const shift=emp.shifts?.find(s=>s.date===ds);
+      const cell=document.createElement('div'); cell.className='gr-cell';
+      cell.title='Modifier';
+      cell.onclick=()=>openEdit(idx,empIdx,ds);
+      cell.innerHTML=buildChip(shift);
+      row.appendChild(cell);
+    });
+    card.appendChild(row);
   });
+
+  // FOOTER
+  const footer=document.createElement('div'); footer.className='grid-footer';
+  footer.innerHTML=`<span class="edit-hint">✏️ Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employé</button>`;
+  card.appendChild(footer);
+
+  planning.appendChild(card);
 }
 
-// ── ANALYSE ──
-const GROQ_PROMPT = `Tu es un expert en lecture de tableaux de planning de travail. Analyse l'image de ce planning et extrait les horaires.
-
-STRUCTURE DU TABLEAU :
-- Colonnes = jours de la semaine (lundi a samedi)
-- Lignes = employes
-- Chaque case peut contenir 0, 1 ou 2 blocs colores superposes
-
-COMMENT LIRE CHAQUE CASE :
-Une case remplie contient TOUJOURS deux elements superposes :
-  [1] Un rectangle JAUNE avec les heures ex: "07:00/13:00" ou "13:15/19:15" -> ce sont les heures du shift a extraire
-  [2] Un rectangle BLEU (= fermeture) ou VERT (= ouverture) en dessous avec le texte "Ferm" ou "Ouv" + "00:00/24:00" + "Fermeture" ou "Ouverture"
-
-REGLE CRITIQUE : Le "00:00/24:00" dans le rectangle bleu/vert = DUREE DE JOURNEE, PAS des heures de travail. IGNORE completement cette valeur. Seules les heures dans le rectangle JAUNE comptent.
-
-EXEMPLES CONCRETS :
-- Rectangle jaune "07:00/13:00" + rectangle vert "Ouv" -> start:"07:00", end:"13:00", type:"Ouverture"
-- Rectangle jaune "13:15/19:15" + rectangle bleu "Ferm" -> start:"13:15", end:"19:15", type:"Fermeture"
-- Rectangle jaune "10:15/19:15" + rectangle bleu "Ferm" -> start:"10:15", end:"19:15", type:"Fermeture"
-- Case grise ou vide -> start:null, end:null, type:"repos"
-- Rectangle rose/rouge avec texte "Credit Temps CRDT" -> start:null, end:null, type:"CRDT"
-- Rectangle rose/rouge avec texte "Vacances Employes" -> start:null, end:null, type:"Vacances"
-- Rectangle avec "MAL" -> start:null, end:null, type:"MAL"
-
-OBLIGATION : Pour chaque employe, tu DOIS renseigner les 6 jours. Aucun jour ne peut etre omis.
-
-Retourne UNIQUEMENT du JSON brut sans markdown ni backticks, structure :
-{
-  "label": "JJ/MM/AAAA - JJ/MM/AAAA",
-  "days": ["AAAA-MM-JJ","AAAA-MM-JJ","AAAA-MM-JJ","AAAA-MM-JJ","AAAA-MM-JJ","AAAA-MM-JJ"],
-  "employees": [
-    {
-      "lastName": "NOM",
-      "firstName": "PRENOM",
-      "shifts": [
-        { "date": "AAAA-MM-JJ", "start": "HH:MM", "end": "HH:MM", "type": "Ouverture" },
-        { "date": "AAAA-MM-JJ", "start": null, "end": null, "type": "repos" }
-      ]
-    }
-  ]
-}` ;
-
-async function callGemini(imageBase64, imageType) {
-  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getKey()}` },
-    body: JSON.stringify({
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-      max_tokens: 8000,
-      temperature: 0,
-      messages: [{ role: 'user', content: [
-        { type: 'image_url', image_url: { url: `data:${imageType};base64,${imageBase64}` } },
-        { type: 'text', text: GROQ_PROMPT }
-      ]}]
-    })
-  });
-  if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || `Erreur Groq ${resp.status}`); }
-  const data = await resp.json();
-  return data.choices?.[0]?.message?.content || '';
-}
-
-function parseWeekJSON(raw) {
-  let clean = raw.replace(/```json|```/g, '').trim();
-  let parsed;
-  try {
-    parsed = JSON.parse(clean);
-  } catch(e) {
-    // JSON tronque : couper apres le dernier shift complet et refermer
-    const lastBrace = clean.lastIndexOf('{ "date"');
-    if (lastBrace > 0) {
-      const beforeLast = clean.lastIndexOf('},', lastBrace);
-      if (beforeLast > 0) clean = clean.substring(0, beforeLast + 1);
-    }
-    // Compter les accolades/crochets non fermes
-    let depth = 0;
-    const closes = [];
-    for (const c of clean) {
-      if (c === '{' || c === '[') depth++;
-      else if (c === '}' || c === ']') depth--;
-    }
-    // Refermer dans l'ordre inverse
-    const stack = [];
-    let d2 = 0;
-    for (const c of clean) {
-      if (c === '{') { stack.push('}'); d2++; }
-      else if (c === '[') { stack.push(']'); d2++; }
-      else if (c === '}' || c === ']') { stack.pop(); d2--; }
-    }
-    while (stack.length) clean += stack.pop();
-    try { parsed = JSON.parse(clean); } catch(e2) {
-      throw new Error('JSON invalide meme apres reparation : ' + e2.message);
-    }
-  }
-  if (parsed.weeks) return parsed.weeks;
-  if (parsed.label) return [parsed];
-  return [];
-}
-
-async function analyzeImages() {
-  const files = uploadedFiles.filter(Boolean);
-  if (!files.length || !hasKey()) return;
-
-  setStatus('loading', `Analyse de l'image 1/${files.length}...`);
-  document.getElementById('analyze-btn').disabled = true;
-
-  try {
-    const images = await Promise.all(files.map(async f => ({ base64: await fileToBase64(f), type: f.type })));
-
-    allWeeks = [];
-    for (let i = 0; i < images.length; i++) {
-      setStatus('loading', `Analyse image ${i+1}/${images.length}...`);
-      const raw = await callGemini(images[i].base64, images[i].type);
-      let weeks = [];
-      try { weeks = parseWeekJSON(raw); } catch(e) {
-        console.error('Parse error image', i+1, e, '\nRaw:', raw);
-        throw new Error(`Image ${i+1} : impossible de lire le JSON. (${e.message})`);
-      }
-      allWeeks.push(...weeks);
-    }
-
-    if (!allWeeks.length) throw new Error('Aucune semaine trouvee.');
-
-    localStorage.setItem(PLANNING_KEY, JSON.stringify(allWeeks));
-    currentWeekIdx = 0; renderWeek(0);
-    setStatus('success', `OK - ${allWeeks.length} semaine(s) importee(s) et sauvegardees`);
-
-  } catch(err) {
-    setStatus('error', 'Erreur : ' + err.message);
-    document.getElementById('analyze-btn').disabled = false;
-  }
-}
-
-
-// ── RENDER ──
-function renderWeek(idx) {
-  const week = allWeeks[idx]; if (!week) return;
-
-  document.getElementById('week-nav').style.display = 'flex';
-  document.getElementById('week-title').textContent = week.label;
-  document.getElementById('prev-btn').disabled = idx === 0;
-  document.getElementById('next-btn').disabled = idx === allWeeks.length - 1;
-
-  const me = week.employees?.find(e => e.firstName?.toUpperCase().includes(MY_NAME) || e.lastName?.toUpperCase().includes(MY_NAME));
-  const colleagues = (week.employees || []).filter(e => e !== me);
-  const todayStr = new Date().toISOString().split('T')[0];
-
-  const planning = document.getElementById('planning');
-  planning.style.display = 'block';
-  planning.innerHTML = '';
-
-  // MON PLANNING
-  const mySection = document.createElement('div'); mySection.className = 'my-week';
-  mySection.innerHTML = `<div class="my-week-header"><span style="font-size:17px">👤</span><h2>Mes horaires</h2><span class="week-range">${week.label}</span></div>`;
-
-  if (me) {
-    const dr = document.createElement('div'); dr.className = 'days-row';
-    (week.days || []).forEach((dateStr, i) => {
-      const shift = me.shifts?.find(s => s.date === dateStr);
-      const d = new Date(dateStr + 'T12:00:00');
-      const col = document.createElement('div'); col.className = 'day-col';
-      col.innerHTML = `<div class="day-label">${DAYS[i]||''}</div><div class="day-date${dateStr===todayStr?' today':''}">${d.getDate()}</div>`;
-      if (shift?.start && shift.type !== 'repos') {
-        const tc = shift.type?.toLowerCase().includes('ouv') ? 'ouverture' : 'fermeture';
-        col.innerHTML += `<div class="shift-card ${tc}"><div class="shift-time">${shift.start}–${shift.end}</div><div class="shift-type">${shift.type||''}</div></div>`;
-      } else {
-        col.innerHTML += `<div class="shift-card off"><div class="off-label">Repos</div></div>`;
-      }
-      dr.appendChild(col);
-    });
-    mySection.appendChild(dr);
-  } else {
-    mySection.innerHTML += `<div style="padding:16px;color:var(--muted);font-size:13px;">Nom "${MY_NAME}" introuvable dans ce planning.</div>`;
-  }
-  planning.appendChild(mySection);
-
-  // COLLÈGUES
-  if (colleagues.length) {
-    const cs = document.createElement('div'); cs.className = 'colleagues-section';
-    cs.innerHTML = `<div class="colleagues-header"><span style="font-size:15px">👥</span><h2>Collègues</h2></div>`;
-
-    const hdr = document.createElement('div'); hdr.className = 'col-days-header';
-    hdr.innerHTML = `<div class="cdh-name"></div>`;
-    (week.days || []).forEach((ds, i) => {
-      const d = new Date(ds + 'T12:00:00');
-      hdr.innerHTML += `<div class="cdh-day">${DAYS[i]||''}<span class="cdh-date">${d.getDate()}</span></div>`;
-    });
-    cs.appendChild(hdr);
-
-    colleagues.forEach(emp => {
-      const row = document.createElement('div'); row.className = 'colleague-row';
-      row.innerHTML = `<div class="col-name"><span class="fname">${emp.firstName||''}</span><span class="lname">${emp.lastName||''}</span></div>`;
-      (week.days || []).forEach(ds => {
-        const shift = emp.shifts?.find(s => s.date === ds);
-        const cell = document.createElement('div'); cell.className = 'col-day';
-        if (shift?.start && shift.type !== 'repos') {
-          const tc = shift.type?.toLowerCase().includes('ouv') ? 'ouv' : shift.type?.toLowerCase().includes('ferm') ? 'ferm' : 'special';
-          cell.innerHTML = `<div class="mini-shift ${tc}"><div class="mini-time">${shift.start}–${shift.end}</div><div style="font-size:9px;color:var(--muted);margin-top:1px">${shift.type||''}</div></div>`;
-        } else {
-          cell.innerHTML = `<div class="mini-shift off">–</div>`;
-        }
-        row.appendChild(cell);
-      });
-      cs.appendChild(row);
-    });
-    planning.appendChild(cs);
-  }
-}
-
-function changeWeek(dir) {
-  currentWeekIdx = Math.max(0, Math.min(allWeeks.length - 1, currentWeekIdx + dir));
-  renderWeek(currentWeekIdx);
-}
-
-function setStatus(type, msg) {
-  const el = document.getElementById('status'); el.className = type;
-  el.innerHTML = type === 'loading' ? `<span class="spinner"></span>${msg}` : msg;
-}
+function changeWeek(dir){ currentWeekIdx=Math.max(0,Math.min(allWeeks.length-1,currentWeekIdx+dir)); renderWeek(currentWeekIdx); }
+function setStatus(type,msg){ const el=document.getElementById('status'); el.className=type; el.innerHTML=type==='loading'?`<span class="spinner"></span>${msg}`:msg; }
 </script>
 </body>
 </html>
