@@ -3,56 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#3b82f6">
 <title>Rob.Planning</title>
+<link rel="manifest" href="manifest.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#f0f2f5; --surface:#fff; --surface2:#f8f9fb; --border:#e4e7ed; --border2:#d0d5de;
-    --accent:#3b82f6; --accent-light:#eff6ff; --green:#10b981; --green-light:#ecfdf5;
-    --red:#ef4444; --red-light:#fef2f2; --amber:#d97706; --purple:#8b5cf6; --purple-light:#f5f3ff;
-    --text:#111827; --text2:#374151; --muted:#9ca3af; --muted2:#6b7280;
-    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
-    --shadow-md:0 4px 12px rgba(0,0,0,.10),0 2px 4px rgba(0,0,0,.06);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;min-height:100vh}
-  .app{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px}
-  .logo-block{display:flex;align-items:center;gap:12px;min-width:0}
-  .logo{font-size:18px;font-weight:800;white-space:nowrap}.logo span{color:var(--accent)}
-  .logo-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);background:var(--surface);border:1px solid var(--border);padding:3px 9px;border-radius:20px;white-space:nowrap}
-  .header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-  .icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);white-space:nowrap}
-  .icon-btn:hover{border-color:var(--accent);color:var(--accent)}
-  .admin-only{display:none}.is-admin .admin-only{display:inline-flex}.is-admin .grid-footer.admin-only,.is-admin .mobile-footer.admin-only{display:flex}
-  #status{font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace;margin-bottom:14px;min-height:18px;text-align:center}
-  #status.error{color:var(--red)}#status.success{color:var(--green)}#status.loading{color:var(--accent)}#status.pending{color:var(--amber)}
-  @keyframes spin{to{transform:rotate(360deg)}}.spinner{display:inline-block;width:11px;height:11px;border:2px solid rgba(59,130,246,.25);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:5px}
-  #week-nav{display:none;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}.week-title{font-size:14px;font-weight:700;color:var(--text2);text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
-  .week-nav-actions{display:flex;align-items:center;gap:8px}.week-state-badge{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;border-radius:999px;padding:3px 9px;border:1px solid var(--border)}
-  #week-nav.week-past .week-state-badge{background:#f9fafb;color:var(--muted2);border-color:#e5e7eb}#week-nav.week-current .week-state-badge{background:var(--accent-light);color:var(--accent);border-color:#bfdbfe}#week-nav.week-future .week-state-badge{background:var(--green-light);color:var(--green);border-color:#a7f3d0}
-  .week-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;box-shadow:var(--shadow)}
-  .week-btn:hover{border-color:var(--accent);color:var(--accent)}.week-btn:disabled{opacity:.3;cursor:default}
-  .planning-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
-  .planning-card.week-past{border-color:#d1d5db}.planning-card.week-current{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(59,130,246,.12),var(--shadow)}.planning-card.week-future{border-color:#a7f3d0}
-  .mobile-planning{display:none}
-  .grid-header,.grid-row{display:grid;grid-template-columns:148px repeat(6,1fr);border-bottom:1px solid var(--border)}.grid-header{background:var(--surface2)}.grid-row:last-child{border-bottom:none}.grid-row:hover{background:#fafbfc}
-  .gh-name{padding:10px 13px;display:flex;align-items:flex-end;border-right:1px solid var(--border)}.gh-name span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-family:'DM Mono',monospace}
-  .gh-day{padding:9px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day.today-col{background:var(--accent-light)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}
-  .gr-name{padding:9px 13px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border);background:var(--surface2)}.gr-name .fn{font-size:12px;font-weight:600}.gr-name .ln{font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:1px}
-  .gr-cell{padding:5px;border-left:1px solid var(--border);min-height:52px;transition:background .1s}.is-admin .gr-cell{cursor:pointer}.is-admin .gr-cell:hover{background:rgba(59,130,246,.05)}
-  .grid-footer{padding:8px 18px;border-top:1px solid var(--border);background:var(--surface2);align-items:center;gap:6px}.edit-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;flex:1}.btn-add-emp{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer}
-  .chip{border-radius:6px;padding:4px 7px;margin-bottom:2px;min-height:24px}.chip.ouv{background:var(--green-light);border-left:3px solid var(--green)}.chip.ferm{background:var(--accent-light);border-left:3px solid var(--accent)}.chip.off{background:#f9fafb;border-left:3px solid #e5e7eb}.chip.special{background:var(--purple-light);border-left:3px solid var(--purple)}
-  .chip-time{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text);line-height:1.2}.chip-type{font-size:9px;color:var(--muted2);margin-top:1px;text-transform:uppercase;letter-spacing:.3px}.chip-off-label{font-size:11px;color:var(--muted);font-style:italic}.chip-label{font-size:10px;color:var(--purple);font-weight:500;overflow-wrap:anywhere}
-  .mobile-day-card{border-bottom:1px solid var(--border);background:var(--surface)}.mobile-day-card:last-child{border-bottom:none}.mobile-day-card.day-past{border-left:4px solid #d1d5db}.mobile-day-card.day-current{border-left:4px solid var(--accent);box-shadow:inset 0 0 0 1px rgba(59,130,246,.18)}.mobile-day-card.day-future{border-left:4px solid var(--green)}.mobile-day-header{position:sticky;top:0;z-index:2;background:var(--surface2);border-bottom:1px solid var(--border);padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}.mobile-day-card.day-past .mobile-day-header{background:#f9fafb}.mobile-day-card.day-current .mobile-day-header{background:var(--accent-light)}.mobile-day-card.day-future .mobile-day-header{background:var(--green-light)}.mobile-day-title{display:flex;align-items:baseline;gap:8px}.mobile-day-name{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase}.mobile-day-num{font-size:22px;font-weight:800;color:var(--text);line-height:1}.day-current .mobile-day-num{color:var(--accent)}.mobile-day-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);white-space:nowrap}.mobile-day-state{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;border-radius:999px;padding:2px 7px;border:1px solid var(--border);white-space:nowrap}.day-past .mobile-day-state{color:var(--muted2);background:#fff;border-color:#e5e7eb}.day-current .mobile-day-state{color:var(--accent);background:#fff;border-color:#bfdbfe}.day-future .mobile-day-state{color:var(--green);background:#fff;border-color:#a7f3d0}.mobile-emp-row{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:stretch;border-bottom:1px solid var(--border);min-height:54px}.mobile-emp-row:last-child{border-bottom:none}.mobile-emp-name{padding:8px 9px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;background:rgba(248,249,251,.82)}.mobile-emp-name .fn{font-size:12px;font-weight:700;color:var(--text)}.mobile-emp-name .ln{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);margin-top:1px;overflow-wrap:anywhere}.mobile-shift{padding:7px;display:flex;align-items:center}.is-admin .mobile-emp-row{cursor:pointer}.is-admin .mobile-emp-row:hover .mobile-shift{background:rgba(59,130,246,.05)}.mobile-footer{padding:10px 12px;background:var(--surface2);border-top:1px solid var(--border);justify-content:flex-end}
-  .empty-state{text-align:center;padding:60px 20px}.empty-icon{font-size:36px;margin-bottom:14px;display:block;color:var(--muted)}.empty-title{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px}.empty-sub{font-size:13px;color:var(--muted2)}
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(3px)}.modal-overlay.open{display:flex}.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:90%;max-width:480px;box-shadow:var(--shadow-md)}.modal h3{font-size:17px;font-weight:700;margin-bottom:4px}.modal-sub{font-size:12px;color:var(--muted2);font-family:'DM Mono',monospace;margin-bottom:20px;line-height:1.45}
-  .field-label{font-size:12px;color:var(--muted2);font-weight:500;margin-bottom:5px;display:block}.modal-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 13px;font-family:'DM Mono',monospace;font-size:13px;margin-bottom:13px;outline:none}.modal-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
-  .json-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:12px;font-family:'DM Mono',monospace;font-size:11px;height:190px;resize:vertical;outline:none;margin-bottom:13px;line-height:1.6}.json-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
-  .modal-actions{display:flex;gap:8px}.btn-primary{flex:1;background:var(--accent);color:white;border:none;border-radius:9px;padding:11px;font-family:Inter,sans-serif;font-weight:600;font-size:14px;cursor:pointer}.btn-secondary{background:var(--surface2);color:var(--muted2);border:1px solid var(--border);border-radius:9px;padding:11px 16px;font-family:Inter,sans-serif;font-size:14px;cursor:pointer}.btn-danger{background:var(--red-light);color:var(--red);border:1px solid #fecaca;border-radius:9px;padding:11px 16px;font-family:Inter,sans-serif;font-size:14px;cursor:pointer}
-  .type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}.type-btn{background:var(--surface2);border:1.5px solid var(--border);color:var(--muted2);padding:10px 12px;border-radius:9px;font-family:Inter,sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:center}.type-btn.active.ouv{background:var(--green-light);border-color:var(--green);color:var(--green)}.type-btn.active.ferm{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}.type-btn.active.repos{background:#f9fafb;border-color:#9ca3af;color:var(--text2)}.type-btn.active.special{background:var(--purple-light);border-color:var(--purple);color:var(--purple)}
-  .time-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.drop-zone{border:2px dashed var(--border2);border-radius:10px;padding:28px;text-align:center;cursor:pointer;margin-bottom:13px}.drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:var(--accent-light)}.drop-zone-icon{font-size:24px;margin-bottom:8px;color:var(--muted2)}.drop-zone-text{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:3px}.drop-zone-sub{font-size:11px;color:var(--muted2)}.or-divider{text-align:center;font-size:12px;color:var(--muted);margin:10px 0;font-family:'DM Mono',monospace}
-  @media(max-width:640px){.app{padding:12px 10px 50px}header{align-items:flex-start;gap:10px}.logo-block{flex-direction:column;align-items:flex-start;gap:4px}.header-actions{gap:6px}.icon-btn{padding:6px 9px;font-size:11px}#status{text-align:left;margin-bottom:10px}#week-nav{position:sticky;top:0;z-index:5;background:rgba(240,242,245,.96);backdrop-filter:blur(8px);padding:8px 0;margin-bottom:10px}.week-title{font-size:13px;max-width:46vw}.week-state-badge{font-size:9px;padding:2px 7px}.week-btn{padding:6px 9px;font-size:12px}.planning-card{overflow:visible;border-radius:12px}.desktop-planning{display:none}.mobile-planning{display:block}.chip{width:100%;margin:0;padding:6px 8px}.chip-time{font-size:12px}.chip-type,.chip-label{font-size:10px}.modal{padding:22px}.modal-actions{flex-wrap:wrap}.btn-primary{min-width:140px}.btn-secondary,.btn-danger{flex:1}}
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8f9fb;--border:#e4e7ed;--border2:#d0d5de;--accent:#3b82f6;--accent-light:#eff6ff;--green:#10b981;--green-light:#ecfdf5;--red:#ef4444;--red-light:#fef2f2;--amber:#d97706;--amber-light:#fffbeb;--purple:#8b5cf6;--purple-light:#f5f3ff;--text:#111827;--text2:#374151;--muted:#9ca3af;--muted2:#6b7280;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.10),0 2px 4px rgba(0,0,0,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;min-height:100vh}
+.app{max-width:1040px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:12px}
+.logo-block{display:flex;align-items:center;gap:12px;min-width:0}.logo{font-size:18px;font-weight:800;white-space:nowrap}.logo span{color:var(--accent)}.logo-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);background:var(--surface);border:1px solid var(--border);padding:3px 9px;border-radius:20px;white-space:nowrap}
+.header-actions,.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.toolbar{justify-content:space-between;margin-bottom:12px}
+.toolbar-left,.toolbar-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.icon-btn,.tab-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);white-space:nowrap}
+.icon-btn:hover,.tab-btn:hover{border-color:var(--accent);color:var(--accent)}.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.select-input{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:Inter,sans-serif;font-size:12px;font-weight:600;padding:6px 10px;box-shadow:var(--shadow);max-width:220px}
+.admin-only{display:none}.is-admin .admin-only{display:inline-flex}.is-admin .grid-footer.admin-only,.is-admin .mobile-footer.admin-only{display:flex}
+#status{font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace;margin-bottom:12px;min-height:18px;text-align:center}#status.error{color:var(--red)}#status.success{color:var(--green)}#status.loading{color:var(--accent)}#status.pending{color:var(--amber)}
+@keyframes spin{to{transform:rotate(360deg)}}.spinner{display:inline-block;width:11px;height:11px;border:2px solid rgba(59,130,246,.25);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:5px}
+#week-nav{display:none;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}.week-title{font-size:14px;font-weight:700;color:var(--text2);text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}.week-nav-actions{display:flex;align-items:center;gap:8px}.week-state-badge,.view-badge{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-radius:999px;padding:3px 9px;border:1px solid var(--border)}
+#week-nav.week-past .week-state-badge,.badge-past{background:#f9fafb;color:var(--muted2);border-color:#e5e7eb}#week-nav.week-current .week-state-badge,.badge-current{background:var(--accent-light);color:var(--accent);border-color:#bfdbfe}#week-nav.week-future .week-state-badge,.badge-future{background:var(--green-light);color:var(--green);border-color:#a7f3d0}
+.week-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;box-shadow:var(--shadow)}.week-btn:hover{border-color:var(--accent);color:var(--accent)}.week-btn:disabled{opacity:.3;cursor:default}
+.planning-card,.view-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}.planning-card.week-past{border-color:#d1d5db}.planning-card.week-current{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(59,130,246,.12),var(--shadow)}.planning-card.week-future{border-color:#a7f3d0}
+.mobile-planning{display:none}.grid-header,.grid-row{display:grid;grid-template-columns:148px repeat(6,1fr);border-bottom:1px solid var(--border)}.grid-header{background:var(--surface2)}.grid-row:last-child{border-bottom:none}.grid-row:hover{background:#fafbfc}
+.gh-name{padding:10px 13px;display:flex;align-items:flex-end;border-right:1px solid var(--border)}.gh-name span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-family:'DM Mono',monospace}.gh-day{padding:9px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day.today-col{background:var(--accent-light)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}
+.gr-name{padding:9px 13px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border);background:var(--surface2)}.gr-name .fn{font-size:12px;font-weight:700}.gr-name .ln{font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:1px}.gr-cell{padding:5px;border-left:1px solid var(--border);min-height:52px;transition:background .1s}.is-admin .gr-cell{cursor:pointer}.is-admin .gr-cell:hover{background:rgba(59,130,246,.05)}
+.grid-footer{padding:8px 18px;border-top:1px solid var(--border);background:var(--surface2);align-items:center;gap:6px}.edit-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;flex:1}.btn-add-emp{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
+.chip{border-radius:6px;padding:4px 7px;margin-bottom:2px;min-height:24px;width:100%}.chip.ouv{background:var(--green-light);border-left:3px solid var(--green)}.chip.ferm{background:var(--accent-light);border-left:3px solid var(--accent)}.chip.off{background:#f9fafb;border-left:3px solid #e5e7eb}.chip.special{background:var(--purple-light);border-left:3px solid var(--purple)}.chip-time{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--text);line-height:1.2}.chip-type{font-size:9px;color:var(--muted2);margin-top:1px;text-transform:uppercase;letter-spacing:.3px}.chip-off-label{font-size:11px;color:var(--muted);font-style:italic}.chip-label{font-size:10px;color:var(--purple);font-weight:600;overflow-wrap:anywhere}
+.mobile-day-card{border-bottom:1px solid var(--border);background:var(--surface)}.mobile-day-card:last-child{border-bottom:none}.mobile-day-card.day-past{border-left:4px solid #d1d5db}.mobile-day-card.day-current{border-left:4px solid var(--accent);box-shadow:inset 0 0 0 1px rgba(59,130,246,.18)}.mobile-day-card.day-future{border-left:4px solid var(--green)}.mobile-day-header{position:sticky;top:0;z-index:2;background:var(--surface2);border-bottom:1px solid var(--border);padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}.mobile-day-card.day-past .mobile-day-header{background:#f9fafb}.mobile-day-card.day-current .mobile-day-header{background:var(--accent-light)}.mobile-day-card.day-future .mobile-day-header{background:var(--green-light)}.mobile-day-title{display:flex;align-items:baseline;gap:8px}.mobile-day-name{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase}.mobile-day-num{font-size:22px;font-weight:800;color:var(--text);line-height:1}.day-current .mobile-day-num{color:var(--accent)}.mobile-day-count,.mobile-day-state{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;border-radius:999px;padding:2px 7px;border:1px solid var(--border);white-space:nowrap}.day-past .mobile-day-state{color:var(--muted2);background:#fff;border-color:#e5e7eb}.day-current .mobile-day-state{color:var(--accent);background:#fff;border-color:#bfdbfe}.day-future .mobile-day-state{color:var(--green);background:#fff;border-color:#a7f3d0}.mobile-emp-row{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:stretch;border-bottom:1px solid var(--border);min-height:54px}.mobile-emp-row:last-child{border-bottom:none}.mobile-emp-name{padding:8px 9px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;background:rgba(248,249,251,.82)}.mobile-emp-name .fn{font-size:12px;font-weight:700;color:var(--text)}.mobile-emp-name .ln{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);margin-top:1px;overflow-wrap:anywhere}.mobile-shift{padding:7px;display:flex;align-items:center}.is-admin .mobile-emp-row{cursor:pointer}.is-admin .mobile-emp-row:hover .mobile-shift{background:rgba(59,130,246,.05)}.mobile-footer{padding:10px 12px;background:var(--surface2);border-top:1px solid var(--border);justify-content:flex-end}
+.view-head{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;justify-content:space-between;gap:10px;align-items:center}.view-title{font-size:15px;font-weight:800;color:var(--text2)}.view-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);margin-top:3px}.list-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);align-items:center}.list-row:last-child{border-bottom:none}.list-name{font-weight:700;font-size:13px}.list-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);margin-top:2px}.muted-row{opacity:.55}.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;padding:12px}.stat-card{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--surface)}.stat-name{font-size:13px;font-weight:800}.stat-value{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--accent);margin-top:8px}
+.empty-state{text-align:center;padding:60px 20px}.empty-icon{font-size:36px;margin-bottom:14px;display:block;color:var(--muted)}.empty-title{font-size:15px;font-weight:700;color:var(--text2);margin-bottom:6px}.empty-sub{font-size:13px;color:var(--muted2)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(3px)}.modal-overlay.open{display:flex}.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:90%;max-width:520px;box-shadow:var(--shadow-md);max-height:92vh;overflow:auto}.modal h3{font-size:17px;font-weight:800;margin-bottom:4px}.modal-sub{font-size:12px;color:var(--muted2);font-family:'DM Mono',monospace;margin-bottom:18px;line-height:1.45}.field-label{font-size:12px;color:var(--muted2);font-weight:700;margin-bottom:5px;display:block}.modal-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 13px;font-family:'DM Mono',monospace;font-size:13px;margin-bottom:13px;outline:none}.modal-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12)}.json-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:12px;font-family:'DM Mono',monospace;font-size:11px;height:190px;resize:vertical;outline:none;margin-bottom:13px;line-height:1.6}.json-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.modal-actions{display:flex;gap:8px}.btn-primary{flex:1;background:var(--accent);color:white;border:none;border-radius:9px;padding:11px;font-family:Inter,sans-serif;font-weight:700;font-size:14px;cursor:pointer}.btn-secondary{background:var(--surface2);color:var(--muted2);border:1px solid var(--border);border-radius:9px;padding:11px 16px;font-family:Inter,sans-serif;font-size:14px;cursor:pointer}.btn-danger{background:var(--red-light);color:var(--red);border:1px solid #fecaca;border-radius:9px;padding:11px 16px;font-family:Inter,sans-serif;font-size:14px;cursor:pointer}
+.type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}.type-btn,.quick-btn{background:var(--surface2);border:1.5px solid var(--border);color:var(--muted2);padding:10px 12px;border-radius:9px;font-family:Inter,sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center}.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.type-btn.active.ouv{background:var(--green-light);border-color:var(--green);color:var(--green)}.type-btn.active.ferm{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}.type-btn.active.repos{background:#f9fafb;border-color:#9ca3af;color:var(--text2)}.type-btn.active.special{background:var(--purple-light);border-color:var(--purple);color:var(--purple)}.time-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.check-row{display:flex;align-items:center;gap:8px;margin:0 0 12px;color:var(--text2);font-size:13px;font-weight:600}.drop-zone{border:2px dashed var(--border2);border-radius:10px;padding:28px;text-align:center;cursor:pointer;margin-bottom:13px}.drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:var(--accent-light)}.drop-zone-icon{font-size:24px;margin-bottom:8px;color:var(--muted2)}.drop-zone-text{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:3px}.drop-zone-sub{font-size:11px;color:var(--muted2)}.or-divider{text-align:center;font-size:12px;color:var(--muted);margin:10px 0;font-family:'DM Mono',monospace}
+@media(max-width:640px){.app{padding:12px 10px 50px}header{align-items:flex-start;gap:10px}.logo-block{flex-direction:column;align-items:flex-start;gap:4px}.header-actions,.toolbar-left,.toolbar-right{gap:6px}.icon-btn,.tab-btn{padding:6px 9px;font-size:11px}.toolbar{align-items:flex-start}#status{text-align:left;margin-bottom:10px}#week-nav{position:sticky;top:0;z-index:5;background:rgba(240,242,245,.96);backdrop-filter:blur(8px);padding:8px 0;margin-bottom:10px}.week-title{font-size:13px;max-width:46vw}.week-state-badge{font-size:9px;padding:2px 7px}.week-btn{padding:6px 9px;font-size:12px}.planning-card{overflow:visible;border-radius:12px}.desktop-planning{display:none}.mobile-planning{display:block}.chip{margin:0;padding:6px 8px}.chip-time{font-size:12px}.chip-type,.chip-label{font-size:10px}.modal{padding:22px}.modal-actions{flex-wrap:wrap}.btn-primary{min-width:140px}.btn-secondary,.btn-danger{flex:1}.list-row{grid-template-columns:105px minmax(0,1fr)}.quick-grid{grid-template-columns:repeat(2,1fr)}}
+@media print{body{background:#fff}.app{max-width:none;padding:0}header,.toolbar,#status,.week-nav-actions,.admin-only,.modal-overlay{display:none!important}.planning-card,.view-card{box-shadow:none;border-color:#999}.mobile-planning{display:none!important}.desktop-planning{display:block!important}.grid-header,.grid-row{grid-template-columns:120px repeat(6,1fr)}}
 </style>
 </head>
 <body>
@@ -63,268 +50,170 @@
       <button class="icon-btn admin-only" onclick="openImport()">Importer</button>
       <button class="icon-btn" onclick="syncNow(true)">Actualiser</button>
       <button class="icon-btn" onclick="goToday()">Aujourd'hui</button>
+      <button class="icon-btn" onclick="window.print()">Imprimer</button>
       <button class="icon-btn" onclick="openAdmin()">Admin</button>
     </div>
   </header>
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button class="tab-btn" id="tab-week" onclick="setView('week')">Semaine</button>
+      <button class="tab-btn" id="tab-today" onclick="setView('today')">Aujourd'hui</button>
+      <button class="tab-btn" id="tab-employee" onclick="setView('employee')">Employe</button>
+      <button class="tab-btn" id="tab-stats" onclick="setView('stats')">Stats</button>
+    </div>
+    <div class="toolbar-right">
+      <select class="select-input" id="employee-filter" onchange="selectedEmployeeKey=this.value;setView('employee')"></select>
+    </div>
+  </div>
   <div id="status"></div>
   <div id="week-nav">
-    <div class="week-nav-actions"><button class="week-btn" id="prev-btn" onclick="changeWeek(-1)" disabled>&larr; Pr&eacute;c.</button></div>
+    <div class="week-nav-actions"><button class="week-btn" id="prev-btn" onclick="changeWeek(-1)" disabled>&larr; Prec.</button></div>
     <div class="week-title" id="week-title"></div>
     <div class="week-nav-actions"><button class="week-btn" id="next-btn" onclick="changeWeek(1)" disabled>Suiv. &rarr;</button></div>
   </div>
   <div id="planning"></div>
 </div>
 
-<div class="modal-overlay" id="modal-admin">
-  <div class="modal">
-    <h3>Mode admin</h3>
-    <div class="modal-sub">Le token reste uniquement dans ce navigateur. Il sert a importer et modifier le planning.</div>
-    <label class="field-label">Token admin</label>
-    <input type="password" class="modal-input" id="input-admin-token" placeholder="Token defini dans Apps Script">
-    <div class="modal-actions"><button class="btn-primary" onclick="saveAdmin()">Deverrouiller</button><button class="btn-secondary" onclick="lockAdmin()">Verrouiller</button><button class="btn-secondary" onclick="closeAdmin()">Annuler</button></div>
-  </div>
-</div>
+<div class="modal-overlay" id="modal-admin"><div class="modal">
+  <h3>Mode admin</h3><div class="modal-sub">Le token reste uniquement dans ce navigateur. Il sert a importer et modifier le planning.</div>
+  <label class="field-label">Token admin</label><input type="password" class="modal-input" id="input-admin-token" placeholder="Token defini dans Apps Script">
+  <div class="modal-actions"><button class="btn-primary" onclick="saveAdmin()">Deverrouiller</button><button class="btn-secondary" onclick="lockAdmin()">Verrouiller</button><button class="btn-secondary" onclick="closeAdmin()">Annuler</button></div>
+</div></div>
 
-<div class="modal-overlay" id="modal-import">
-  <div class="modal">
-    <h3>Importer un planning</h3>
-    <div class="modal-sub">JSON genere depuis la photo</div>
-    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-json').click()">
-      <div class="drop-zone-icon">JSON</div><div class="drop-zone-text">Glisser un fichier JSON ici</div><div class="drop-zone-sub">ou cliquer pour parcourir</div>
-      <input type="file" id="file-json" accept=".json" style="display:none" onchange="importFile(event)">
-    </div>
-    <div class="or-divider">ou coller le JSON directement</div>
-    <textarea class="json-textarea" id="json-input" placeholder='{"weeks":[...]}'></textarea>
-    <div class="modal-actions"><button class="btn-primary" onclick="importJSON()">Importer</button><button class="btn-secondary" onclick="closeImport()">Annuler</button></div>
-  </div>
-</div>
+<div class="modal-overlay" id="modal-import"><div class="modal">
+  <h3>Importer un planning</h3><div class="modal-sub">JSON genere depuis la photo</div>
+  <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-json').click()"><div class="drop-zone-icon">JSON</div><div class="drop-zone-text">Glisser un fichier JSON ici</div><div class="drop-zone-sub">ou cliquer pour parcourir</div><input type="file" id="file-json" accept=".json" style="display:none" onchange="importFile(event)"></div>
+  <div class="or-divider">ou coller le JSON directement</div><textarea class="json-textarea" id="json-input" placeholder='{"weeks":[...]}'></textarea>
+  <div class="modal-actions"><button class="btn-primary" onclick="importJSON()">Importer</button><button class="btn-secondary" onclick="closeImport()">Annuler</button></div>
+</div></div>
 
-<div class="modal-overlay" id="modal-edit">
-  <div class="modal">
-    <h3 id="edit-title">Modifier le shift</h3><div class="modal-sub" id="edit-sub"></div>
-    <label class="field-label">Type de shift</label>
-    <div class="type-grid">
-      <button class="type-btn ouv" id="tbtn-ouv" onclick="selectType('Ouverture')">Ouverture</button>
-      <button class="type-btn ferm" id="tbtn-ferm" onclick="selectType('Fermeture')">Fermeture</button>
-      <button class="type-btn repos" id="tbtn-repos" onclick="selectType('repos')">Repos</button>
-      <button class="type-btn special" id="tbtn-special" onclick="selectType('special')">Autre</button>
-    </div>
-    <div id="edit-time-section"><div class="time-row"><div><label class="field-label">Debut</label><input type="time" class="modal-input" id="edit-start"></div><div><label class="field-label">Fin</label><input type="time" class="modal-input" id="edit-end"></div></div></div>
-    <div id="edit-special-section" style="display:none"><label class="field-label">Libelle</label><input type="text" class="modal-input" id="edit-special-label" placeholder="CRDT, Vacances VAE, Recup. Jour..."></div>
-    <div class="modal-actions"><button class="btn-primary" onclick="saveShift()">Enregistrer</button><button class="btn-secondary" onclick="closeEdit()">Annuler</button><button class="btn-danger" onclick="deleteShift()">Supprimer</button></div>
+<div class="modal-overlay" id="modal-edit"><div class="modal">
+  <h3 id="edit-title">Modifier le shift</h3><div class="modal-sub" id="edit-sub"></div>
+  <label class="field-label">Type de shift</label>
+  <div class="type-grid">
+    <button class="type-btn ouv" id="tbtn-ouv" onclick="selectType('Ouverture')">Ouverture</button>
+    <button class="type-btn ferm" id="tbtn-ferm" onclick="selectType('Fermeture')">Fermeture</button>
+    <button class="type-btn repos" id="tbtn-repos" onclick="selectType('repos')">Repos</button>
+    <button class="type-btn special" id="tbtn-special" onclick="selectType('special')">Autre</button>
   </div>
-</div>
+  <label class="field-label">Raccourcis</label>
+  <div class="quick-grid">
+    <button class="quick-btn" onclick="setQuickSpecial('CRDT')">CRDT</button>
+    <button class="quick-btn" onclick="setQuickSpecial('VA')">VA</button>
+    <button class="quick-btn" onclick="setQuickSpecial('Vacances Employes VAE')">VAE</button>
+    <button class="quick-btn" onclick="setQuickSpecial('Recup jour ferier')">Recup JF</button>
+    <button class="quick-btn" onclick="setQuickSpecial('Ferie')">Ferie</button>
+    <button class="quick-btn" onclick="setQuickSpecial('MAL 1/2T')">MAL 1/2T</button>
+  </div>
+  <div id="edit-special-section"><label class="field-label">Libelle libre</label><input type="text" class="modal-input" id="edit-special-label" placeholder="CRDT, VA, Recup jour ferier..."></div>
+  <label class="field-label">Horaire</label>
+  <label class="check-row"><input type="checkbox" id="edit-hide-time" onchange="toggleTimeFields()">Ne pas afficher d'horaire</label>
+  <div id="edit-time-section"><div class="time-row"><div><label class="field-label">Debut</label><input type="time" class="modal-input" id="edit-start"></div><div><label class="field-label">Fin</label><input type="time" class="modal-input" id="edit-end"></div></div></div>
+  <div class="modal-actions"><button class="btn-primary" onclick="saveShift()">Enregistrer</button><button class="btn-secondary" onclick="closeEdit()">Annuler</button><button class="btn-danger" onclick="deleteShift()">Supprimer</button></div>
+</div></div>
 
-<div class="modal-overlay" id="modal-add-emp">
-  <div class="modal">
-    <h3>Ajouter un employe</h3><div class="modal-sub" id="add-emp-sub">Semaine en cours</div>
-    <label class="field-label">Prenom</label><input type="text" class="modal-input" id="emp-firstname" placeholder="Prenom">
-    <label class="field-label">Nom</label><input type="text" class="modal-input" id="emp-lastname" placeholder="NOM">
-    <div class="modal-actions"><button class="btn-primary" onclick="confirmAddEmployee()">Ajouter</button><button class="btn-secondary" onclick="closeAddEmployee()">Annuler</button></div>
-  </div>
-</div>
+<div class="modal-overlay" id="modal-add-emp"><div class="modal">
+  <h3>Ajouter un employe</h3><div class="modal-sub" id="add-emp-sub">Semaine en cours</div>
+  <label class="field-label">Prenom</label><input type="text" class="modal-input" id="emp-firstname" placeholder="Prenom">
+  <label class="field-label">Nom</label><input type="text" class="modal-input" id="emp-lastname" placeholder="NOM">
+  <div class="modal-actions"><button class="btn-primary" onclick="confirmAddEmployee()">Ajouter</button><button class="btn-secondary" onclick="closeAddEmployee()">Annuler</button></div>
+</div></div>
 
 <script>
-const DAYS = ["Lu","Ma","Me","Je","Ve","Sa"];
-const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxkRwejUPDsjpUG6z7oRIQlGxj3lmJbYMgefCrNB8HCzWWI8Q5zHxPYL8tKn_hvg_ar/exec";
-const STORAGE_CACHE = "rob_planning_cache";
-const STORAGE_ADMIN_TOKEN = "rob_admin_token";
-const STORAGE_LAST_SYNC = "rob_planning_last_sync";
-let allWeeks = [], currentWeekIdx = 0, editCtx = null, currentType = "repos", syncInProgress = false, apiCallId = 0;
+const DAYS=["Lu","Ma","Me","Je","Ve","Sa"];
+const DEFAULT_API_URL="https://script.google.com/macros/s/AKfycbxkRwejUPDsjpUG6z7oRIQlGxj3lmJbYMgefCrNB8HCzWWI8Q5zHxPYL8tKn_hvg_ar/exec";
+const STORAGE_CACHE="rob_planning_cache",STORAGE_ADMIN_TOKEN="rob_admin_token",STORAGE_LAST_SYNC="rob_planning_last_sync";
+let allWeeks=[],currentWeekIdx=0,editCtx=null,currentType="repos",syncInProgress=false,apiCallId=0,currentView="week",selectedEmployeeKey="";
 
-function escapeHTML(value){return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+function escapeHTML(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
 function getAdminToken(){return localStorage.getItem(STORAGE_ADMIN_TOKEN)||"";}
-function isAdmin(){return !!getAdminToken();}
+function isAdmin(){return!!getAdminToken();}
 function updateAdminUI(){document.getElementById("app").classList.toggle("is-admin",isAdmin());}
 function apiUrl(){return DEFAULT_API_URL.replace(/\/+$/,"");}
 function requireApiUrl(){const url=apiUrl();if(!url)throw new Error("URL Apps Script manquante");return url;}
+function todayISO(){return new Date().toISOString().split("T")[0];}
+function sortWeeks(a,b){return String(a.days?.[0]||"").localeCompare(String(b.days?.[0]||""));}
+function employeeKey(emp){return `${emp.firstName||""}|${emp.lastName||""}`.toLowerCase();}
+function employeeLabel(emp){return `${emp.firstName||""} ${emp.lastName||""}`.trim();}
+function loadLocalWeeks(){try{const c=JSON.parse(localStorage.getItem(STORAGE_CACHE)||"[]");return Array.isArray(c)?c:[]}catch(e){return[]}}
+function saveLocalWeeks(){localStorage.setItem(STORAGE_CACHE,JSON.stringify(allWeeks));}
+function lastSyncLabel(){const v=localStorage.getItem(STORAGE_LAST_SYNC);if(!v)return"";try{return" - sync "+new Date(v).toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"})}catch(e){return""}}
+function parseMinutes(t){const m=String(t||"").match(/^(\d{2}):(\d{2})$/);return m?Number(m[1])*60+Number(m[2]):null;}
+function durationHours(s){const a=parseMinutes(s.start),b=parseMinutes(s.end);if(a===null||b===null)return 0;return Math.max(0,b-a)/60;}
+function getWeekState(week){const days=week?.days||[],today=todayISO(),start=days[0]||"",end=days[days.length-1]||"";if(start&&end&&today>=start&&today<=end)return"current";if(end&&today>end)return"past";return"future";}
+function weekStateLabel(s){return s==="current"?"Semaine actuelle":s==="past"?"Semaine passee":"Semaine a venir";}
+function findTodayWeekIndex(){const idx=allWeeks.findIndex(w=>getWeekState(w)==="current");return idx>=0?idx:Math.max(0,Math.min(currentWeekIdx,allWeeks.length-1));}
+function getDayState(d){const t=todayISO();return d===t?"current":d<t?"past":"future";}
+function dayStateLabel(s){return s==="current"?"Aujourd'hui":s==="past"?"Passe":"A venir";}
+function setStatus(type,msg){const el=document.getElementById("status");el.className=type||"";el.innerHTML=type==="loading"?`<span class="spinner"></span>${escapeHTML(msg)}`:escapeHTML(msg||"");}
+
+function setView(view){currentView=view;render();}
+function setActiveTabs(){["week","today","employee","stats"].forEach(v=>document.getElementById("tab-"+v)?.classList.toggle("active",currentView===v));}
+function goToday(){if(!allWeeks.length)return setStatus("pending","Aucun planning charge");currentWeekIdx=findTodayWeekIndex();currentView="week";render();}
+function changeWeek(dir){currentWeekIdx=Math.max(0,Math.min(allWeeks.length-1,currentWeekIdx+dir));currentView="week";render();}
+
+function refreshEmployeeFilter(){
+  const select=document.getElementById("employee-filter"),seen=new Map();
+  allWeeks.forEach(w=>(w.employees||[]).forEach(e=>{const k=employeeKey(e);if(k.trim()!=="|"&&!seen.has(k))seen.set(k,employeeLabel(e));}));
+  const old=selectedEmployeeKey;select.innerHTML=`<option value="">Tous les employes</option>`+[...seen.entries()].sort((a,b)=>a[1].localeCompare(b[1])).map(([k,l])=>`<option value="${escapeHTML(k)}">${escapeHTML(l)}</option>`).join("");
+  if(old&&seen.has(old)){selectedEmployeeKey=old;select.value=old}else if(!seen.has(selectedEmployeeKey)){selectedEmployeeKey=""}
+}
 
 function openAdmin(){document.getElementById("input-admin-token").value=getAdminToken();document.getElementById("modal-admin").classList.add("open");}
 function closeAdmin(){document.getElementById("modal-admin").classList.remove("open");}
-async function saveAdmin(){
-  const token=document.getElementById("input-admin-token").value.trim();
-  if(!token)return setStatus("error","Token admin vide");
-  setStatus("loading","Verification du token admin...");
-  try{
-    await jsonp("auth",{token});
-    localStorage.setItem(STORAGE_ADMIN_TOKEN,token);
-    closeAdmin();updateAdminUI();renderWeek(currentWeekIdx);
-    setStatus("success","Mode admin actif");
-  }catch(err){
-    localStorage.removeItem(STORAGE_ADMIN_TOKEN);
-    updateAdminUI();renderWeek(currentWeekIdx);
-    setStatus("error","Token admin invalide");
-  }
-}
-function lockAdmin(){localStorage.removeItem(STORAGE_ADMIN_TOKEN);closeAdmin();updateAdminUI();renderWeek(currentWeekIdx);setStatus("success","Mode lecture seule");}
-
-["admin","import","edit","add-emp"].forEach(id=>{
-  const el=document.getElementById("modal-"+id);
-  el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");});
-});
+async function saveAdmin(){const token=document.getElementById("input-admin-token").value.trim();if(!token)return setStatus("error","Token admin vide");setStatus("loading","Verification du token admin...");try{await jsonp("auth",{token});localStorage.setItem(STORAGE_ADMIN_TOKEN,token);closeAdmin();updateAdminUI();render();setStatus("success","Mode admin actif")}catch(e){localStorage.removeItem(STORAGE_ADMIN_TOKEN);updateAdminUI();render();setStatus("error","Token admin invalide")}}
+function lockAdmin(){localStorage.removeItem(STORAGE_ADMIN_TOKEN);closeAdmin();updateAdminUI();render();setStatus("success","Mode lecture seule");}
+["admin","import","edit","add-emp"].forEach(id=>{const el=document.getElementById("modal-"+id);el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open")})});
 
 function openImport(){if(!isAdmin())return;document.getElementById("json-input").value="";document.getElementById("modal-import").classList.add("open");}
 function closeImport(){document.getElementById("modal-import").classList.remove("open");}
-const dz=document.getElementById("drop-zone");
-dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag-over");});
-dz.addEventListener("dragleave",()=>dz.classList.remove("drag-over"));
-dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag-over");const file=e.dataTransfer.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{closeImport();processJSON(ev.target.result);};r.readAsText(file);});
-function importFile(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{closeImport();processJSON(ev.target.result);};r.readAsText(file);e.target.value="";}
+const dz=document.getElementById("drop-zone");dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag-over")});dz.addEventListener("dragleave",()=>dz.classList.remove("drag-over"));dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag-over");const f=e.dataTransfer.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{closeImport();processJSON(ev.target.result)};r.readAsText(f)});
+function importFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{closeImport();processJSON(ev.target.result)};r.readAsText(f);e.target.value="";}
 function importJSON(){const raw=document.getElementById("json-input").value.trim();if(!raw)return;closeImport();processJSON(raw);}
+function countWeekChanges(oldWeek,newWeek){if(!oldWeek)return 0;let count=0;const oldMap=new Map();(oldWeek.employees||[]).forEach(e=>(e.shifts||[]).forEach(s=>oldMap.set(employeeKey(e)+"|"+s.date,JSON.stringify(s))));(newWeek.employees||[]).forEach(e=>(e.shifts||[]).forEach(s=>{if(oldMap.get(employeeKey(e)+"|"+s.date)!==JSON.stringify(s))count++}));return count;}
 function processJSON(raw){
   if(!isAdmin())return setStatus("error","Mode admin requis");
   try{
-    const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
-    const weeks=Array.isArray(parsed)?parsed:parsed.weeks?parsed.weeks:parsed.label?[parsed]:null;
+    const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim()),weeks=Array.isArray(parsed)?parsed:parsed.weeks?parsed.weeks:parsed.label?[parsed]:null;
     if(!weeks||!weeks.length)throw new Error("Format non reconnu");
-    const labels=new Set(weeks.map(w=>w.label));
-    allWeeks=[...allWeeks.filter(w=>!labels.has(w.label)),...weeks].sort(sortWeeks);
-    currentWeekIdx=Math.max(0,allWeeks.findIndex(w=>labels.has(w.label)));
-    saveLocalWeeks();renderWeek(currentWeekIdx);saveToGoogle("Import effectue");
-  }catch(err){setStatus("error","JSON invalide : "+err.message);}
+    const changes=weeks.map(w=>({label:w.label,count:countWeekChanges(allWeeks.find(x=>x.label===w.label),w)})).filter(x=>x.count>0);
+    if(changes.length&&!confirm("Semaines deja existantes modifiees:\n"+changes.map(x=>`- ${x.label}: ${x.count} changement(s)`).join("\n")+"\n\nContinuer l'import ?"))return;
+    const labels=new Set(weeks.map(w=>w.label));allWeeks=[...allWeeks.filter(w=>!labels.has(w.label)),...weeks].sort(sortWeeks);currentWeekIdx=Math.max(0,allWeeks.findIndex(w=>labels.has(w.label)));saveLocalWeeks();refreshEmployeeFilter();currentView="week";render();saveToGoogle("Import effectue");
+  }catch(err){setStatus("error","JSON invalide : "+err.message)}
 }
 
-function sortWeeks(a,b){return String(a.days?.[0]||"").localeCompare(String(b.days?.[0]||""));}
-function loadLocalWeeks(){try{const cached=JSON.parse(localStorage.getItem(STORAGE_CACHE)||"[]");return Array.isArray(cached)?cached:[];}catch(e){return [];}}
-function saveLocalWeeks(){localStorage.setItem(STORAGE_CACHE,JSON.stringify(allWeeks));}
-function lastSyncLabel(){const v=localStorage.getItem(STORAGE_LAST_SYNC);if(!v)return "";try{return " - sync "+new Date(v).toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
-function todayISO(){return new Date().toISOString().split("T")[0];}
-function getWeekState(week){
-  const days=week?.days||[], today=todayISO(), start=days[0]||"", end=days[days.length-1]||"";
-  if(start&&end&&today>=start&&today<=end)return "current";
-  if(end&&today>end)return "past";
-  return "future";
-}
-function weekStateLabel(state){return state==="current"?"Semaine actuelle":state==="past"?"Semaine passee":"Semaine a venir";}
-function findTodayWeekIndex(){const idx=allWeeks.findIndex(w=>getWeekState(w)==="current");return idx>=0?idx:Math.max(0,Math.min(currentWeekIdx,allWeeks.length-1));}
-function goToday(){if(!allWeeks.length)return setStatus("pending","Aucun planning charge");renderWeek(findTodayWeekIndex());}
-function getDayState(dayStr){const today=todayISO();return dayStr===today?"current":dayStr<today?"past":"future";}
-function dayStateLabel(state){return state==="current"?"Aujourd'hui":state==="past"?"Passe":"A venir";}
-
-function jsonp(action,params={}){
-  return new Promise((resolve,reject)=>{
-    const url=requireApiUrl();
-    const cb="robPlanningCb"+(++apiCallId);
-    const script=document.createElement("script");
-    const timer=setTimeout(()=>{cleanup();reject(new Error("Timeout Apps Script"));},10000);
-    function cleanup(){clearTimeout(timer);delete window[cb];script.remove();}
-    window[cb]=payload=>{cleanup();payload&&payload.ok?resolve(payload):reject(new Error(payload?.error||"Erreur Apps Script"));};
-    script.onerror=()=>{cleanup();reject(new Error("Chargement Apps Script impossible"));};
-    const query=new URLSearchParams({action,callback:cb,_:String(Date.now())});
-    Object.keys(params).forEach(key=>query.set(key,params[key]));
-    script.src=url+(url.includes("?")?"&":"?")+query.toString();
-    document.body.appendChild(script);
-  });
-}
-
-async function loadFromGoogle(){
-  const payload=await jsonp("data");
-  if(!Array.isArray(payload.weeks))throw new Error("Format Google Sheet invalide");
-  return payload.weeks.sort(sortWeeks);
-}
-
-async function postToGoogleNoCors(){
-  const body=JSON.stringify({token:getAdminToken(),weeks:allWeeks});
-  await fetch(requireApiUrl(),{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body});
-}
-
-async function saveToGoogle(context){
-  if(!isAdmin())return setStatus("error","Mode admin requis");
-  saveLocalWeeks();
-  setStatus("loading",(context||"Modification")+" - envoi Google Sheet...");
-  try{
-    await postToGoogleNoCors();
-    await new Promise(r=>setTimeout(r,1400));
-    const remote=await loadFromGoogle();
-    if(JSON.stringify(remote)!==JSON.stringify(allWeeks.sort(sortWeeks)))throw new Error("Verification distante incomplete");
-    localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());
-    setStatus("success","Synchronise Google Sheet"+lastSyncLabel());
-  }catch(err){
-    setStatus("pending","Sauvegarde locale OK - verification Google a refaire");
-  }
-}
-
-async function syncNow(userRequested){
-  if(syncInProgress)return;
-  syncInProgress=true;
-  try{
-    if(userRequested)setStatus("loading","Lecture Google Sheet...");
-    const weeks=await loadFromGoogle();
-    if(weeks.length){allWeeks=weeks;saveLocalWeeks();currentWeekIdx=findTodayWeekIndex();renderWeek(currentWeekIdx);localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());setStatus("success","Synchronise Google Sheet"+lastSyncLabel());}
-    else{allWeeks=[];saveLocalWeeks();renderEmpty();setStatus("success","Google Sheet disponible - aucun planning");}
-  }catch(err){
-    const cached=loadLocalWeeks();
-    if(cached.length){allWeeks=cached;currentWeekIdx=findTodayWeekIndex();renderWeek(currentWeekIdx);setStatus("pending","Cache local - verifie Apps Script");}
-    else{renderEmpty();setStatus("error","Aucun planning - verifie Apps Script");}
-  }finally{syncInProgress=false;}
-}
+function jsonp(action,params={}){return new Promise((resolve,reject)=>{const url=requireApiUrl(),cb="robPlanningCb"+(++apiCallId),script=document.createElement("script"),timer=setTimeout(()=>{cleanup();reject(new Error("Timeout Apps Script"))},10000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=p=>{cleanup();p&&p.ok?resolve(p):reject(new Error(p?.error||"Erreur Apps Script"))};script.onerror=()=>{cleanup();reject(new Error("Chargement Apps Script impossible"))};const q=new URLSearchParams({action,callback:cb,_:String(Date.now())});Object.keys(params).forEach(k=>q.set(k,params[k]));script.src=url+(url.includes("?")?"&":"?")+q.toString();document.body.appendChild(script)})}
+async function loadFromGoogle(){const p=await jsonp("data");if(!Array.isArray(p.weeks))throw new Error("Format Google Sheet invalide");return p.weeks.sort(sortWeeks);}
+async function postToGoogleNoCors(){await fetch(requireApiUrl(),{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:getAdminToken(),weeks:allWeeks})});}
+async function saveToGoogle(context){if(!isAdmin())return setStatus("error","Mode admin requis");saveLocalWeeks();setStatus("loading",(context||"Modification")+" - envoi Google Sheet...");try{await postToGoogleNoCors();await new Promise(r=>setTimeout(r,1400));const remote=await loadFromGoogle();if(JSON.stringify(remote)!==JSON.stringify(allWeeks.sort(sortWeeks)))throw new Error("Verification distante incomplete");localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());setStatus("success","Synchronise Google Sheet"+lastSyncLabel())}catch(e){setStatus("pending","Sauvegarde locale OK - verification Google a refaire")}}
+async function syncNow(userRequested){if(syncInProgress)return;syncInProgress=true;try{if(userRequested)setStatus("loading","Lecture Google Sheet...");const weeks=await loadFromGoogle();if(weeks.length){allWeeks=weeks;saveLocalWeeks();refreshEmployeeFilter();currentWeekIdx=findTodayWeekIndex();render();localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());setStatus("success","Synchronise Google Sheet"+lastSyncLabel())}else{allWeeks=[];saveLocalWeeks();refreshEmployeeFilter();renderEmpty();setStatus("success","Google Sheet disponible - aucun planning")}}catch(e){const cached=loadLocalWeeks();if(cached.length){allWeeks=cached;refreshEmployeeFilter();currentWeekIdx=findTodayWeekIndex();render();setStatus("pending","Cache local - verifie Apps Script")}else{renderEmpty();setStatus("error","Aucun planning - verifie Apps Script")}}finally{syncInProgress=false}}
 
 function openEdit(weekIdx,empIdx,dateStr){
-  if(!isAdmin())return;
-  editCtx={weekIdx,empIdx,dateStr};
-  const week=allWeeks[weekIdx], emp=week.employees[empIdx], shift=emp.shifts?.find(s=>s.date===dateStr)||{type:"repos"}, d=new Date(dateStr+"T12:00:00");
-  document.getElementById("edit-title").textContent=`${emp.firstName||""} ${emp.lastName||""}`.trim();
-  document.getElementById("edit-sub").textContent=`${DAYS[week.days.indexOf(dateStr)]||""} ${d.getDate()}/${String(d.getMonth()+1).padStart(2,"0")}`;
-  const type=shift.type||"repos", tl=type.toLowerCase();
+  if(!isAdmin())return;editCtx={weekIdx,empIdx,dateStr};const week=allWeeks[weekIdx],emp=week.employees[empIdx],shift=emp.shifts?.find(s=>s.date===dateStr)||{type:"repos"},d=new Date(dateStr+"T12:00:00"),type=shift.type||"repos",tl=type.toLowerCase();
+  document.getElementById("edit-title").textContent=employeeLabel(emp);document.getElementById("edit-sub").textContent=`${DAYS[week.days.indexOf(dateStr)]||""} ${d.getDate()}/${String(d.getMonth()+1).padStart(2,"0")}`;
   if(tl==="ouverture"||tl.startsWith("ouv")||type==="Atelier")selectType("Ouverture");else if(tl==="fermeture"||tl.startsWith("ferm"))selectType("Fermeture");else if(type==="repos")selectType("repos");else selectType("special");
-  document.getElementById("edit-start").value=shift.start||"";document.getElementById("edit-end").value=shift.end||"";
-  const basic=tl==="ouverture"||tl.startsWith("ouv")||tl==="fermeture"||tl.startsWith("ferm")||type==="Atelier";
-  document.getElementById("edit-special-label").value=(!basic&&type!=="repos")?type:"";
-  document.getElementById("modal-edit").classList.add("open");
+  document.getElementById("edit-special-label").value=(currentType==="special")?type:"";document.getElementById("edit-start").value=shift.start||"";document.getElementById("edit-end").value=shift.end||"";document.getElementById("edit-hide-time").checked=!(shift.start||shift.end);toggleTimeFields();document.getElementById("modal-edit").classList.add("open");
 }
 function closeEdit(){document.getElementById("modal-edit").classList.remove("open");editCtx=null;}
-function selectType(t){currentType=t;["tbtn-ouv","tbtn-ferm","tbtn-repos","tbtn-special"].forEach(id=>document.getElementById(id).classList.remove("active"));const map={Ouverture:"tbtn-ouv",Fermeture:"tbtn-ferm",repos:"tbtn-repos",special:"tbtn-special"};document.getElementById(map[t])?.classList.add("active");document.getElementById("edit-time-section").style.display=(t==="Ouverture"||t==="Fermeture")?"block":"none";document.getElementById("edit-special-section").style.display=t==="special"?"block":"none";}
-function saveShift(){if(!editCtx)return;const {weekIdx,empIdx,dateStr}=editCtx, emp=allWeeks[weekIdx].employees[empIdx];if(!emp.shifts)emp.shifts=[];const shift={date:dateStr};if(currentType==="repos")shift.type="repos";else if(currentType==="special")shift.type=document.getElementById("edit-special-label").value.trim()||"Absent";else{shift.type=currentType;shift.start=document.getElementById("edit-start").value;shift.end=document.getElementById("edit-end").value;}const idx=emp.shifts.findIndex(s=>s.date===dateStr);if(idx>=0)emp.shifts[idx]=shift;else emp.shifts.push(shift);closeEdit();renderWeek(weekIdx);saveToGoogle("Shift modifie");}
-function deleteShift(){if(!editCtx)return;const {weekIdx,empIdx,dateStr}=editCtx, emp=allWeeks[weekIdx].employees[empIdx];if(emp.shifts)emp.shifts=emp.shifts.filter(s=>s.date!==dateStr);closeEdit();renderWeek(weekIdx);saveToGoogle("Shift supprime");}
+function selectType(t){currentType=t;["tbtn-ouv","tbtn-ferm","tbtn-repos","tbtn-special"].forEach(id=>document.getElementById(id).classList.remove("active"));const map={Ouverture:"tbtn-ouv",Fermeture:"tbtn-ferm",repos:"tbtn-repos",special:"tbtn-special"};document.getElementById(map[t])?.classList.add("active");document.getElementById("edit-special-section").style.display=t==="special"?"block":"none";}
+function setQuickSpecial(label){selectType("special");document.getElementById("edit-special-label").value=label;document.getElementById("edit-hide-time").checked=true;toggleTimeFields();}
+function toggleTimeFields(){const hide=document.getElementById("edit-hide-time").checked;document.getElementById("edit-time-section").style.opacity=hide?.45:1;document.getElementById("edit-start").disabled=hide;document.getElementById("edit-end").disabled=hide;}
+function saveShift(){if(!editCtx)return;const {weekIdx,empIdx,dateStr}=editCtx,emp=allWeeks[weekIdx].employees[empIdx];if(!emp.shifts)emp.shifts=[];const shift={date:dateStr,type:currentType==="special"?(document.getElementById("edit-special-label").value.trim()||"Absent"):currentType};if(!document.getElementById("edit-hide-time").checked){const start=document.getElementById("edit-start").value,end=document.getElementById("edit-end").value;if(start)shift.start=start;if(end)shift.end=end;}const idx=emp.shifts.findIndex(s=>s.date===dateStr);if(idx>=0)emp.shifts[idx]=shift;else emp.shifts.push(shift);closeEdit();render();saveToGoogle("Shift modifie");}
+function deleteShift(){if(!editCtx)return;const {weekIdx,empIdx,dateStr}=editCtx,emp=allWeeks[weekIdx].employees[empIdx];if(emp.shifts)emp.shifts=emp.shifts.filter(s=>s.date!==dateStr);closeEdit();render();saveToGoogle("Shift supprime");}
 function openAddEmployee(){if(!isAdmin())return;document.getElementById("emp-firstname").value="";document.getElementById("emp-lastname").value="";document.getElementById("add-emp-sub").textContent=allWeeks[currentWeekIdx]?.label||"Semaine en cours";document.getElementById("modal-add-emp").classList.add("open");}
 function closeAddEmployee(){document.getElementById("modal-add-emp").classList.remove("open");}
-function confirmAddEmployee(){const fn=document.getElementById("emp-firstname").value.trim(), ln=document.getElementById("emp-lastname").value.trim();if(!fn&&!ln)return;const week=allWeeks[currentWeekIdx];if(!week)return;week.employees=week.employees||[];week.employees.push({firstName:fn,lastName:ln,shifts:(week.days||[]).map(d=>({date:d,type:"repos"}))});closeAddEmployee();renderWeek(currentWeekIdx);saveToGoogle(`${fn} ${ln}`.trim()+" ajoute");}
+function confirmAddEmployee(){const fn=document.getElementById("emp-firstname").value.trim(),ln=document.getElementById("emp-lastname").value.trim();if(!fn&&!ln)return;const week=allWeeks[currentWeekIdx];if(!week)return;week.employees=week.employees||[];week.employees.push({firstName:fn,lastName:ln,shifts:(week.days||[]).map(d=>({date:d,type:"repos"}))});closeAddEmployee();refreshEmployeeFilter();render();saveToGoogle(`${fn} ${ln}`.trim()+" ajoute");}
 
-function buildChip(shift){
-  if(!shift||shift.type==="repos")return `<div class="chip off"><span class="chip-off-label">-</span></div>`;
-  const t=shift.type||"", tl=t.toLowerCase(), type=escapeHTML(t), start=escapeHTML(shift.start||""), end=escapeHTML(shift.end||"");
-  if(tl==="ouverture"||tl.startsWith("ouv")||t==="Atelier")return `<div class="chip ouv"><div class="chip-time">${start}-${end}</div><div class="chip-type">${type}</div></div>`;
-  if(tl==="fermeture"||tl.startsWith("ferm"))return `<div class="chip ferm"><div class="chip-time">${start}-${end}</div><div class="chip-type">Fermeture</div></div>`;
-  return `<div class="chip special">${shift.start?`<div class="chip-time">${start}-${end}</div>`:""}<div class="chip-label">${type}</div></div>`;
-}
-function buildMobileDay(dayStr,dayIdx,week,weekIdx,todayStr){
-  const d=new Date(dayStr+"T12:00:00"), block=document.createElement("div");
-  const employees=week.employees||[];
-  const dayState=getDayState(dayStr);
-  block.className="mobile-day-card day-"+dayState;
-  block.innerHTML=`<div class="mobile-day-header"><div class="mobile-day-title"><span class="mobile-day-name">${escapeHTML(DAYS[dayIdx]||"")}</span><span class="mobile-day-num">${d.getDate()}</span></div><span class="mobile-day-state">${dayStateLabel(dayState)}</span><span class="mobile-day-count">${employees.length} pers.</span></div>`;
-  employees.forEach((emp,empIdx)=>{
-    const row=document.createElement("div");
-    row.className="mobile-emp-row";
-    if(isAdmin()){row.title="Modifier";row.onclick=()=>openEdit(weekIdx,empIdx,dayStr);}
-    row.innerHTML=`<div class="mobile-emp-name"><span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span></div><div class="mobile-shift">${buildChip(emp.shifts?.find(s=>s.date===dayStr))}</div>`;
-    block.appendChild(row);
-  });
-  return block;
-}
+function buildChip(shift){if(!shift||shift.type==="repos"&&!(shift.start||shift.end))return`<div class="chip off"><span class="chip-off-label">-</span></div>`;const t=shift.type||"",tl=t.toLowerCase(),type=escapeHTML(t),start=escapeHTML(shift.start||""),end=escapeHTML(shift.end||""),time=shift.start?`<div class="chip-time">${start}-${end}</div>`:"";if(tl==="ouverture"||tl.startsWith("ouv")||t==="Atelier")return`<div class="chip ouv">${time}<div class="chip-type">${type}</div></div>`;if(tl==="fermeture"||tl.startsWith("ferm"))return`<div class="chip ferm">${time}<div class="chip-type">Fermeture</div></div>`;return`<div class="chip special">${time}<div class="chip-label">${type}</div></div>`;}
 function renderEmpty(){document.getElementById("week-nav").style.display="none";document.getElementById("planning").innerHTML=`<div class="empty-state"><span class="empty-icon">Calendrier</span><div class="empty-title">Aucun planning charge</div><div class="empty-sub">Clique sur Actualiser ou importe un planning en mode admin.</div></div>`;}
-function renderWeek(idx){
-  const week=allWeeks[idx];if(!week)return renderEmpty();currentWeekIdx=idx;updateAdminUI();
-  const state=getWeekState(week);
-  const nav=document.getElementById("week-nav");nav.style.display="flex";nav.className="week-"+state;
-  document.getElementById("week-title").innerHTML=`<span>${escapeHTML(week.label||"Planning")}</span><span class="week-state-badge">${weekStateLabel(state)}</span>`;
-  document.getElementById("prev-btn").disabled=idx===0;document.getElementById("next-btn").disabled=idx===allWeeks.length-1;
-  const todayStr=todayISO(), card=document.createElement("div");card.className="planning-card week-"+state;
-  const desktop=document.createElement("div");desktop.className="desktop-planning";
-  const gh=document.createElement("div");gh.className="grid-header";gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;
-  (week.days||[]).forEach((ds,i)=>{const d=new Date(ds+"T12:00:00");gh.innerHTML+=`<div class="gh-day${ds===todayStr?" today-col":""}"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===todayStr?" today":""}">${d.getDate()}</div></div>`;});desktop.appendChild(gh);
-  (week.employees||[]).forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="grid-row";const name=document.createElement("div");name.className="gr-name";name.innerHTML=`<span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>`;row.appendChild(name);(week.days||[]).forEach(ds=>{const cell=document.createElement("div");cell.className="gr-cell";if(isAdmin()){cell.title="Modifier";cell.onclick=()=>openEdit(idx,empIdx,ds);}cell.innerHTML=buildChip(emp.shifts?.find(s=>s.date===ds));row.appendChild(cell);});desktop.appendChild(row);});
-  const footer=document.createElement("div");footer.className="grid-footer admin-only";footer.innerHTML=`<span class="edit-hint">Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;card.appendChild(footer);
-  desktop.appendChild(footer);card.appendChild(desktop);
-  const mobile=document.createElement("div");mobile.className="mobile-planning";
-  (week.days||[]).forEach((ds,dayIdx)=>mobile.appendChild(buildMobileDay(ds,dayIdx,week,idx,todayStr)));
-  const mobileFooter=document.createElement("div");mobileFooter.className="mobile-footer admin-only";mobileFooter.innerHTML=`<button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;mobile.appendChild(mobileFooter);
-  card.appendChild(mobile);
-  document.getElementById("planning").innerHTML="";document.getElementById("planning").appendChild(card);updateAdminUI();
-}
-function changeWeek(dir){currentWeekIdx=Math.max(0,Math.min(allWeeks.length-1,currentWeekIdx+dir));renderWeek(currentWeekIdx);}
-function setStatus(type,msg){const el=document.getElementById("status");el.className=type||"";el.innerHTML=type==="loading"?`<span class="spinner"></span>${escapeHTML(msg)}`:escapeHTML(msg||"");}
-window.addEventListener("DOMContentLoaded",()=>{updateAdminUI();const cached=loadLocalWeeks();if(cached.length){allWeeks=cached;renderWeek(findTodayWeekIndex());}else renderEmpty();syncNow(false);});
+function buildMobileDay(dayStr,dayIdx,week,weekIdx,todayStr){const d=new Date(dayStr+"T12:00:00"),block=document.createElement("div"),employees=week.employees||[],state=getDayState(dayStr);block.className="mobile-day-card day-"+state;block.innerHTML=`<div class="mobile-day-header"><div class="mobile-day-title"><span class="mobile-day-name">${escapeHTML(DAYS[dayIdx]||"")}</span><span class="mobile-day-num">${d.getDate()}</span></div><span class="mobile-day-state">${dayStateLabel(state)}</span><span class="mobile-day-count">${employees.length} pers.</span></div>`;employees.forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="mobile-emp-row";if(isAdmin()){row.title="Modifier";row.onclick=()=>openEdit(weekIdx,empIdx,dayStr)}row.innerHTML=`<div class="mobile-emp-name"><span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span></div><div class="mobile-shift">${buildChip(emp.shifts?.find(s=>s.date===dayStr))}</div>`;block.appendChild(row)});return block;}
+function renderWeek(idx){const week=allWeeks[idx];if(!week)return renderEmpty();currentWeekIdx=idx;const state=getWeekState(week),nav=document.getElementById("week-nav");nav.style.display="flex";nav.className="week-"+state;document.getElementById("week-title").innerHTML=`<span>${escapeHTML(week.label||"Planning")}</span><span class="week-state-badge">${weekStateLabel(state)}</span>`;document.getElementById("prev-btn").disabled=idx===0;document.getElementById("next-btn").disabled=idx===allWeeks.length-1;const today=todayISO(),card=document.createElement("div");card.className="planning-card week-"+state;const desktop=document.createElement("div");desktop.className="desktop-planning";const gh=document.createElement("div");gh.className="grid-header";gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;(week.days||[]).forEach((ds,i)=>{const d=new Date(ds+"T12:00:00");gh.innerHTML+=`<div class="gh-day${ds===today?" today-col":""}"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===today?" today":""}">${d.getDate()}</div></div>`});desktop.appendChild(gh);(week.employees||[]).forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="grid-row";row.innerHTML=`<div class="gr-name"><span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span></div>`;(week.days||[]).forEach(ds=>{const cell=document.createElement("div");cell.className="gr-cell";if(isAdmin()){cell.title="Modifier";cell.onclick=()=>openEdit(idx,empIdx,ds)}cell.innerHTML=buildChip(emp.shifts?.find(s=>s.date===ds));row.appendChild(cell)});desktop.appendChild(row)});const footer=document.createElement("div");footer.className="grid-footer admin-only";footer.innerHTML=`<span class="edit-hint">Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;desktop.appendChild(footer);card.appendChild(desktop);const mobile=document.createElement("div");mobile.className="mobile-planning";(week.days||[]).forEach((ds,i)=>mobile.appendChild(buildMobileDay(ds,i,week,idx,today)));const mf=document.createElement("div");mf.className="mobile-footer admin-only";mf.innerHTML=`<button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;mobile.appendChild(mf);card.appendChild(mobile);document.getElementById("planning").innerHTML="";document.getElementById("planning").appendChild(card);}
+function getTodayEntries(){const today=todayISO(),week=allWeeks.find(w=>(w.days||[]).includes(today));if(!week)return{week:null,entries:[]};const entries=(week.employees||[]).map((emp,empIdx)=>({emp,empIdx,shift:emp.shifts?.find(s=>s.date===today),weekIdx:allWeeks.indexOf(week)}));entries.sort((a,b)=>(parseMinutes(a.shift?.start)??9999)-(parseMinutes(b.shift?.start)??9999));return{week,entries};}
+function renderToday(){document.getElementById("week-nav").style.display="none";const {week,entries}=getTodayEntries(),today=todayISO();if(!week){document.getElementById("planning").innerHTML=`<div class="view-card"><div class="empty-state"><div class="empty-title">Aucun planning pour aujourd'hui</div><div class="empty-sub">${escapeHTML(today)}</div></div></div>`;return}document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Aujourd'hui</div><div class="view-sub">${escapeHTML(week.label)} - ${escapeHTML(today)}</div></div><span class="view-badge badge-current">${entries.length} pers.</span></div>${entries.map(e=>`<div class="list-row${!e.shift||e.shift.type==="repos"?" muted-row":""}" ${isAdmin()?`onclick="openEdit(${e.weekIdx},${e.empIdx},'${today}')" style="cursor:pointer"`:""}><div><div class="list-name">${escapeHTML(employeeLabel(e.emp))}</div><div class="list-meta">${escapeHTML(e.emp.lastName||"")}</div></div><div>${buildChip(e.shift)}</div></div>`).join("")}</div>`;}
+function renderEmployee(){document.getElementById("week-nav").style.display="none";const key=selectedEmployeeKey||document.getElementById("employee-filter").value;if(!key){document.getElementById("planning").innerHTML=`<div class="view-card"><div class="empty-state"><div class="empty-title">Choisis un employe</div><div class="empty-sub">Utilise le menu en haut a droite.</div></div></div>`;return}let rows=[],label="";allWeeks.forEach((w,wi)=>(w.employees||[]).forEach((emp,ei)=>{if(employeeKey(emp)===key){label=employeeLabel(emp);(w.days||[]).forEach(ds=>rows.push({week:w,wi,ei,ds,shift:emp.shifts?.find(s=>s.date===ds)}))}}));document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">${escapeHTML(label||"Employe")}</div><div class="view-sub">${rows.length} jour(s)</div></div></div>${rows.map(r=>`<div class="list-row" ${isAdmin()?`onclick="openEdit(${r.wi},${r.ei},'${r.ds}')" style="cursor:pointer"`:""}><div><div class="list-name">${escapeHTML(r.ds)}</div><div class="list-meta">${escapeHTML(r.week.label)}</div></div><div>${buildChip(r.shift)}</div></div>`).join("")}</div>`;}
+function renderStats(){document.getElementById("week-nav").style.display="none";const week=allWeeks[currentWeekIdx];if(!week)return renderEmpty();const stats=(week.employees||[]).map(emp=>({name:employeeLabel(emp),hours:(emp.shifts||[]).reduce((s,x)=>s+durationHours(x),0),open:(emp.shifts||[]).filter(s=>(s.type||"").toLowerCase().startsWith("ouv")).length,close:(emp.shifts||[]).filter(s=>(s.type||"").toLowerCase().startsWith("ferm")).length}));document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Stats semaine</div><div class="view-sub">${escapeHTML(week.label)}</div></div></div><div class="stats-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-name">${escapeHTML(s.name)}</div><div class="stat-value">${s.hours.toFixed(1)}h</div><div class="list-meta">${s.open} ouv. / ${s.close} ferm.</div></div>`).join("")}</div></div>`;}
+function render(){updateAdminUI();refreshEmployeeFilter();setActiveTabs();if(currentView==="today")renderToday();else if(currentView==="employee")renderEmployee();else if(currentView==="stats")renderStats();else renderWeek(currentWeekIdx);}
+window.addEventListener("DOMContentLoaded",()=>{updateAdminUI();const cached=loadLocalWeeks();if(cached.length){allWeeks=cached;refreshEmployeeFilter();currentWeekIdx=findTodayWeekIndex();render()}else renderEmpty();syncNow(false);if("serviceWorker"in navigator)navigator.serviceWorker.register("service-worker.js").catch(()=>{});});
 </script>
 </body>
 </html>
