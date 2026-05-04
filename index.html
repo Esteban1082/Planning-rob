@@ -151,7 +151,21 @@ function closeSettings(){document.getElementById("modal-settings").classList.rem
 function saveSettings(){localStorage.setItem(STORAGE_SETTINGS,JSON.stringify({apiUrl:document.getElementById("input-api-url").value.trim()}));closeSettings();syncNow(true);}
 function openAdmin(){document.getElementById("input-admin-token").value=getAdminToken();document.getElementById("modal-admin").classList.add("open");}
 function closeAdmin(){document.getElementById("modal-admin").classList.remove("open");}
-function saveAdmin(){localStorage.setItem(STORAGE_ADMIN_TOKEN,document.getElementById("input-admin-token").value.trim());closeAdmin();updateAdminUI();setStatus("success",isAdmin()?"Mode admin actif":"Mode lecture seule");}
+async function saveAdmin(){
+  const token=document.getElementById("input-admin-token").value.trim();
+  if(!token)return setStatus("error","Token admin vide");
+  setStatus("loading","Verification du token admin...");
+  try{
+    await jsonp("auth",{token});
+    localStorage.setItem(STORAGE_ADMIN_TOKEN,token);
+    closeAdmin();updateAdminUI();renderWeek(currentWeekIdx);
+    setStatus("success","Mode admin actif");
+  }catch(err){
+    localStorage.removeItem(STORAGE_ADMIN_TOKEN);
+    updateAdminUI();renderWeek(currentWeekIdx);
+    setStatus("error","Token admin invalide");
+  }
+}
 function lockAdmin(){localStorage.removeItem(STORAGE_ADMIN_TOKEN);closeAdmin();updateAdminUI();renderWeek(currentWeekIdx);setStatus("success","Mode lecture seule");}
 
 ["settings","admin","import","edit","add-emp"].forEach(id=>{
@@ -185,7 +199,7 @@ function loadLocalWeeks(){try{const cached=JSON.parse(localStorage.getItem(STORA
 function saveLocalWeeks(){localStorage.setItem(STORAGE_CACHE,JSON.stringify(allWeeks));}
 function lastSyncLabel(){const v=localStorage.getItem(STORAGE_LAST_SYNC);if(!v)return "";try{return " - sync "+new Date(v).toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
 
-function jsonp(action){
+function jsonp(action,params={}){
   return new Promise((resolve,reject)=>{
     const url=requireApiUrl();
     const cb="robPlanningCb"+(++apiCallId);
@@ -194,7 +208,9 @@ function jsonp(action){
     function cleanup(){clearTimeout(timer);delete window[cb];script.remove();}
     window[cb]=payload=>{cleanup();payload&&payload.ok?resolve(payload):reject(new Error(payload?.error||"Erreur Apps Script"));};
     script.onerror=()=>{cleanup();reject(new Error("Chargement Apps Script impossible"));};
-    script.src=url+(url.includes("?")?"&":"?")+"action="+encodeURIComponent(action)+"&callback="+encodeURIComponent(cb)+"&_="+Date.now();
+    const query=new URLSearchParams({action,callback:cb,_:String(Date.now())});
+    Object.keys(params).forEach(key=>query.set(key,params[key]));
+    script.src=url+(url.includes("?")?"&":"?")+query.toString();
     document.body.appendChild(script);
   });
 }
