@@ -1,4 +1,4 @@
-const CACHE_NAME = "rob-planning-v7";
+const CACHE_NAME = "rob-planning-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
