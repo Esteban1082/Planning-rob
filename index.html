@@ -3,557 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planning Rob</title>
+<title>Rob.Planning</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f0f2f5;
-    --surface: #ffffff;
-    --surface2: #f8f9fb;
-    --border: #e4e7ed;
-    --border2: #d0d5de;
-    --accent: #3b82f6;
-    --accent-light: #eff6ff;
-    --green: #10b981;
-    --green-light: #ecfdf5;
-    --red: #ef4444;
-    --purple: #8b5cf6;
-    --purple-light: #f5f3ff;
-    --text: #111827;
-    --text2: #374151;
-    --muted: #9ca3af;
-    --muted2: #6b7280;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
+    --bg:#f0f2f5; --surface:#fff; --surface2:#f8f9fb; --border:#e4e7ed; --border2:#d0d5de;
+    --accent:#3b82f6; --accent-light:#eff6ff; --green:#10b981; --green-light:#ecfdf5;
+    --red:#ef4444; --red-light:#fef2f2; --amber:#d97706; --purple:#8b5cf6; --purple-light:#f5f3ff;
+    --text:#111827; --text2:#374151; --muted:#9ca3af; --muted2:#6b7280;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+    --shadow-md:0 4px 12px rgba(0,0,0,.10),0 2px 4px rgba(0,0,0,.06);
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Inter', sans-serif; min-height:100vh; }
-  .app { max-width:1000px; margin:0 auto; padding:20px 16px 60px; }
-
-  /* ── HEADER ── */
-  header {
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:18px;
-  }
-  .logo-block { display:flex; align-items:center; gap:12px; }
-  .logo { font-size:18px; font-weight:800; letter-spacing:-0.5px; color:var(--text); }
-  .logo span { color:var(--accent); }
-  .logo-badge {
-    font-family:'DM Mono',monospace; font-size:11px; color:var(--muted2);
-    background:var(--surface); border:1px solid var(--border);
-    padding:3px 9px; border-radius:20px;
-  }
-  .header-actions { display:flex; align-items:center; gap:8px; }
-  .icon-btn {
-    background:var(--surface); border:1px solid var(--border); color:var(--muted2);
-    padding:6px 12px; border-radius:8px; font-size:12px; font-weight:500;
-    cursor:pointer; transition:all 0.15s; box-shadow:var(--shadow);
-    display:flex; align-items:center; gap:5px;
-  }
-  .icon-btn:hover { border-color:var(--accent); color:var(--accent); }
-
-  /* ── STATUS ── */
-  #status {
-    font-size:11px; color:var(--muted2); font-family:'DM Mono',monospace;
-    margin-bottom:14px; min-height:16px; text-align:center;
-  }
-  #status.error { color:var(--red); }
-  #status.success { color:var(--green); }
-  #status.loading { color:var(--accent); }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  .spinner {
-    display:inline-block; width:11px; height:11px;
-    border:2px solid rgba(59,130,246,0.25); border-top-color:var(--accent);
-    border-radius:50%; animation:spin 0.8s linear infinite;
-    vertical-align:middle; margin-right:5px;
-  }
-
-  /* ── WEEK NAV ── */
-  #week-nav { display:none; align-items:center; justify-content:space-between; margin-bottom:14px; }
-  .week-title { font-size:14px; font-weight:700; color:var(--text2); }
-  .week-btn {
-    background:var(--surface); border:1px solid var(--border); color:var(--text2);
-    padding:5px 12px; border-radius:7px; cursor:pointer; font-size:13px; font-weight:500;
-    transition:all 0.15s; box-shadow:var(--shadow);
-  }
-  .week-btn:hover { border-color:var(--accent); color:var(--accent); }
-  .week-btn:disabled { opacity:0.3; cursor:default; }
-
-  /* ── PLANNING CARD ── */
-  #planning { display:none; }
-  .planning-card {
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:14px; overflow:hidden; box-shadow:var(--shadow);
-  }
-
-  /* GRID */
-  .grid-header, .grid-row {
-    display:grid;
-    grid-template-columns: 148px repeat(6,1fr);
-    border-bottom:1px solid var(--border);
-  }
-  .grid-header { background:var(--surface2); }
-  .grid-row:last-child { border-bottom:none; }
-  .grid-row:hover { background:#fafbfc; }
-
-  .gh-name {
-    padding:10px 13px; display:flex; align-items:flex-end;
-    border-right:1px solid var(--border);
-  }
-  .gh-name span { font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; font-family:'DM Mono',monospace; }
-  .gh-day {
-    padding:9px 6px; text-align:center;
-    border-left:1px solid var(--border);
-  }
-  .gh-day-label { font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-family:'DM Mono',monospace; }
-  .gh-day-date { font-size:18px; font-weight:800; color:var(--text); line-height:1.15; margin-top:1px; }
-  .gh-day-date.today { color:var(--accent); }
-
-  .gr-name {
-    padding:9px 13px; display:flex; flex-direction:column; justify-content:center;
-    border-right:1px solid var(--border); background:var(--surface2);
-  }
-  .gr-name .fn { font-size:12px; font-weight:600; color:var(--text); }
-  .gr-name .ln { font-size:10px; color:var(--muted2); font-family:'DM Mono',monospace; margin-top:1px; }
-
-  .gr-cell {
-    padding:5px 5px; border-left:1px solid var(--border);
-    min-height:52px; cursor:pointer; transition:background 0.1s;
-  }
-  .gr-cell:hover { background:rgba(59,130,246,0.05); }
-
-  /* FOOTER GRID */
-  .grid-footer {
-    padding:8px 18px; border-top:1px solid var(--border);
-    background:var(--surface2); display:flex; align-items:center; gap:6px;
-  }
-  .edit-hint { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; flex:1; }
-  .btn-add-emp {
-    background:var(--surface); border:1px solid var(--border); color:var(--muted2);
-    padding:4px 10px; border-radius:6px; font-size:11px; font-weight:500;
-    cursor:pointer; transition:all 0.15s;
-  }
-  .btn-add-emp:hover { border-color:var(--green); color:var(--green); }
-
-  /* SHIFT CHIPS */
-  .chip { border-radius:6px; padding:4px 7px; margin-bottom:2px; }
-  .chip.ouv  { background:var(--green-light); border-left:3px solid var(--green); }
-  .chip.ferm { background:var(--accent-light); border-left:3px solid var(--accent); }
-  .chip.off  { background:#f9fafb; border-left:3px solid #e5e7eb; }
-  .chip.special { background:var(--purple-light); border-left:3px solid var(--purple); }
-  .chip-time { font-family:'DM Mono',monospace; font-size:11px; font-weight:500; color:var(--text); line-height:1.2; }
-  .chip-type { font-size:9px; color:var(--muted2); margin-top:1px; text-transform:uppercase; letter-spacing:0.3px; }
-  .chip-off-label { font-size:11px; color:var(--muted); font-style:italic; }
-  .chip-label { font-size:10px; color:var(--purple); font-weight:500; }
-
-  /* ── EMPTY STATE ── */
-  .empty-state { text-align:center; padding:60px 20px; }
-  .empty-icon { font-size:44px; margin-bottom:14px; display:block; }
-  .empty-title { font-size:15px; font-weight:600; color:var(--text2); margin-bottom:6px; }
-  .empty-sub { font-size:13px; color:var(--muted2); }
-
-  /* ── MODALS ── */
-  .modal-overlay {
-    display:none; position:fixed; inset:0;
-    background:rgba(0,0,0,0.35); z-index:100;
-    align-items:center; justify-content:center;
-    backdrop-filter:blur(3px);
-  }
-  .modal-overlay.open { display:flex; }
-  .modal {
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:16px; padding:28px; width:90%; max-width:460px;
-    box-shadow:var(--shadow-md);
-  }
-  .modal h3 { font-size:17px; font-weight:700; margin-bottom:4px; }
-  .modal-sub { font-size:12px; color:var(--muted2); font-family:'DM Mono',monospace; margin-bottom:20px; }
-  .field-label { font-size:12px; color:var(--muted2); font-weight:500; margin-bottom:5px; display:block; }
-  .modal-input {
-    width:100%; background:var(--surface2); border:1px solid var(--border);
-    color:var(--text); border-radius:9px; padding:10px 13px;
-    font-family:'DM Mono',monospace; font-size:13px; margin-bottom:13px;
-    outline:none; transition:border-color 0.15s;
-  }
-  .modal-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.12); }
-  .json-textarea {
-    width:100%; background:var(--surface2); border:1px solid var(--border);
-    color:var(--text); border-radius:9px; padding:12px;
-    font-family:'DM Mono',monospace; font-size:11px; height:190px;
-    resize:vertical; outline:none; transition:border-color 0.15s;
-    margin-bottom:13px; line-height:1.6;
-  }
-  .json-textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.12); }
-  .modal-actions { display:flex; gap:8px; }
-  .btn-primary {
-    flex:1; background:var(--accent); color:white; border:none;
-    border-radius:9px; padding:11px; font-family:'Inter',sans-serif;
-    font-weight:600; font-size:14px; cursor:pointer; transition:all 0.15s;
-  }
-  .btn-primary:hover { background:#2563eb; }
-  .btn-secondary {
-    background:var(--surface2); color:var(--muted2); border:1px solid var(--border);
-    border-radius:9px; padding:11px 16px; font-family:'Inter',sans-serif;
-    font-size:14px; cursor:pointer;
-  }
-  .btn-secondary:hover { border-color:var(--border2); color:var(--text2); }
-  .btn-danger {
-    background:#fef2f2; color:var(--red); border:1px solid #fecaca;
-    border-radius:9px; padding:11px 16px; font-family:'Inter',sans-serif;
-    font-size:14px; cursor:pointer;
-  }
-  .btn-danger:hover { background:#fee2e2; }
-
-  .type-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px; }
-  .type-btn {
-    background:var(--surface2); border:1.5px solid var(--border); color:var(--muted2);
-    padding:10px 12px; border-radius:9px; font-family:'Inter',sans-serif;
-    font-size:13px; font-weight:500; cursor:pointer; transition:all 0.15s; text-align:center;
-  }
-  .type-btn:hover { border-color:var(--border2); color:var(--text2); }
-  .type-btn.active.ouv     { background:var(--green-light); border-color:var(--green); color:var(--green); }
-  .type-btn.active.ferm    { background:var(--accent-light); border-color:var(--accent); color:var(--accent); }
-  .type-btn.active.repos   { background:#f9fafb; border-color:#9ca3af; color:var(--text2); }
-  .type-btn.active.special { background:var(--purple-light); border-color:var(--purple); color:var(--purple); }
-  .time-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-
-  /* IMPORT MODAL DROPZONE */
-  .drop-zone {
-    border:2px dashed var(--border2); border-radius:10px; padding:28px;
-    text-align:center; cursor:pointer; transition:all 0.15s; margin-bottom:13px;
-  }
-  .drop-zone:hover, .drop-zone.drag-over { border-color:var(--accent); background:var(--accent-light); }
-  .drop-zone-icon { font-size:28px; margin-bottom:8px; }
-  .drop-zone-text { font-size:13px; font-weight:600; color:var(--text2); margin-bottom:3px; }
-  .drop-zone-sub { font-size:11px; color:var(--muted2); }
-  .or-divider { text-align:center; font-size:12px; color:var(--muted); margin:10px 0; font-family:'DM Mono',monospace; }
-
-  @media (max-width:640px) {
-    .planning-card { overflow-x:auto; }
-    .grid-header, .grid-row { min-width:580px; }
-  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;min-height:100vh}
+  .app{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px}
+  .logo-block{display:flex;align-items:center;gap:12px;min-width:0}
+  .logo{font-size:18px;font-weight:800;white-space:nowrap}.logo span{color:var(--accent)}
+  .logo-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);background:var(--surface);border:1px solid var(--border);padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .icon-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);white-space:nowrap}
+  .icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .admin-only{display:none}.is-admin .admin-only{display:inline-flex}.is-admin .grid-footer.admin-only{display:flex}
+  #status{font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace;margin-bottom:14px;min-height:18px;text-align:center}
+  #status.error{color:var(--red)}#status.success{color:var(--green)}#status.loading{color:var(--accent)}#status.pending{color:var(--amber)}
+  @keyframes spin{to{transform:rotate(360deg)}}.spinner{display:inline-block;width:11px;height:11px;border:2px solid rgba(59,130,246,.25);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:5px}
+  #week-nav{display:none;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}.week-title{font-size:14px;font-weight:700;color:var(--text2);text-align:center}
+  .week-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;box-shadow:var(--shadow)}
+  .week-btn:hover{border-color:var(--accent);color:var(--accent)}.week-btn:disabled{opacity:.3;cursor:default}
+  .planning-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+  .grid-header,.grid-row{display:grid;grid-template-columns:148px repeat(6,1fr);border-bottom:1px solid var(--border)}.grid-header{background:var(--surface2)}.grid-row:last-child{border-bottom:none}.grid-row:hover{background:#fafbfc}
+  .gh-name{padding:10px 13px;display:flex;align-items:flex-end;border-right:1px solid var(--border)}.gh-name span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-family:'DM Mono',monospace}
+  .gh-day{padding:9px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}
+  .gr-name{padding:9px 13px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border);background:var(--surface2)}.gr-name .fn{font-size:12px;font-weight:600}.gr-name .ln{font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:1px}
+  .gr-cell{padding:5px;border-left:1px solid var(--border);min-height:52px;transition:background .1s}.is-admin .gr-cell{cursor:pointer}.is-admin .gr-cell:hover{background:rgba(59,130,246,.05)}
+  .grid-footer{padding:8px 18px;border-top:1px solid var(--border);background:var(--surface2);align-items:center;gap:6px}.edit-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;flex:1}.btn-add-emp{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer}
+  .chip{border-radius:6px;padding:4px 7px;margin-bottom:2px;min-height:24px}.chip.ouv{background:var(--green-light);border-left:3px solid var(--green)}.chip.ferm{background:var(--accent-light);border-left:3px solid var(--accent)}.chip.off{background:#f9fafb;border-left:3px solid #e5e7eb}.chip.special{background:var(--purple-light);border-left:3px solid var(--purple)}
+  .chip-time{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text);line-height:1.2}.chip-type{font-size:9px;color:var(--muted2);margin-top:1px;text-transform:uppercase;letter-spacing:.3px}.chip-off-label{font-size:11px;color:var(--muted);font-style:italic}.chip-label{font-size:10px;color:var(--purple);font-weight:500;overflow-wrap:anywhere}
+  .empty-state{text-align:center;padding:60px 20px}.empty-icon{font-size:36px;margin-bottom:14px;display:block;color:var(--muted)}.empty-title{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px}.empty-sub{font-size:13px;color:var(--muted2)}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(3px)}.modal-overlay.open{display:flex}.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:90%;max-width:480px;box-shadow:var(--shadow-md)}.modal h3{font-size:17px;font-weight:700;margin-bottom:4px}.modal-sub{font-size:12px;color:var(--muted2);font-family:'DM Mono',monospace;margin-bottom:20px;line-height:1.45}
+  .field-label{font-size:12px;color:var(--muted2);font-weight:500;margin-bottom:5px;display:block}.modal-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 13px;font-family:'DM Mono',monospace;font-size:13px;margin-bottom:13px;outline:none}.modal-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+  .json-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:12px;font-family:'DM Mono',monospace;font-size:11px;height:190px;resize:vertical;outline:none;margin-bottom:13px;line-height:1.6}.json-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+  .modal-actions{display:flex;gap:8px}.btn-primary{flex:1;background:var(--accent);color:white;border:none;border-radius:9px;padding:11px;font-family:Inter,sans-serif;font-weight:600;font-size:14px;cursor:pointer}.btn-secondary{background:var(--surface2);color:var(--muted2);border:1px solid var(--border);border-radius:9px;padding:11px 16px;font-family:Inter,sans-serif;font-size:14px;cursor:pointer}.btn-danger{background:var(--red-light);color:var(--red);border:1px solid #fecaca;border-radius:9px;padding:11px 16px;font-family:Inter,sans-serif;font-size:14px;cursor:pointer}
+  .type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}.type-btn{background:var(--surface2);border:1.5px solid var(--border);color:var(--muted2);padding:10px 12px;border-radius:9px;font-family:Inter,sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:center}.type-btn.active.ouv{background:var(--green-light);border-color:var(--green);color:var(--green)}.type-btn.active.ferm{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}.type-btn.active.repos{background:#f9fafb;border-color:#9ca3af;color:var(--text2)}.type-btn.active.special{background:var(--purple-light);border-color:var(--purple);color:var(--purple)}
+  .time-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.drop-zone{border:2px dashed var(--border2);border-radius:10px;padding:28px;text-align:center;cursor:pointer;margin-bottom:13px}.drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:var(--accent-light)}.drop-zone-icon{font-size:24px;margin-bottom:8px;color:var(--muted2)}.drop-zone-text{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:3px}.drop-zone-sub{font-size:11px;color:var(--muted2)}.or-divider{text-align:center;font-size:12px;color:var(--muted);margin:10px 0;font-family:'DM Mono',monospace}
+  @media(max-width:640px){.app{padding:14px 10px 50px}header{align-items:flex-start}.logo-block{flex-direction:column;align-items:flex-start;gap:4px}.planning-card{overflow-x:auto}.grid-header,.grid-row{min-width:580px}.week-title{font-size:13px}}
 </style>
 </head>
 <body>
-<div class="app">
-
+<div class="app" id="app">
   <header>
-    <div class="logo-block">
-      <div class="logo">Rob<span>.</span>Planning</div>
-      <div class="logo-badge">Pâtisserie 31300</div>
-    </div>
+    <div class="logo-block"><div class="logo">Rob<span>.</span>Planning</div><div class="logo-badge">P&acirc;tisserie 31300</div></div>
     <div class="header-actions">
-      <button class="icon-btn" onclick="openImport()">⬆ Importer</button>
-      <button class="icon-btn" onclick="openSettings()">⚙</button>
+      <button class="icon-btn admin-only" onclick="openImport()">Importer</button>
+      <button class="icon-btn" onclick="syncNow(true)">Actualiser</button>
+      <button class="icon-btn" onclick="openAdmin()">Admin</button>
+      <button class="icon-btn" onclick="openSettings()">Config</button>
     </div>
   </header>
-
   <div id="status"></div>
-
   <div id="week-nav">
-    <button class="week-btn" id="prev-btn" onclick="changeWeek(-1)" disabled>← Préc.</button>
+    <button class="week-btn" id="prev-btn" onclick="changeWeek(-1)" disabled>&larr; Pr&eacute;c.</button>
     <div class="week-title" id="week-title"></div>
-    <button class="week-btn" id="next-btn" onclick="changeWeek(1)" disabled>Suiv. →</button>
+    <button class="week-btn" id="next-btn" onclick="changeWeek(1)" disabled>Suiv. &rarr;</button>
   </div>
-
-  <div id="planning">
-    <div class="empty-state">
-      <span class="empty-icon">🗓️</span>
-      <div class="empty-title">Aucun planning chargé</div>
-      <div class="empty-sub">Cliquer sur <strong>⬆ Importer</strong> pour ajouter un planning</div>
-    </div>
-  </div>
-
+  <div id="planning"></div>
 </div>
 
-<!-- MODAL SETTINGS -->
 <div class="modal-overlay" id="modal-settings">
   <div class="modal">
-    <h3>⚙️ Configuration</h3>
-    <div class="modal-sub">Serveur de données PoupiOS</div>
-    <label class="field-label">IP de PoupiOS</label>
-    <input type="text" class="modal-input" id="input-poupi" placeholder="192.168.129.131">
-    <div class="modal-actions">
-      <button class="btn-primary" onclick="saveSettings()">Enregistrer</button>
-      <button class="btn-secondary" onclick="closeSettings()">Annuler</button>
-    </div>
+    <h3>Configuration</h3>
+    <div class="modal-sub">Colle ici l'URL de deploiement Google Apps Script. Une fois l'URL integree dans le HTML final, l'equipe n'aura plus rien a configurer.</div>
+    <label class="field-label">URL Google Apps Script</label>
+    <input type="url" class="modal-input" id="input-api-url" placeholder="https://script.google.com/macros/s/.../exec">
+    <div class="modal-actions"><button class="btn-primary" onclick="saveSettings()">Enregistrer</button><button class="btn-secondary" onclick="closeSettings()">Annuler</button></div>
   </div>
 </div>
 
-<!-- MODAL IMPORT -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal">
+    <h3>Mode admin</h3>
+    <div class="modal-sub">Le token reste uniquement dans ce navigateur. Il sert a importer et modifier le planning.</div>
+    <label class="field-label">Token admin</label>
+    <input type="password" class="modal-input" id="input-admin-token" placeholder="Token defini dans Apps Script">
+    <div class="modal-actions"><button class="btn-primary" onclick="saveAdmin()">Deverrouiller</button><button class="btn-secondary" onclick="lockAdmin()">Verrouiller</button><button class="btn-secondary" onclick="closeAdmin()">Annuler</button></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-import">
   <div class="modal">
-    <h3>⬆ Importer un planning</h3>
-    <div class="modal-sub">JSON généré par Claude depuis la photo</div>
+    <h3>Importer un planning</h3>
+    <div class="modal-sub">JSON genere depuis la photo</div>
     <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-json').click()">
-      <div class="drop-zone-icon">📂</div>
-      <div class="drop-zone-text">Glisser un fichier JSON ici</div>
-      <div class="drop-zone-sub">ou cliquer pour parcourir</div>
+      <div class="drop-zone-icon">JSON</div><div class="drop-zone-text">Glisser un fichier JSON ici</div><div class="drop-zone-sub">ou cliquer pour parcourir</div>
       <input type="file" id="file-json" accept=".json" style="display:none" onchange="importFile(event)">
     </div>
-    <div class="or-divider">— ou coller le JSON directement —</div>
+    <div class="or-divider">ou coller le JSON directement</div>
     <textarea class="json-textarea" id="json-input" placeholder='{"weeks":[...]}'></textarea>
-    <div class="modal-actions">
-      <button class="btn-primary" onclick="importJSON()">Importer</button>
-      <button class="btn-secondary" onclick="closeImport()">Annuler</button>
-    </div>
+    <div class="modal-actions"><button class="btn-primary" onclick="importJSON()">Importer</button><button class="btn-secondary" onclick="closeImport()">Annuler</button></div>
   </div>
 </div>
 
-<!-- MODAL EDIT SHIFT -->
 <div class="modal-overlay" id="modal-edit">
   <div class="modal">
-    <h3 id="edit-title">Modifier le shift</h3>
-    <div class="modal-sub" id="edit-sub"></div>
+    <h3 id="edit-title">Modifier le shift</h3><div class="modal-sub" id="edit-sub"></div>
     <label class="field-label">Type de shift</label>
     <div class="type-grid">
-      <button class="type-btn ouv"     id="tbtn-ouv"     onclick="selectType('Ouverture')">🟢 Ouverture</button>
-      <button class="type-btn ferm"    id="tbtn-ferm"    onclick="selectType('Fermeture')">🔵 Fermeture</button>
-      <button class="type-btn repos"   id="tbtn-repos"   onclick="selectType('repos')">— Repos</button>
-      <button class="type-btn special" id="tbtn-special" onclick="selectType('special')">⭐ Autre</button>
+      <button class="type-btn ouv" id="tbtn-ouv" onclick="selectType('Ouverture')">Ouverture</button>
+      <button class="type-btn ferm" id="tbtn-ferm" onclick="selectType('Fermeture')">Fermeture</button>
+      <button class="type-btn repos" id="tbtn-repos" onclick="selectType('repos')">Repos</button>
+      <button class="type-btn special" id="tbtn-special" onclick="selectType('special')">Autre</button>
     </div>
-    <div id="edit-time-section">
-      <div class="time-row">
-        <div><label class="field-label">Début</label><input type="time" class="modal-input" id="edit-start"></div>
-        <div><label class="field-label">Fin</label><input type="time" class="modal-input" id="edit-end"></div>
-      </div>
-    </div>
-    <div id="edit-special-section" style="display:none">
-      <label class="field-label">Libellé</label>
-      <input type="text" class="modal-input" id="edit-special-label" placeholder="CRDT, Vacances VAE, Récup. Jour…">
-    </div>
-    <div class="modal-actions">
-      <button class="btn-primary" onclick="saveShift()">Enregistrer</button>
-      <button class="btn-secondary" onclick="closeEdit()">Annuler</button>
-      <button class="btn-danger" onclick="deleteShift()">Supprimer</button>
-    </div>
+    <div id="edit-time-section"><div class="time-row"><div><label class="field-label">Debut</label><input type="time" class="modal-input" id="edit-start"></div><div><label class="field-label">Fin</label><input type="time" class="modal-input" id="edit-end"></div></div></div>
+    <div id="edit-special-section" style="display:none"><label class="field-label">Libelle</label><input type="text" class="modal-input" id="edit-special-label" placeholder="CRDT, Vacances VAE, Recup. Jour..."></div>
+    <div class="modal-actions"><button class="btn-primary" onclick="saveShift()">Enregistrer</button><button class="btn-secondary" onclick="closeEdit()">Annuler</button><button class="btn-danger" onclick="deleteShift()">Supprimer</button></div>
   </div>
 </div>
 
-<!-- MODAL ADD EMPLOYEE -->
 <div class="modal-overlay" id="modal-add-emp">
   <div class="modal">
-    <h3>👤 Ajouter un employé</h3>
-    <div class="modal-sub" id="add-emp-sub">Semaine en cours</div>
-    <label class="field-label">Prénom</label>
-    <input type="text" class="modal-input" id="emp-firstname" placeholder="Prénom">
-    <label class="field-label">Nom</label>
-    <input type="text" class="modal-input" id="emp-lastname" placeholder="NOM">
-    <div class="modal-actions">
-      <button class="btn-primary" onclick="confirmAddEmployee()">Ajouter</button>
-      <button class="btn-secondary" onclick="document.getElementById('modal-add-emp').classList.remove('open')">Annuler</button>
-    </div>
+    <h3>Ajouter un employe</h3><div class="modal-sub" id="add-emp-sub">Semaine en cours</div>
+    <label class="field-label">Prenom</label><input type="text" class="modal-input" id="emp-firstname" placeholder="Prenom">
+    <label class="field-label">Nom</label><input type="text" class="modal-input" id="emp-lastname" placeholder="NOM">
+    <div class="modal-actions"><button class="btn-primary" onclick="confirmAddEmployee()">Ajouter</button><button class="btn-secondary" onclick="closeAddEmployee()">Annuler</button></div>
   </div>
 </div>
 
 <script>
-const MY_NAME = "ESTEBAN";
 const DAYS = ["Lu","Ma","Me","Je","Ve","Sa"];
-const STORAGE_SETTINGS = "rob_settings";
+const DEFAULT_API_URL = "";
+const STORAGE_SETTINGS = "rob_google_settings";
 const STORAGE_CACHE = "rob_planning_cache";
+const STORAGE_ADMIN_TOKEN = "rob_admin_token";
+const STORAGE_LAST_SYNC = "rob_planning_last_sync";
+let allWeeks = [], currentWeekIdx = 0, editCtx = null, currentType = "repos", syncInProgress = false, apiCallId = 0;
 
-let allWeeks = [], currentWeekIdx = 0, editCtx = null, currentType = 'repos';
+function escapeHTML(value){return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+function getSettings(){try{return {apiUrl:(JSON.parse(localStorage.getItem(STORAGE_SETTINGS)||"{}").apiUrl||DEFAULT_API_URL).trim()};}catch(e){return {apiUrl:DEFAULT_API_URL};}}
+function getAdminToken(){return localStorage.getItem(STORAGE_ADMIN_TOKEN)||"";}
+function isAdmin(){return !!getAdminToken();}
+function updateAdminUI(){document.getElementById("app").classList.toggle("is-admin",isAdmin());}
+function apiUrl(){return getSettings().apiUrl.replace(/\/+$/,"");}
+function requireApiUrl(){const url=apiUrl();if(!url)throw new Error("URL Apps Script manquante");return url;}
 
-// ── SETTINGS ──────────────────────────────────────────────────────────────
-function getSettings() {
-  try { return { poupiIP:'192.168.129.131',...JSON.parse(localStorage.getItem(STORAGE_SETTINGS)||'{}') }; }
-  catch(e) { return { poupiIP:'192.168.129.131' }; }
-}
-function saveSettings() {
-  localStorage.setItem(STORAGE_SETTINGS, JSON.stringify({ poupiIP:document.getElementById('input-poupi').value.trim()||'192.168.129.131' }));
-  closeSettings(); setStatus('success','Configuration sauvegardée');
-}
-function openSettings() { document.getElementById('input-poupi').value=getSettings().poupiIP; document.getElementById('modal-settings').classList.add('open'); }
-function closeSettings() { document.getElementById('modal-settings').classList.remove('open'); }
-document.getElementById('modal-settings').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-settings')) closeSettings(); });
+function openSettings(){document.getElementById("input-api-url").value=getSettings().apiUrl;document.getElementById("modal-settings").classList.add("open");}
+function closeSettings(){document.getElementById("modal-settings").classList.remove("open");}
+function saveSettings(){localStorage.setItem(STORAGE_SETTINGS,JSON.stringify({apiUrl:document.getElementById("input-api-url").value.trim()}));closeSettings();syncNow(true);}
+function openAdmin(){document.getElementById("input-admin-token").value=getAdminToken();document.getElementById("modal-admin").classList.add("open");}
+function closeAdmin(){document.getElementById("modal-admin").classList.remove("open");}
+function saveAdmin(){localStorage.setItem(STORAGE_ADMIN_TOKEN,document.getElementById("input-admin-token").value.trim());closeAdmin();updateAdminUI();setStatus("success",isAdmin()?"Mode admin actif":"Mode lecture seule");}
+function lockAdmin(){localStorage.removeItem(STORAGE_ADMIN_TOKEN);closeAdmin();updateAdminUI();renderWeek(currentWeekIdx);setStatus("success","Mode lecture seule");}
 
-// ── IMPORT ────────────────────────────────────────────────────────────────
-function openImport() { document.getElementById('json-input').value=''; document.getElementById('modal-import').classList.add('open'); }
-function closeImport() { document.getElementById('modal-import').classList.remove('open'); }
-document.getElementById('modal-import').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-import')) closeImport(); });
-
-// Drag & drop
-const dz = document.getElementById('drop-zone');
-dz.addEventListener('dragover',e=>{ e.preventDefault(); dz.classList.add('drag-over'); });
-dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-dz.addEventListener('drop',e=>{ e.preventDefault(); dz.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{ closeImport(); processJSON(ev.target.result); }; r.readAsText(f); });
-
-function importFile(e) {
-  const file=e.target.files[0]; if(!file) return;
-  const r=new FileReader(); r.onload=ev=>{ closeImport(); processJSON(ev.target.result); }; r.readAsText(file); e.target.value='';
-}
-function importJSON() { const raw=document.getElementById('json-input').value.trim(); if(!raw) return; closeImport(); processJSON(raw); }
-
-function processJSON(raw) {
-  try {
-    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    let weeks=Array.isArray(parsed)?parsed:parsed.weeks?parsed.weeks:parsed.label?[parsed]:null;
-    if(!weeks?.length) throw new Error('Format non reconnu');
-    const newLabels=new Set(weeks.map(w=>w.label));
-    allWeeks=[...allWeeks.filter(w=>!newLabels.has(w.label)),...weeks].sort((a,b)=>(a.days?.[0]||'')>(b.days?.[0]||'')?1:-1);
-    persist();
-    currentWeekIdx=Math.max(0,allWeeks.findIndex(w=>newLabels.has(w.label)));
-    renderWeek(currentWeekIdx);
-    setStatus('success',`✓ ${weeks.length} semaine(s) importée(s)`);
-  } catch(err) { setStatus('error','⚠ JSON invalide : '+err.message); }
-}
-
-// ── PERSISTENCE ────────────────────────────────────────────────────────────
-function persist() {
-  localStorage.setItem(STORAGE_CACHE,JSON.stringify(allWeeks));
-  saveToServer();
-}
-async function saveToServer() {
-  try { await fetch(`http://${getSettings().poupiIP}/planning/save`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(allWeeks),signal:AbortSignal.timeout(5000)}); } catch(e){}
-}
-
-// ── INIT ──────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', async ()=>{
-  try {
-    setStatus('loading','Chargement...');
-    const resp=await fetch(`http://${getSettings().poupiIP}/planning/data`,{signal:AbortSignal.timeout(4000)});
-    if(resp.ok){ const data=await resp.json(); if(Array.isArray(data)&&data.length){ allWeeks=data; localStorage.setItem(STORAGE_CACHE,JSON.stringify(data)); currentWeekIdx=0; renderWeek(0); setStatus('success',`${data.length} semaine(s) chargée(s)`); return; } }
-  } catch(e){}
-  try {
-    const cached=JSON.parse(localStorage.getItem(STORAGE_CACHE)||'[]');
-    if(cached.length){ allWeeks=cached; currentWeekIdx=0; renderWeek(0); setStatus('success',`Cache local — ${cached.length} semaine(s)`); return; }
-  } catch(e){}
-  setStatus('','');
+["settings","admin","import","edit","add-emp"].forEach(id=>{
+  const el=document.getElementById("modal-"+id);
+  el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");});
 });
 
-// ── EDIT SHIFT ────────────────────────────────────────────────────────────
-function openEdit(weekIdx, empIdx, dateStr) {
+function openImport(){if(!isAdmin())return;document.getElementById("json-input").value="";document.getElementById("modal-import").classList.add("open");}
+function closeImport(){document.getElementById("modal-import").classList.remove("open");}
+const dz=document.getElementById("drop-zone");
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag-over");});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag-over"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag-over");const file=e.dataTransfer.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{closeImport();processJSON(ev.target.result);};r.readAsText(file);});
+function importFile(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{closeImport();processJSON(ev.target.result);};r.readAsText(file);e.target.value="";}
+function importJSON(){const raw=document.getElementById("json-input").value.trim();if(!raw)return;closeImport();processJSON(raw);}
+function processJSON(raw){
+  if(!isAdmin())return setStatus("error","Mode admin requis");
+  try{
+    const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
+    const weeks=Array.isArray(parsed)?parsed:parsed.weeks?parsed.weeks:parsed.label?[parsed]:null;
+    if(!weeks||!weeks.length)throw new Error("Format non reconnu");
+    const labels=new Set(weeks.map(w=>w.label));
+    allWeeks=[...allWeeks.filter(w=>!labels.has(w.label)),...weeks].sort(sortWeeks);
+    currentWeekIdx=Math.max(0,allWeeks.findIndex(w=>labels.has(w.label)));
+    saveLocalWeeks();renderWeek(currentWeekIdx);saveToGoogle("Import effectue");
+  }catch(err){setStatus("error","JSON invalide : "+err.message);}
+}
+
+function sortWeeks(a,b){return String(a.days?.[0]||"").localeCompare(String(b.days?.[0]||""));}
+function loadLocalWeeks(){try{const cached=JSON.parse(localStorage.getItem(STORAGE_CACHE)||"[]");return Array.isArray(cached)?cached:[];}catch(e){return [];}}
+function saveLocalWeeks(){localStorage.setItem(STORAGE_CACHE,JSON.stringify(allWeeks));}
+function lastSyncLabel(){const v=localStorage.getItem(STORAGE_LAST_SYNC);if(!v)return "";try{return " - sync "+new Date(v).toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
+
+function jsonp(action){
+  return new Promise((resolve,reject)=>{
+    const url=requireApiUrl();
+    const cb="robPlanningCb"+(++apiCallId);
+    const script=document.createElement("script");
+    const timer=setTimeout(()=>{cleanup();reject(new Error("Timeout Apps Script"));},10000);
+    function cleanup(){clearTimeout(timer);delete window[cb];script.remove();}
+    window[cb]=payload=>{cleanup();payload&&payload.ok?resolve(payload):reject(new Error(payload?.error||"Erreur Apps Script"));};
+    script.onerror=()=>{cleanup();reject(new Error("Chargement Apps Script impossible"));};
+    script.src=url+(url.includes("?")?"&":"?")+"action="+encodeURIComponent(action)+"&callback="+encodeURIComponent(cb)+"&_="+Date.now();
+    document.body.appendChild(script);
+  });
+}
+
+async function loadFromGoogle(){
+  const payload=await jsonp("data");
+  if(!Array.isArray(payload.weeks))throw new Error("Format Google Sheet invalide");
+  return payload.weeks.sort(sortWeeks);
+}
+
+async function postToGoogleNoCors(){
+  const body=JSON.stringify({token:getAdminToken(),weeks:allWeeks});
+  await fetch(requireApiUrl(),{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body});
+}
+
+async function saveToGoogle(context){
+  if(!isAdmin())return setStatus("error","Mode admin requis");
+  saveLocalWeeks();
+  setStatus("loading",(context||"Modification")+" - envoi Google Sheet...");
+  try{
+    await postToGoogleNoCors();
+    await new Promise(r=>setTimeout(r,1400));
+    const remote=await loadFromGoogle();
+    if(JSON.stringify(remote)!==JSON.stringify(allWeeks.sort(sortWeeks)))throw new Error("Verification distante incomplete");
+    localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());
+    setStatus("success","Synchronise Google Sheet"+lastSyncLabel());
+  }catch(err){
+    setStatus("pending","Sauvegarde locale OK - verification Google a refaire");
+  }
+}
+
+async function syncNow(userRequested){
+  if(syncInProgress)return;
+  syncInProgress=true;
+  try{
+    if(userRequested)setStatus("loading","Lecture Google Sheet...");
+    const weeks=await loadFromGoogle();
+    if(weeks.length){allWeeks=weeks;saveLocalWeeks();currentWeekIdx=Math.min(currentWeekIdx,weeks.length-1);renderWeek(currentWeekIdx);localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());setStatus("success","Synchronise Google Sheet"+lastSyncLabel());}
+    else{allWeeks=[];saveLocalWeeks();renderEmpty();setStatus("success","Google Sheet disponible - aucun planning");}
+  }catch(err){
+    const cached=loadLocalWeeks();
+    if(cached.length){allWeeks=cached;renderWeek(currentWeekIdx);setStatus("pending","Cache local - configure ou verifie l'URL Apps Script");}
+    else{renderEmpty();setStatus("error","Aucun planning - configure l'URL Apps Script");}
+  }finally{syncInProgress=false;}
+}
+
+function openEdit(weekIdx,empIdx,dateStr){
+  if(!isAdmin())return;
   editCtx={weekIdx,empIdx,dateStr};
-  const week=allWeeks[weekIdx], emp=week.employees[empIdx];
-  const shift=emp.shifts?.find(s=>s.date===dateStr)||{type:'repos'};
-  const d=new Date(dateStr+'T12:00:00');
-  document.getElementById('edit-title').textContent=`${emp.firstName} ${emp.lastName}`;
-  document.getElementById('edit-sub').textContent=`${DAYS[week.days.indexOf(dateStr)]||''} ${d.getDate()}/${String(d.getMonth()+1).padStart(2,'0')}`;
-  const type=shift.type||'repos', tl=type.toLowerCase();
-  if(tl==='ouverture'||tl.startsWith('ouv')||type==='Atelier') selectType('Ouverture');
-  else if(tl==='fermeture'||tl.startsWith('ferm')) selectType('Fermeture');
-  else if(type==='repos') selectType('repos');
-  else selectType('special');
-  document.getElementById('edit-start').value=shift.start||'';
-  document.getElementById('edit-end').value=shift.end||'';
-  const isOF=(tl==='ouverture'||tl.startsWith('ouv')||tl==='fermeture'||tl.startsWith('ferm')||type==='Atelier');
-  document.getElementById('edit-special-label').value=(!isOF&&type!=='repos')?type:'';
-  document.getElementById('modal-edit').classList.add('open');
+  const week=allWeeks[weekIdx], emp=week.employees[empIdx], shift=emp.shifts?.find(s=>s.date===dateStr)||{type:"repos"}, d=new Date(dateStr+"T12:00:00");
+  document.getElementById("edit-title").textContent=`${emp.firstName||""} ${emp.lastName||""}`.trim();
+  document.getElementById("edit-sub").textContent=`${DAYS[week.days.indexOf(dateStr)]||""} ${d.getDate()}/${String(d.getMonth()+1).padStart(2,"0")}`;
+  const type=shift.type||"repos", tl=type.toLowerCase();
+  if(tl==="ouverture"||tl.startsWith("ouv")||type==="Atelier")selectType("Ouverture");else if(tl==="fermeture"||tl.startsWith("ferm"))selectType("Fermeture");else if(type==="repos")selectType("repos");else selectType("special");
+  document.getElementById("edit-start").value=shift.start||"";document.getElementById("edit-end").value=shift.end||"";
+  const basic=tl==="ouverture"||tl.startsWith("ouv")||tl==="fermeture"||tl.startsWith("ferm")||type==="Atelier";
+  document.getElementById("edit-special-label").value=(!basic&&type!=="repos")?type:"";
+  document.getElementById("modal-edit").classList.add("open");
 }
-function closeEdit(){ document.getElementById('modal-edit').classList.remove('open'); editCtx=null; }
-document.getElementById('modal-edit').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-edit')) closeEdit(); });
+function closeEdit(){document.getElementById("modal-edit").classList.remove("open");editCtx=null;}
+function selectType(t){currentType=t;["tbtn-ouv","tbtn-ferm","tbtn-repos","tbtn-special"].forEach(id=>document.getElementById(id).classList.remove("active"));const map={Ouverture:"tbtn-ouv",Fermeture:"tbtn-ferm",repos:"tbtn-repos",special:"tbtn-special"};document.getElementById(map[t])?.classList.add("active");document.getElementById("edit-time-section").style.display=(t==="Ouverture"||t==="Fermeture")?"block":"none";document.getElementById("edit-special-section").style.display=t==="special"?"block":"none";}
+function saveShift(){if(!editCtx)return;const {weekIdx,empIdx,dateStr}=editCtx, emp=allWeeks[weekIdx].employees[empIdx];if(!emp.shifts)emp.shifts=[];const shift={date:dateStr};if(currentType==="repos")shift.type="repos";else if(currentType==="special")shift.type=document.getElementById("edit-special-label").value.trim()||"Absent";else{shift.type=currentType;shift.start=document.getElementById("edit-start").value;shift.end=document.getElementById("edit-end").value;}const idx=emp.shifts.findIndex(s=>s.date===dateStr);if(idx>=0)emp.shifts[idx]=shift;else emp.shifts.push(shift);closeEdit();renderWeek(weekIdx);saveToGoogle("Shift modifie");}
+function deleteShift(){if(!editCtx)return;const {weekIdx,empIdx,dateStr}=editCtx, emp=allWeeks[weekIdx].employees[empIdx];if(emp.shifts)emp.shifts=emp.shifts.filter(s=>s.date!==dateStr);closeEdit();renderWeek(weekIdx);saveToGoogle("Shift supprime");}
+function openAddEmployee(){if(!isAdmin())return;document.getElementById("emp-firstname").value="";document.getElementById("emp-lastname").value="";document.getElementById("add-emp-sub").textContent=allWeeks[currentWeekIdx]?.label||"Semaine en cours";document.getElementById("modal-add-emp").classList.add("open");}
+function closeAddEmployee(){document.getElementById("modal-add-emp").classList.remove("open");}
+function confirmAddEmployee(){const fn=document.getElementById("emp-firstname").value.trim(), ln=document.getElementById("emp-lastname").value.trim();if(!fn&&!ln)return;const week=allWeeks[currentWeekIdx];if(!week)return;week.employees=week.employees||[];week.employees.push({firstName:fn,lastName:ln,shifts:(week.days||[]).map(d=>({date:d,type:"repos"}))});closeAddEmployee();renderWeek(currentWeekIdx);saveToGoogle(`${fn} ${ln}`.trim()+" ajoute");}
 
-function selectType(t) {
-  currentType=t;
-  ['tbtn-ouv','tbtn-ferm','tbtn-repos','tbtn-special'].forEach(id=>document.getElementById(id).classList.remove('active'));
-  const map={'Ouverture':'tbtn-ouv','Fermeture':'tbtn-ferm','repos':'tbtn-repos','special':'tbtn-special'};
-  document.getElementById(map[t])?.classList.add('active');
-  document.getElementById('edit-time-section').style.display=(t==='Ouverture'||t==='Fermeture')?'block':'none';
-  document.getElementById('edit-special-section').style.display=t==='special'?'block':'none';
+function buildChip(shift){
+  if(!shift||shift.type==="repos")return `<div class="chip off"><span class="chip-off-label">-</span></div>`;
+  const t=shift.type||"", tl=t.toLowerCase(), type=escapeHTML(t), start=escapeHTML(shift.start||""), end=escapeHTML(shift.end||"");
+  if(tl==="ouverture"||tl.startsWith("ouv")||t==="Atelier")return `<div class="chip ouv"><div class="chip-time">${start}-${end}</div><div class="chip-type">${type}</div></div>`;
+  if(tl==="fermeture"||tl.startsWith("ferm"))return `<div class="chip ferm"><div class="chip-time">${start}-${end}</div><div class="chip-type">Fermeture</div></div>`;
+  return `<div class="chip special">${shift.start?`<div class="chip-time">${start}-${end}</div>`:""}<div class="chip-label">${type}</div></div>`;
 }
-function saveShift(){
-  if(!editCtx) return;
-  const {weekIdx,empIdx,dateStr}=editCtx;
-  const emp=allWeeks[weekIdx].employees[empIdx];
-  if(!emp.shifts) emp.shifts=[];
-  let shift={date:dateStr};
-  if(currentType==='repos') shift.type='repos';
-  else if(currentType==='special') shift.type=document.getElementById('edit-special-label').value.trim()||'Absent';
-  else { shift.type=currentType; shift.start=document.getElementById('edit-start').value; shift.end=document.getElementById('edit-end').value; }
-  const idx=emp.shifts.findIndex(s=>s.date===dateStr);
-  if(idx>=0) emp.shifts[idx]=shift; else emp.shifts.push(shift);
-  persist(); closeEdit(); renderWeek(weekIdx); setStatus('success','✓ Shift modifié');
-}
-function deleteShift(){
-  if(!editCtx) return;
-  const {weekIdx,empIdx,dateStr}=editCtx;
-  const emp=allWeeks[weekIdx].employees[empIdx];
-  if(emp.shifts) emp.shifts=emp.shifts.filter(s=>s.date!==dateStr);
-  persist(); closeEdit(); renderWeek(weekIdx); setStatus('success','Shift supprimé');
-}
-
-// ── ADD EMPLOYEE ──────────────────────────────────────────────────────────
-function openAddEmployee(){
-  document.getElementById('emp-firstname').value='';
-  document.getElementById('emp-lastname').value='';
-  document.getElementById('add-emp-sub').textContent=allWeeks[currentWeekIdx]?.label||'Semaine en cours';
-  document.getElementById('modal-add-emp').classList.add('open');
-}
-document.getElementById('modal-add-emp').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-add-emp')) document.getElementById('modal-add-emp').classList.remove('open'); });
-function confirmAddEmployee(){
-  const fn=document.getElementById('emp-firstname').value.trim();
-  const ln=document.getElementById('emp-lastname').value.trim();
-  if(!fn&&!ln) return;
-  const week=allWeeks[currentWeekIdx]; if(!week) return;
-  week.employees=week.employees||[];
-  week.employees.push({firstName:fn,lastName:ln,shifts:(week.days||[]).map(d=>({date:d,type:'repos'}))});
-  persist(); document.getElementById('modal-add-emp').classList.remove('open');
-  renderWeek(currentWeekIdx); setStatus('success',`✓ ${fn} ${ln} ajouté(e)`);
-}
-
-// ── BUILD CHIP ────────────────────────────────────────────────────────────
-function buildChip(shift) {
-  if(!shift||shift.type==='repos') return `<div class="chip off"><span class="chip-off-label">–</span></div>`;
-  const t=shift.type||'', tl=t.toLowerCase();
-  if(tl==='ouverture'||tl.startsWith('ouv')||t==='Atelier'){
-    return `<div class="chip ouv"><div class="chip-time">${shift.start||''}–${shift.end||''}</div><div class="chip-type">${t}</div></div>`;
-  }
-  if(tl==='fermeture'||tl.startsWith('ferm')){
-    return `<div class="chip ferm"><div class="chip-time">${shift.start||''}–${shift.end||''}</div><div class="chip-type">Fermeture</div></div>`;
-  }
-  const timeStr=shift.start?`<div class="chip-time">${shift.start}–${shift.end}</div>`:'';
-  return `<div class="chip special">${timeStr}<div class="chip-label">${t}</div></div>`;
-}
-
-// ── RENDER ────────────────────────────────────────────────────────────────
+function renderEmpty(){document.getElementById("week-nav").style.display="none";document.getElementById("planning").innerHTML=`<div class="empty-state"><span class="empty-icon">Calendrier</span><div class="empty-title">Aucun planning charge</div><div class="empty-sub">Configure l'URL Apps Script, puis actualise.</div></div>`;}
 function renderWeek(idx){
-  const week=allWeeks[idx]; if(!week) return;
-  document.getElementById('week-nav').style.display='flex';
-  document.getElementById('week-title').textContent=week.label;
-  document.getElementById('prev-btn').disabled=idx===0;
-  document.getElementById('next-btn').disabled=idx===allWeeks.length-1;
-
-  const todayStr=new Date().toISOString().split('T')[0];
-  const planning=document.getElementById('planning');
-  planning.style.display='block'; planning.innerHTML='';
-
-  const card=document.createElement('div'); card.className='planning-card';
-
-  // GRID HEADER
-  const gh=document.createElement('div'); gh.className='grid-header';
-  gh.innerHTML=`<div class="gh-name"><span>Employé</span></div>`;
-  (week.days||[]).forEach((ds,i)=>{
-    const d=new Date(ds+'T12:00:00');
-    gh.innerHTML+=`<div class="gh-day"><div class="gh-day-label">${DAYS[i]||''}</div><div class="gh-day-date${ds===todayStr?' today':''}">${d.getDate()}</div></div>`;
-  });
-  card.appendChild(gh);
-
-  // EMPLOYEE ROWS — ordre original conservé
-  (week.employees||[]).forEach((emp,empIdx)=>{
-    const row=document.createElement('div'); row.className='grid-row';
-    const nameDiv=document.createElement('div'); nameDiv.className='gr-name';
-    nameDiv.innerHTML=`<span class="fn">${emp.firstName||''}</span><span class="ln">${emp.lastName||''}</span>`;
-    row.appendChild(nameDiv);
-    (week.days||[]).forEach(ds=>{
-      const shift=emp.shifts?.find(s=>s.date===ds);
-      const cell=document.createElement('div'); cell.className='gr-cell';
-      cell.title='Modifier';
-      cell.onclick=()=>openEdit(idx,empIdx,ds);
-      cell.innerHTML=buildChip(shift);
-      row.appendChild(cell);
-    });
-    card.appendChild(row);
-  });
-
-  // FOOTER
-  const footer=document.createElement('div'); footer.className='grid-footer';
-  footer.innerHTML=`<span class="edit-hint">✏️ Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employé</button>`;
-  card.appendChild(footer);
-
-  planning.appendChild(card);
+  const week=allWeeks[idx];if(!week)return renderEmpty();currentWeekIdx=idx;updateAdminUI();
+  document.getElementById("week-nav").style.display="flex";document.getElementById("week-title").textContent=week.label||"Planning";document.getElementById("prev-btn").disabled=idx===0;document.getElementById("next-btn").disabled=idx===allWeeks.length-1;
+  const todayStr=new Date().toISOString().split("T")[0], card=document.createElement("div");card.className="planning-card";
+  const gh=document.createElement("div");gh.className="grid-header";gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;
+  (week.days||[]).forEach((ds,i)=>{const d=new Date(ds+"T12:00:00");gh.innerHTML+=`<div class="gh-day"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===todayStr?" today":""}">${d.getDate()}</div></div>`;});card.appendChild(gh);
+  (week.employees||[]).forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="grid-row";const name=document.createElement("div");name.className="gr-name";name.innerHTML=`<span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>`;row.appendChild(name);(week.days||[]).forEach(ds=>{const cell=document.createElement("div");cell.className="gr-cell";if(isAdmin()){cell.title="Modifier";cell.onclick=()=>openEdit(idx,empIdx,ds);}cell.innerHTML=buildChip(emp.shifts?.find(s=>s.date===ds));row.appendChild(cell);});card.appendChild(row);});
+  const footer=document.createElement("div");footer.className="grid-footer admin-only";footer.innerHTML=`<span class="edit-hint">Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;card.appendChild(footer);
+  document.getElementById("planning").innerHTML="";document.getElementById("planning").appendChild(card);updateAdminUI();
 }
-
-function changeWeek(dir){ currentWeekIdx=Math.max(0,Math.min(allWeeks.length-1,currentWeekIdx+dir)); renderWeek(currentWeekIdx); }
-function setStatus(type,msg){ const el=document.getElementById('status'); el.className=type; el.innerHTML=type==='loading'?`<span class="spinner"></span>${msg}`:msg; }
+function changeWeek(dir){currentWeekIdx=Math.max(0,Math.min(allWeeks.length-1,currentWeekIdx+dir));renderWeek(currentWeekIdx);}
+function setStatus(type,msg){const el=document.getElementById("status");el.className=type||"";el.innerHTML=type==="loading"?`<span class="spinner"></span>${escapeHTML(msg)}`:escapeHTML(msg||"");}
+window.addEventListener("DOMContentLoaded",()=>{updateAdminUI();const cached=loadLocalWeeks();if(cached.length){allWeeks=cached;renderWeek(0);}else renderEmpty();syncNow(false);});
 </script>
 </body>
 </html>
