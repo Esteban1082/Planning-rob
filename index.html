@@ -28,13 +28,16 @@
   #status{font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace;margin-bottom:14px;min-height:18px;text-align:center}
   #status.error{color:var(--red)}#status.success{color:var(--green)}#status.loading{color:var(--accent)}#status.pending{color:var(--amber)}
   @keyframes spin{to{transform:rotate(360deg)}}.spinner{display:inline-block;width:11px;height:11px;border:2px solid rgba(59,130,246,.25);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:5px}
-  #week-nav{display:none;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}.week-title{font-size:14px;font-weight:700;color:var(--text2);text-align:center}
+  #week-nav{display:none;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}.week-title{font-size:14px;font-weight:700;color:var(--text2);text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .week-nav-actions{display:flex;align-items:center;gap:8px}.week-state-badge{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;border-radius:999px;padding:3px 9px;border:1px solid var(--border)}
+  #week-nav.week-past .week-state-badge{background:#f9fafb;color:var(--muted2);border-color:#e5e7eb}#week-nav.week-current .week-state-badge{background:var(--accent-light);color:var(--accent);border-color:#bfdbfe}#week-nav.week-future .week-state-badge{background:var(--green-light);color:var(--green);border-color:#a7f3d0}
   .week-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;box-shadow:var(--shadow)}
   .week-btn:hover{border-color:var(--accent);color:var(--accent)}.week-btn:disabled{opacity:.3;cursor:default}
   .planning-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+  .planning-card.week-past{border-color:#d1d5db}.planning-card.week-current{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(59,130,246,.12),var(--shadow)}.planning-card.week-future{border-color:#a7f3d0}
   .grid-header,.grid-row{display:grid;grid-template-columns:148px repeat(6,1fr);border-bottom:1px solid var(--border)}.grid-header{background:var(--surface2)}.grid-row:last-child{border-bottom:none}.grid-row:hover{background:#fafbfc}
   .gh-name{padding:10px 13px;display:flex;align-items:flex-end;border-right:1px solid var(--border)}.gh-name span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-family:'DM Mono',monospace}
-  .gh-day{padding:9px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}
+  .gh-day{padding:9px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day.today-col{background:var(--accent-light)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}
   .gr-name{padding:9px 13px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border);background:var(--surface2)}.gr-name .fn{font-size:12px;font-weight:600}.gr-name .ln{font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace;margin-top:1px}
   .gr-cell{padding:5px;border-left:1px solid var(--border);min-height:52px;transition:background .1s}.is-admin .gr-cell{cursor:pointer}.is-admin .gr-cell:hover{background:rgba(59,130,246,.05)}
   .grid-footer{padding:8px 18px;border-top:1px solid var(--border);background:var(--surface2);align-items:center;gap:6px}.edit-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;flex:1}.btn-add-emp{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer}
@@ -57,27 +60,17 @@
     <div class="header-actions">
       <button class="icon-btn admin-only" onclick="openImport()">Importer</button>
       <button class="icon-btn" onclick="syncNow(true)">Actualiser</button>
+      <button class="icon-btn" onclick="goToday()">Aujourd'hui</button>
       <button class="icon-btn" onclick="openAdmin()">Admin</button>
-      <button class="icon-btn" onclick="openSettings()">Config</button>
     </div>
   </header>
   <div id="status"></div>
   <div id="week-nav">
-    <button class="week-btn" id="prev-btn" onclick="changeWeek(-1)" disabled>&larr; Pr&eacute;c.</button>
+    <div class="week-nav-actions"><button class="week-btn" id="prev-btn" onclick="changeWeek(-1)" disabled>&larr; Pr&eacute;c.</button></div>
     <div class="week-title" id="week-title"></div>
-    <button class="week-btn" id="next-btn" onclick="changeWeek(1)" disabled>Suiv. &rarr;</button>
+    <div class="week-nav-actions"><button class="week-btn" id="next-btn" onclick="changeWeek(1)" disabled>Suiv. &rarr;</button></div>
   </div>
   <div id="planning"></div>
-</div>
-
-<div class="modal-overlay" id="modal-settings">
-  <div class="modal">
-    <h3>Configuration</h3>
-    <div class="modal-sub">Colle ici l'URL de deploiement Google Apps Script. Une fois l'URL integree dans le HTML final, l'equipe n'aura plus rien a configurer.</div>
-    <label class="field-label">URL Google Apps Script</label>
-    <input type="url" class="modal-input" id="input-api-url" placeholder="https://script.google.com/macros/s/.../exec">
-    <div class="modal-actions"><button class="btn-primary" onclick="saveSettings()">Enregistrer</button><button class="btn-secondary" onclick="closeSettings()">Annuler</button></div>
-  </div>
 </div>
 
 <div class="modal-overlay" id="modal-admin">
@@ -131,24 +124,19 @@
 
 <script>
 const DAYS = ["Lu","Ma","Me","Je","Ve","Sa"];
-const DEFAULT_API_URL = "";
-const STORAGE_SETTINGS = "rob_google_settings";
+const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxkRwejUPDsjpUG6z7oRIQlGxj3lmJbYMgefCrNB8HCzWWI8Q5zHxPYL8tKn_hvg_ar/exec";
 const STORAGE_CACHE = "rob_planning_cache";
 const STORAGE_ADMIN_TOKEN = "rob_admin_token";
 const STORAGE_LAST_SYNC = "rob_planning_last_sync";
 let allWeeks = [], currentWeekIdx = 0, editCtx = null, currentType = "repos", syncInProgress = false, apiCallId = 0;
 
 function escapeHTML(value){return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
-function getSettings(){try{return {apiUrl:(JSON.parse(localStorage.getItem(STORAGE_SETTINGS)||"{}").apiUrl||DEFAULT_API_URL).trim()};}catch(e){return {apiUrl:DEFAULT_API_URL};}}
 function getAdminToken(){return localStorage.getItem(STORAGE_ADMIN_TOKEN)||"";}
 function isAdmin(){return !!getAdminToken();}
 function updateAdminUI(){document.getElementById("app").classList.toggle("is-admin",isAdmin());}
-function apiUrl(){return getSettings().apiUrl.replace(/\/+$/,"");}
+function apiUrl(){return DEFAULT_API_URL.replace(/\/+$/,"");}
 function requireApiUrl(){const url=apiUrl();if(!url)throw new Error("URL Apps Script manquante");return url;}
 
-function openSettings(){document.getElementById("input-api-url").value=getSettings().apiUrl;document.getElementById("modal-settings").classList.add("open");}
-function closeSettings(){document.getElementById("modal-settings").classList.remove("open");}
-function saveSettings(){localStorage.setItem(STORAGE_SETTINGS,JSON.stringify({apiUrl:document.getElementById("input-api-url").value.trim()}));closeSettings();syncNow(true);}
 function openAdmin(){document.getElementById("input-admin-token").value=getAdminToken();document.getElementById("modal-admin").classList.add("open");}
 function closeAdmin(){document.getElementById("modal-admin").classList.remove("open");}
 async function saveAdmin(){
@@ -168,7 +156,7 @@ async function saveAdmin(){
 }
 function lockAdmin(){localStorage.removeItem(STORAGE_ADMIN_TOKEN);closeAdmin();updateAdminUI();renderWeek(currentWeekIdx);setStatus("success","Mode lecture seule");}
 
-["settings","admin","import","edit","add-emp"].forEach(id=>{
+["admin","import","edit","add-emp"].forEach(id=>{
   const el=document.getElementById("modal-"+id);
   el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open");});
 });
@@ -198,6 +186,16 @@ function sortWeeks(a,b){return String(a.days?.[0]||"").localeCompare(String(b.da
 function loadLocalWeeks(){try{const cached=JSON.parse(localStorage.getItem(STORAGE_CACHE)||"[]");return Array.isArray(cached)?cached:[];}catch(e){return [];}}
 function saveLocalWeeks(){localStorage.setItem(STORAGE_CACHE,JSON.stringify(allWeeks));}
 function lastSyncLabel(){const v=localStorage.getItem(STORAGE_LAST_SYNC);if(!v)return "";try{return " - sync "+new Date(v).toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
+function todayISO(){return new Date().toISOString().split("T")[0];}
+function getWeekState(week){
+  const days=week?.days||[], today=todayISO(), start=days[0]||"", end=days[days.length-1]||"";
+  if(start&&end&&today>=start&&today<=end)return "current";
+  if(end&&today>end)return "past";
+  return "future";
+}
+function weekStateLabel(state){return state==="current"?"Semaine actuelle":state==="past"?"Semaine passee":"Semaine a venir";}
+function findTodayWeekIndex(){const idx=allWeeks.findIndex(w=>getWeekState(w)==="current");return idx>=0?idx:Math.max(0,Math.min(currentWeekIdx,allWeeks.length-1));}
+function goToday(){if(!allWeeks.length)return setStatus("pending","Aucun planning charge");renderWeek(findTodayWeekIndex());}
 
 function jsonp(action,params={}){
   return new Promise((resolve,reject)=>{
@@ -248,12 +246,12 @@ async function syncNow(userRequested){
   try{
     if(userRequested)setStatus("loading","Lecture Google Sheet...");
     const weeks=await loadFromGoogle();
-    if(weeks.length){allWeeks=weeks;saveLocalWeeks();currentWeekIdx=Math.min(currentWeekIdx,weeks.length-1);renderWeek(currentWeekIdx);localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());setStatus("success","Synchronise Google Sheet"+lastSyncLabel());}
+    if(weeks.length){allWeeks=weeks;saveLocalWeeks();currentWeekIdx=findTodayWeekIndex();renderWeek(currentWeekIdx);localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());setStatus("success","Synchronise Google Sheet"+lastSyncLabel());}
     else{allWeeks=[];saveLocalWeeks();renderEmpty();setStatus("success","Google Sheet disponible - aucun planning");}
   }catch(err){
     const cached=loadLocalWeeks();
-    if(cached.length){allWeeks=cached;renderWeek(currentWeekIdx);setStatus("pending","Cache local - configure ou verifie l'URL Apps Script");}
-    else{renderEmpty();setStatus("error","Aucun planning - configure l'URL Apps Script");}
+    if(cached.length){allWeeks=cached;currentWeekIdx=findTodayWeekIndex();renderWeek(currentWeekIdx);setStatus("pending","Cache local - verifie Apps Script");}
+    else{renderEmpty();setStatus("error","Aucun planning - verifie Apps Script");}
   }finally{syncInProgress=false;}
 }
 
@@ -285,20 +283,23 @@ function buildChip(shift){
   if(tl==="fermeture"||tl.startsWith("ferm"))return `<div class="chip ferm"><div class="chip-time">${start}-${end}</div><div class="chip-type">Fermeture</div></div>`;
   return `<div class="chip special">${shift.start?`<div class="chip-time">${start}-${end}</div>`:""}<div class="chip-label">${type}</div></div>`;
 }
-function renderEmpty(){document.getElementById("week-nav").style.display="none";document.getElementById("planning").innerHTML=`<div class="empty-state"><span class="empty-icon">Calendrier</span><div class="empty-title">Aucun planning charge</div><div class="empty-sub">Configure l'URL Apps Script, puis actualise.</div></div>`;}
+function renderEmpty(){document.getElementById("week-nav").style.display="none";document.getElementById("planning").innerHTML=`<div class="empty-state"><span class="empty-icon">Calendrier</span><div class="empty-title">Aucun planning charge</div><div class="empty-sub">Clique sur Actualiser ou importe un planning en mode admin.</div></div>`;}
 function renderWeek(idx){
   const week=allWeeks[idx];if(!week)return renderEmpty();currentWeekIdx=idx;updateAdminUI();
-  document.getElementById("week-nav").style.display="flex";document.getElementById("week-title").textContent=week.label||"Planning";document.getElementById("prev-btn").disabled=idx===0;document.getElementById("next-btn").disabled=idx===allWeeks.length-1;
-  const todayStr=new Date().toISOString().split("T")[0], card=document.createElement("div");card.className="planning-card";
+  const state=getWeekState(week);
+  const nav=document.getElementById("week-nav");nav.style.display="flex";nav.className="week-"+state;
+  document.getElementById("week-title").innerHTML=`<span>${escapeHTML(week.label||"Planning")}</span><span class="week-state-badge">${weekStateLabel(state)}</span>`;
+  document.getElementById("prev-btn").disabled=idx===0;document.getElementById("next-btn").disabled=idx===allWeeks.length-1;
+  const todayStr=todayISO(), card=document.createElement("div");card.className="planning-card week-"+state;
   const gh=document.createElement("div");gh.className="grid-header";gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;
-  (week.days||[]).forEach((ds,i)=>{const d=new Date(ds+"T12:00:00");gh.innerHTML+=`<div class="gh-day"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===todayStr?" today":""}">${d.getDate()}</div></div>`;});card.appendChild(gh);
+  (week.days||[]).forEach((ds,i)=>{const d=new Date(ds+"T12:00:00");gh.innerHTML+=`<div class="gh-day${ds===todayStr?" today-col":""}"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===todayStr?" today":""}">${d.getDate()}</div></div>`;});card.appendChild(gh);
   (week.employees||[]).forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="grid-row";const name=document.createElement("div");name.className="gr-name";name.innerHTML=`<span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>`;row.appendChild(name);(week.days||[]).forEach(ds=>{const cell=document.createElement("div");cell.className="gr-cell";if(isAdmin()){cell.title="Modifier";cell.onclick=()=>openEdit(idx,empIdx,ds);}cell.innerHTML=buildChip(emp.shifts?.find(s=>s.date===ds));row.appendChild(cell);});card.appendChild(row);});
   const footer=document.createElement("div");footer.className="grid-footer admin-only";footer.innerHTML=`<span class="edit-hint">Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;card.appendChild(footer);
   document.getElementById("planning").innerHTML="";document.getElementById("planning").appendChild(card);updateAdminUI();
 }
 function changeWeek(dir){currentWeekIdx=Math.max(0,Math.min(allWeeks.length-1,currentWeekIdx+dir));renderWeek(currentWeekIdx);}
 function setStatus(type,msg){const el=document.getElementById("status");el.className=type||"";el.innerHTML=type==="loading"?`<span class="spinner"></span>${escapeHTML(msg)}`:escapeHTML(msg||"");}
-window.addEventListener("DOMContentLoaded",()=>{updateAdminUI();const cached=loadLocalWeeks();if(cached.length){allWeeks=cached;renderWeek(0);}else renderEmpty();syncNow(false);});
+window.addEventListener("DOMContentLoaded",()=>{updateAdminUI();const cached=loadLocalWeeks();if(cached.length){allWeeks=cached;renderWeek(findTodayWeekIndex());}else renderEmpty();syncNow(false);});
 </script>
 </body>
 </html>
