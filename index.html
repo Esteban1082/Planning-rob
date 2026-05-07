@@ -62,6 +62,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <button class="tab-btn" id="tab-stats" onclick="setView('stats')">Stats</button>
     </div>
     <div class="toolbar-right">
+      <input type="search" class="search-input" id="employee-search" placeholder="Rechercher un employé..." oninput="refreshEmployeeFilter()">
       <select class="select-input" id="employee-filter" onchange="selectedEmployeeKey=this.value;setView('employee')"></select>
     </div>
   </div>
@@ -177,11 +178,20 @@ function setActiveTabs(){["week","today","employee","stats"].forEach(v=>document
 function goToday(){if(!allWeeks.length)return setStatus("pending","Aucun planning charge");currentWeekIdx=findTodayWeekIndex();currentView="week";render();}
 function changeWeek(dir){if(dir>0&&currentWeekIdx>=allWeeks.length-1){const last=allWeeks[allWeeks.length-1],nextStart=last?.days?.[0]?addDays(new Date(last.days[0]+"T12:00:00"),7):mondayOf(new Date());currentWeekIdx=addWeekIfMissing(nextStart);saveLocalWeeks()}else{currentWeekIdx=Math.max(0,currentWeekIdx+dir)}currentView="week";render();}
 
-function refreshEmployeeFilter(){
-  const select=document.getElementById("employee-filter"),seen=new Map();
+function searchEmployees(query){
+  const q=String(query||"").toLowerCase().trim();
+  const seen=new Map();
   allWeeks.forEach(w=>(w.employees||[]).forEach(e=>{const k=employeeKey(e);if(k.trim()!=="|"&&!seen.has(k))seen.set(k,employeeLabel(e));}));
-  const old=selectedEmployeeKey;select.innerHTML=`<option value="">Tous les employes</option>`+[...seen.entries()].sort((a,b)=>a[1].localeCompare(b[1])).map(([k,l])=>`<option value="${escapeHTML(k)}">${escapeHTML(l)}</option>`).join("");
-  if(old&&seen.has(old)){selectedEmployeeKey=old;select.value=old}else if(!seen.has(selectedEmployeeKey)){selectedEmployeeKey=""}
+  const results=Array.from(seen.entries()).filter(([k,l])=>!q||l.toLowerCase().includes(q)||k.includes(q)).sort((a,b)=>a[1].localeCompare(b[1]));
+  return results;
+}
+function refreshEmployeeFilter(){
+  const query=document.getElementById("employee-search").value;
+  const results=searchEmployees(query);
+  const select=document.getElementById("employee-filter");
+  select.innerHTML=`<option value="">Tous les employes</option>`+results.map(([k,l])=>`<option value="${escapeHTML(k)}">${escapeHTML(l)}</option>`).join("");
+  if(!results.length&&query)select.innerHTML=`<option value="">Aucun resultat</option>`;
+  const old=selectedEmployeeKey;if(old&&results.some(([k])=>k===old)){selectedEmployeeKey=old;select.value=old}else if(!results.some(([k])=>k===selectedEmployeeKey)){selectedEmployeeKey=""}
 }
 
 function openAdmin(){document.getElementById("input-admin-token").value=getAdminToken();document.getElementById("modal-admin").classList.add("open");}
