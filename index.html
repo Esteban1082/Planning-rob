@@ -28,7 +28,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .week-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;box-shadow:var(--shadow)}.week-btn:hover{border-color:var(--accent);color:var(--accent)}.week-btn:disabled{opacity:.3;cursor:default}
 .planning-card,.view-card{background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}.planning-card.week-past{border-color:oklch(84% .006 250)}.planning-card.week-current{border-color:oklch(76% .09 255);box-shadow:0 0 0 3px rgba(59,130,246,.12),var(--shadow)}.planning-card.week-future{border-color:oklch(79% .10 145)}
 .mobile-planning{display:none}.grid-header,.grid-row{display:grid;grid-template-columns:148px repeat(6,1fr);border-bottom:1px solid var(--border)}.grid-header{background:var(--surface2)}.grid-row:last-child{border-bottom:none}.grid-row:hover{background:#fafbfc}
-.gh-name{padding:11px 13px;display:flex;align-items:flex-end;border-right:1px solid var(--border)}.gh-name span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-family:'DM Mono',ui-monospace,Menlo,monospace}.gh-day{padding:10px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day.today-col{background:var(--accent-light)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',ui-monospace,Menlo,monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}
+.gh-name{padding:11px 13px;display:flex;align-items:flex-end;border-right:1px solid var(--border)}.gh-name span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-family:'DM Mono',ui-monospace,Menlo,monospace}.gh-day{padding:10px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day.today-col{background:var(--accent-light)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',ui-monospace,Menlo,monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}.gh-day-note-badge{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:var(--purple);color:white;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;}
 .gr-name{position:relative;padding:10px 13px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border);background:var(--surface2);transition:background .15s}.gr-name .fn{font-size:12px;font-weight:800}.gr-name .ln{font-size:10px;color:var(--muted2);font-family:'DM Mono',ui-monospace,Menlo,monospace;margin-top:1px}.gr-name{cursor:pointer}.gr-name:hover{background:var(--accent-light)}.emp-delete-btn{display:none;position:absolute;right:7px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:7px;border:1px solid #fecaca;background:var(--red-light);color:var(--red);font-size:15px;line-height:1;font-weight:800;cursor:pointer}.is-admin .gr-name:hover .emp-delete-btn,.is-admin .mobile-emp-name .emp-delete-btn{display:inline-flex;align-items:center;justify-content:center}.gr-cell{padding:5px;border-left:1px solid var(--border);min-height:54px;transition:background .1s}.is-admin .gr-cell{cursor:pointer}.is-admin .gr-cell:hover{background:rgba(59,130,246,.05)}
 .grid-footer{padding:8px 18px;border-top:1px solid var(--border);background:var(--surface2);align-items:center;gap:6px}.edit-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;flex:1}.btn-add-emp{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
 .chip{border-radius:6px;padding:5px 7px;margin-bottom:2px;min-height:25px;width:100%;border:1px solid transparent}.chip.ouv{background:var(--green-light);border-color:oklch(88% .05 145);border-left:3px solid var(--green)}.chip.ferm{background:var(--accent-light);border-color:oklch(88% .05 255);border-left:3px solid var(--accent)}.chip.off{background:#f9fafb;border-color:#edf0f4;border-left:3px solid #e5e7eb}.chip.empty{background:#fff;border-color:#edf0f4;border-left:3px dashed #d1d5db}.chip.special{background:var(--purple-light);border-color:oklch(88% .05 300);border-left:3px solid var(--purple)}.chip-time{font-family:'DM Mono',ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;color:var(--text);line-height:1.2}.chip-type{font-size:9px;color:var(--muted2);margin-top:1px;text-transform:uppercase;letter-spacing:.3px}.chip-off-label{font-size:11px;color:var(--muted);font-style:italic}.chip-label{font-size:10px;color:var(--purple);font-weight:700;overflow-wrap:anywhere}
@@ -147,6 +147,19 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
   </div>
 </div></div>
 
+<!-- Modale Note du jour -->
+<div class="modal-overlay" id="modal-daynote"><div class="modal">
+  <h3 id="daynote-title">Note du jour</h3>
+  <div class="modal-sub" id="daynote-sub">Ajouter une note pour ce jour (visible par tous).</div>
+  <label class="field-label">Note</label>
+  <textarea class="modal-input" id="daynote-text" style="height:120px;resize:vertical;font-family:Inter,sans-serif" placeholder="Ex: Formation nouvel employé, Fermeture exceptionnelle, Remplacement prévu..."></textarea>
+  <div class="modal-actions">
+    <button class="btn-primary" id="daynote-save-btn" onclick="saveDayNote()">Enregistrer</button>
+    <button class="btn-secondary" onclick="closeDayNote()">Annuler</button>
+    <button class="danger-btn" id="daynote-delete-btn" onclick="deleteDayNote()" style="display:none">Supprimer</button>
+  </div>
+</div></div>
+
 <script>
 const DAYS=["Lu","Ma","Me","Je","Ve","Sa"],INITIAL_FUTURE_WEEKS=12;
 
@@ -237,6 +250,70 @@ function confirmCopyWeek() {
   setStatus('success', 'Copie de la semaine effectuée.');
 }
 
+// Gestion des notes par jour
+let currentNoteCtx = null; // {weekIdx, day}
+
+function openDayNote(weekIdx, day) {
+  const week = allWeeks[weekIdx];
+  if (!week) return;
+  currentNoteCtx = {weekIdx, day};
+  const note = week.notes?.days?.[day] || "";
+  document.getElementById('daynote-text').value = note;
+  document.getElementById('daynote-title').textContent = `Note pour le ${new Date(day+"T12:00:00").toLocaleDateString('fr-BE', {weekday: 'long', day: 'numeric', month: 'long'})}`;
+  document.getElementById('daynote-delete-btn').style.display = note.trim() ? 'inline-block' : 'none';
+  document.getElementById('modal-daynote').classList.add('open');
+}
+
+function closeDayNote() {
+  document.getElementById('modal-daynote').classList.remove('open');
+  currentNoteCtx = null;
+}
+
+function saveDayNote() {
+  if (!currentNoteCtx || !isAdmin()) return;
+  const {weekIdx, day} = currentNoteCtx;
+  const week = allWeeks[weekIdx];
+  if (!week) return;
+  const text = document.getElementById('daynote-text').value.trim();
+  week.notes = week.notes || {days: {}};
+  week.notes.days = week.notes.days || {};
+  if (text) {
+    week.notes.days[day] = text;
+  } else {
+    delete week.notes.days[day];
+    if (Object.keys(week.notes.days).length === 0) {
+      delete week.notes.days;
+      if (Object.keys(week.notes).length === 0) {
+        delete week.notes;
+      }
+    }
+  }
+  closeDayNote();
+  saveLocalWeeks();
+  render();
+  saveToGoogle("Note jour");
+  setStatus('success', 'Note enregistrée.');
+}
+
+function deleteDayNote() {
+  if (!currentNoteCtx || !isAdmin()) return;
+  const {weekIdx, day} = currentNoteCtx;
+  const week = allWeeks[weekIdx];
+  if (!week || !week.notes?.days?.[day]) return;
+  delete week.notes.days[day];
+  if (Object.keys(week.notes.days).length === 0) {
+    delete week.notes.days;
+    if (Object.keys(week.notes).length === 0) {
+      delete week.notes;
+    }
+  }
+  closeDayNote();
+  saveLocalWeeks();
+  render();
+  saveToGoogle("Note jour supprimée");
+  setStatus('success', 'Note supprimée.');
+}
+
 
 const DEFAULT_API_URL="https://script.google.com/macros/s/AKfycbxkRwejUPDsjpUG6z7oRIQlGxj3lmJbYMgefCrNB8HCzWWI8Q5zHxPYL8tKn_hvg_ar/exec";
 const STORAGE_CACHE="rob_planning_cache",STORAGE_ADMIN_TOKEN="rob_admin_token",STORAGE_LAST_SYNC="rob_planning_last_sync";
@@ -302,7 +379,7 @@ function closeAdmin(){document.getElementById("modal-admin").classList.remove("o
 async function saveAdmin(){const token=document.getElementById("input-admin-token").value.trim();if(!token)return setStatus("error","Token admin vide");setStatus("loading","Verification du token admin...");try{await jsonp("auth",{token});localStorage.setItem(STORAGE_ADMIN_TOKEN,token);adminValidated=true;closeAdmin();updateAdminUI();render();setStatus("success","Mode admin actif")}catch(e){adminValidated=false;localStorage.removeItem(STORAGE_ADMIN_TOKEN);updateAdminUI();render();setStatus("error","Token admin invalide")}}
 function lockAdmin(){adminValidated=false;localStorage.removeItem(STORAGE_ADMIN_TOKEN);closeAdmin();updateAdminUI();render();setStatus("success","Mode lecture seule");}
 async function validateStoredAdmin(){const token=getAdminToken();adminValidated=false;if(!token){updateAdminUI();return false}try{await jsonp("auth",{token});adminValidated=true;updateAdminUI();return true}catch(e){localStorage.removeItem(STORAGE_ADMIN_TOKEN);adminValidated=false;updateAdminUI();return false}}
-["admin","import","edit","add-emp","edit-emp"].forEach(id=>{const el=document.getElementById("modal-"+id);el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open")})});
+["admin","import","edit","add-emp","edit-emp","copyweek","daynote"].forEach(id=>{const el=document.getElementById("modal-"+id);el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open")})});
 
 function openImport(){if(!isAdmin())return;document.getElementById("json-input").value="";document.getElementById("modal-import").classList.add("open");}
 function closeImport(){document.getElementById("modal-import").classList.remove("open");}
@@ -353,7 +430,8 @@ function confirmEditEmployee(){if(!isAdmin())return;const key=selectedEmployeeKe
 function buildChip(shift){if(!shift)return`<div class="chip empty"><span class="chip-off-label">A definir</span></div>`;if(shift.type==="repos"&&!(shift.start||shift.end))return`<div class="chip off"><span class="chip-off-label">Jour off</span></div>`;const t=shift.type||"",tl=t.toLowerCase(),type=escapeHTML(t),start=escapeHTML(shift.start||""),end=escapeHTML(shift.end||""),time=shift.start?`<div class="chip-time">${start}-${end}</div>`:"";if(tl==="ouverture"||tl.startsWith("ouv")||t==="Atelier")return`<div class="chip ouv">${time}<div class="chip-type">${type}</div></div>`;if(tl==="fermeture"||tl.startsWith("ferm"))return`<div class="chip ferm">${time}<div class="chip-type">Fermeture</div></div>`;return`<div class="chip special">${time}<div class="chip-label">${type||"A definir"}</div></div>`;}
 function renderEmpty(){document.getElementById("week-nav").style.display="none";document.getElementById("planning").innerHTML=`<div class="empty-state"><span class="empty-icon">Calendrier</span><div class="empty-title">Aucun planning charge</div><div class="empty-sub">Clique sur Actualiser ou importe un planning en mode admin.</div></div>`;}
 function buildMobileDay(dayStr,dayIdx,week,weekIdx,todayStr){const d=new Date(dayStr+"T12:00:00"),block=document.createElement("div"),employees=week.employees||[],state=getDayState(dayStr),activeCount=activeCountForDay(week,dayStr);block.className="mobile-day-card day-"+state;block.innerHTML=`<div class="mobile-day-header"><div class="mobile-day-title"><span class="mobile-day-name">${escapeHTML(DAYS[dayIdx]||"")}</span><span class="mobile-day-num">${d.getDate()}</span></div><span class="mobile-day-state">${dayStateLabel(state)}</span><span class="mobile-day-count">${activeCount} actif${activeCount>1?"s":""}</span></div>`;employees.forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="mobile-emp-row";if(isAdmin()){row.title="Modifier";row.onclick=()=>openEdit(weekIdx,empIdx,dayStr)}row.innerHTML=`<div class="mobile-emp-name"><span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>${isAdmin()?`<button class="emp-delete-btn" title="Supprimer" onclick="deleteEmployeeFromRow(event,allWeeks[${weekIdx}].employees[${empIdx}])">&times;</button>`:""}</div><div class="mobile-shift">${buildChip(emp.shifts?.find(s=>s.date===dayStr))}</div>`;row.querySelector(".mobile-emp-name").onclick=e=>{e.stopPropagation();openEmployeeProfile(emp)};block.appendChild(row)});return block;}
-function renderWeek(idx){const week=allWeeks[idx];if(!week)return renderEmpty();currentWeekIdx=idx;const state=getWeekState(week),nav=document.getElementById("week-nav");nav.style.display="flex";nav.className="week-"+state;document.getElementById("week-title").innerHTML=`<span class="week-main-title">${escapeHTML(weekDisplayTitle(week))}</span><span class="week-sub-title">${escapeHTML(week.generated?"Semaine previsionnelle - "+week.label:week.label||"Planning")}</span><span class="week-state-badge">${week.generated?"A preparer":weekStateLabel(state)}</span>`;document.getElementById("prev-btn").disabled=idx===0;document.getElementById("next-btn").disabled=false;const today=todayISO(),card=document.createElement("div");card.className="planning-card week-"+state;const desktop=document.createElement("div");desktop.className="desktop-planning";const gh=document.createElement("div");gh.className="grid-header";gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;(week.days||[]).forEach((ds,i)=>{const d=new Date(ds+"T12:00:00");gh.innerHTML+=`<div class="gh-day${ds===today?" today-col":""}"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===today?" today":""}">${d.getDate()}</div></div>`});desktop.appendChild(gh);(week.employees||[]).forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="grid-row";const nameCell=document.createElement("div");nameCell.className="gr-name";nameCell.onclick=()=>openEmployeeProfile(emp);nameCell.innerHTML=`<span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>${isAdmin()?`<button class="emp-delete-btn" title="Supprimer" onclick="deleteEmployeeFromRow(event,allWeeks[${idx}].employees[${empIdx}])">&times;</button>`:""}`;row.appendChild(nameCell);(week.days||[]).forEach(ds=>{const cell=document.createElement("div");cell.className="gr-cell";if(isAdmin()){cell.title="Modifier";cell.onclick=()=>openEdit(idx,empIdx,ds)}cell.innerHTML=buildChip(emp.shifts?.find(s=>s.date===ds));row.appendChild(cell)});desktop.appendChild(row)});const footer=document.createElement("div");footer.className="grid-footer admin-only";footer.innerHTML=`<span class="edit-hint">Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;desktop.appendChild(footer);card.appendChild(desktop);const mobile=document.createElement("div");mobile.className="mobile-planning";(week.days||[]).forEach((ds,i)=>mobile.appendChild(buildMobileDay(ds,i,week,idx,today)));const mf=document.createElement("div");mf.className="mobile-footer admin-only";mf.innerHTML=`<button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;mobile.appendChild(mf);card.appendChild(mobile);document.getElementById("planning").innerHTML="";document.getElementById("planning").appendChild(card);}
+function renderWeek(idx){const week=allWeeks[idx];if(!week)return renderEmpty();currentWeekIdx=idx;const state=getWeekState(week),nav=document.getElementById("week-nav");nav.style.display="flex";nav.className="week-"+state;document.getElementById("week-title").innerHTML=`<span class="week-main-title">${escapeHTML(weekDisplayTitle(week))}</span><span class="week-sub-title">${escapeHTML(week.generated?"Semaine previsionnelle - "+week.label:week.label||"Planning")}</span><span class="week-state-badge">${week.generated?"A preparer":weekStateLabel(state)}</span>`;document.getElementById("prev-btn").disabled=idx===0;document.getElementById("next-btn").disabled=false;const today=todayISO(),card=document.createElement("div");card.className="planning-card week-"+state;const desktop=document.createElement("div");desktop.className="desktop-planning";const gh=document.createElement("div");gh.className="grid-header";gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;(week.days||[]).forEach((ds,i)=>{const d=new Date(ds+"T12:00:00");const hasNote=week.notes?.days?.[ds];gh.innerHTML+=`<div class="gh-day${ds===today?" today-col":""}" style="position:relative"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===today?" today":""}">${d.getDate()}</div>${hasNote?`<div class="gh-day-note-badge" title="Note disponible" onclick="event.stopPropagation(); openDayNote(${idx}, '${ds}')">!</div>`:"
+        }</div>`});desktop.appendChild(gh);(week.employees||[]).forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="grid-row";const nameCell=document.createElement("div");nameCell.className="gr-name";nameCell.onclick=()=>openEmployeeProfile(emp);nameCell.innerHTML=`<span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>${isAdmin()?`<button class="emp-delete-btn" title="Supprimer" onclick="deleteEmployeeFromRow(event,allWeeks[${idx}].employees[${empIdx}])">&times;</button>`:""}`;row.appendChild(nameCell);(week.days||[]).forEach(ds=>{const cell=document.createElement("div");cell.className="gr-cell";if(isAdmin()){cell.title="Modifier";cell.onclick=()=>openEdit(idx,empIdx,ds)}cell.innerHTML=buildChip(emp.shifts?.find(s=>s.date===ds));row.appendChild(cell)});desktop.appendChild(row)});const footer=document.createElement("div");footer.className="grid-footer admin-only";footer.innerHTML=`<span class="edit-hint">Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;desktop.appendChild(footer);card.appendChild(desktop);const mobile=document.createElement("div");mobile.className="mobile-planning";(week.days||[]).forEach((ds,i)=>mobile.appendChild(buildMobileDay(ds,i,week,idx,today)));const mf=document.createElement("div");mf.className="mobile-footer admin-only";mf.innerHTML=`<button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;mobile.appendChild(mf);card.appendChild(mobile);document.getElementById("planning").innerHTML="";document.getElementById("planning").appendChild(card);}
 function getTodayEntries(){const today=todayISO(),week=allWeeks.find(w=>(w.days||[]).includes(today));if(!week)return{week:null,entries:[]};const entries=(week.employees||[]).map((emp,empIdx)=>({emp,empIdx,shift:emp.shifts?.find(s=>s.date===today),weekIdx:allWeeks.indexOf(week)})).filter(e=>isWorkingShift(e.shift));entries.sort((a,b)=>(parseMinutes(a.shift?.start)??9999)-(parseMinutes(b.shift?.start)??9999));return{week,entries};}
 function renderToday(){document.getElementById("week-nav").style.display="none";const {week,entries}=getTodayEntries(),today=todayISO(),d=new Date(today+"T12:00:00"),dateLabel=d.toLocaleDateString("fr-BE",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});if(!week){document.getElementById("planning").innerHTML=`<div class="view-card"><div class="empty-state"><div class="empty-title">Aucun planning pour aujourd'hui</div><div class="empty-sub">${escapeHTML(dateLabel)}</div></div></div>`;return}document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Aujourd'hui</div><div class="today-date-big">${escapeHTML(dateLabel)}</div><div class="view-sub">${escapeHTML(week.label)}</div></div><span class="view-badge badge-current">${entries.length} pers.</span></div>${entries.map(e=>`<div class="list-row${!e.shift||e.shift.type==="repos"?" muted-row":""}" ${isAdmin()?`onclick="openEdit(${e.weekIdx},${e.empIdx},'${today}')" style="cursor:pointer"`:""}><div><div class="list-name">${escapeHTML(employeeLabel(e.emp))}</div><div class="list-meta">${escapeHTML(e.emp.lastName||"")}</div></div><div>${buildChip(e.shift)}</div></div>`).join("")}</div>`;}
 function renderEmployee(){
