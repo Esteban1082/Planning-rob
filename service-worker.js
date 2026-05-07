@@ -1,4 +1,4 @@
-const CACHE_NAME = "rob-planning-v10";
+const CACHE_NAME = "rob-planning-v14";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -24,6 +24,7 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const request = event.request;
   if (request.method !== "GET") return;
+  if (!request.url.startsWith("http")) return;
   event.respondWith(
     fetch(request)
       .then(response => {

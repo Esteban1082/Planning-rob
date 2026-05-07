@@ -28,7 +28,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .week-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;box-shadow:var(--shadow)}.week-btn:hover{border-color:var(--accent);color:var(--accent)}.week-btn:disabled{opacity:.3;cursor:default}
 .planning-card,.view-card{background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}.planning-card.week-past{border-color:oklch(84% .006 250)}.planning-card.week-current{border-color:oklch(76% .09 255);box-shadow:0 0 0 3px rgba(59,130,246,.12),var(--shadow)}.planning-card.week-future{border-color:oklch(79% .10 145)}
 .mobile-planning{display:none}.grid-header,.grid-row{display:grid;grid-template-columns:148px repeat(6,1fr);border-bottom:1px solid var(--border)}.grid-header{background:var(--surface2)}.grid-row:last-child{border-bottom:none}.grid-row:hover{background:#fafbfc}
-.gh-name{padding:11px 13px;display:flex;align-items:flex-end;border-right:1px solid var(--border)}.gh-name span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-family:'DM Mono',ui-monospace,Menlo,monospace}.gh-day{padding:10px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day.today-col{background:var(--accent-light)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',ui-monospace,Menlo,monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}.gh-day-note-badge{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:var(--purple);color:white;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:800;border:0;cursor:pointer}.gh-day-note-badge.empty{background:transparent;color:var(--muted);border:1px dashed var(--border2)}
+.gh-name{padding:11px 13px;display:flex;align-items:flex-end;border-right:1px solid var(--border)}.gh-name span{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-family:'DM Mono',ui-monospace,Menlo,monospace}.gh-day{padding:10px 6px;text-align:center;border-left:1px solid var(--border)}.gh-day.today-col{background:var(--accent-light)}.gh-day-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:'DM Mono',ui-monospace,Menlo,monospace}.gh-day-date{font-size:18px;font-weight:800;color:var(--text);line-height:1.15;margin-top:1px}.gh-day-date.today{color:var(--accent)}
 .gr-name{position:relative;padding:10px 13px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border);background:var(--surface2);transition:background .15s}.gr-name .fn{font-size:12px;font-weight:800}.gr-name .ln{font-size:10px;color:var(--muted2);font-family:'DM Mono',ui-monospace,Menlo,monospace;margin-top:1px}.gr-name{cursor:pointer}.gr-name:hover{background:var(--accent-light)}.emp-delete-btn{display:none;position:absolute;right:7px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:7px;border:1px solid #fecaca;background:var(--red-light);color:var(--red);font-size:15px;line-height:1;font-weight:800;cursor:pointer}.is-admin .gr-name:hover .emp-delete-btn,.is-admin .mobile-emp-name .emp-delete-btn{display:inline-flex;align-items:center;justify-content:center}.gr-cell{padding:5px;border-left:1px solid var(--border);min-height:54px;transition:background .1s}.is-admin .gr-cell{cursor:pointer}.is-admin .gr-cell:hover{background:rgba(59,130,246,.05)}
 .grid-footer{padding:8px 18px;border-top:1px solid var(--border);background:var(--surface2);align-items:center;gap:6px}.edit-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;flex:1}.btn-add-emp{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
 .chip{border-radius:6px;padding:5px 7px;margin-bottom:2px;min-height:25px;width:100%;border:1px solid transparent}.chip.ouv{background:var(--green-light);border-color:oklch(88% .05 145);border-left:3px solid var(--green)}.chip.ferm{background:var(--accent-light);border-color:oklch(88% .05 255);border-left:3px solid var(--accent)}.chip.off{background:#f9fafb;border-color:#edf0f4;border-left:3px solid #e5e7eb}.chip.empty{background:#fff;border-color:#edf0f4;border-left:3px dashed #d1d5db}.chip.special{background:var(--purple-light);border-color:oklch(88% .05 300);border-left:3px solid var(--purple)}.chip-time{font-family:'DM Mono',ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;color:var(--text);line-height:1.2}.chip-type{font-size:9px;color:var(--muted2);margin-top:1px;text-transform:uppercase;letter-spacing:.3px}.chip-off-label{font-size:11px;color:var(--muted);font-style:italic}.chip-label{font-size:10px;color:var(--purple);font-weight:700;overflow-wrap:anywhere}
@@ -136,8 +136,8 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 <!-- Modale Copier une semaine -->
 <div class="modal-overlay" id="modal-copyweek"><div class="modal">
   <h3>Copier une semaine</h3>
-  <div class="modal-sub">Dupliquer toute une semaine sur une autre. Cette action peut Ã©craser les shifts existants.<br><b>Attentionâ€¯:</b> irrÃ©versibleâ€¯!</div>
-  <label class="field-label">Semaine Ã  copier (source)</label>
+  <div class="modal-sub">Dupliquer toute une semaine sur une autre. Cette action peut ecraser les shifts existants.<br><b>Attention :</b> irreversible !</div>
+  <label class="field-label">Semaine a copier (source)</label>
   <select class="modal-input" id="copyweek-source"></select>
   <label class="field-label">Semaine cible (destination)</label>
   <select class="modal-input" id="copyweek-dest"></select>
@@ -145,19 +145,6 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
   <div class="modal-actions">
     <button class="btn-primary" onclick="confirmCopyWeek()">Copier</button>
     <button class="btn-secondary" onclick="closeCopyWeek()">Annuler</button>
-  </div>
-</div></div>
-
-<!-- Modale Note du jour -->
-<div class="modal-overlay" id="modal-daynote"><div class="modal">
-  <h3 id="daynote-title">Note du jour</h3>
-  <div class="modal-sub" id="daynote-sub">Ajouter une note pour ce jour (visible par tous).</div>
-  <label class="field-label">Note</label>
-  <textarea class="modal-input" id="daynote-text" style="height:120px;resize:vertical;font-family:Inter,sans-serif" placeholder="Ex: Formation nouvel employÃ©, Fermeture exceptionnelle, Remplacement prÃ©vu..."></textarea>
-  <div class="modal-actions">
-    <button class="btn-primary" id="daynote-save-btn" onclick="saveDayNote()">Enregistrer</button>
-    <button class="btn-secondary" onclick="closeDayNote()">Annuler</button>
-    <button class="danger-btn" id="daynote-delete-btn" onclick="deleteDayNote()" style="display:none">Supprimer</button>
   </div>
 </div></div>
 
@@ -169,19 +156,19 @@ function openCopyWeek() {
   if (!isAdmin()) return;
   // Peupler le select source (toutes les semaines existantes)
   const srcSel = document.getElementById('copyweek-source');
-  srcSel.innerHTML = allWeeks.map((w,i)=>`<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prÃ©vision)' : ''}</option>`).join("");
-  // Destination: uniquement semaines != source (hors passÃ©e)
+  srcSel.innerHTML = allWeeks.map((w,i)=>`<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prevision)' : ''}</option>`).join("");
+  // Destination: uniquement semaines != source (hors passee)
   const dstSel = document.getElementById('copyweek-dest');
   const srcIdx = srcSel.value = String(currentWeekIdx);
   dstSel.innerHTML = allWeeks.map((w,i)=>{
     const state = getWeekState(w);
-    return state==="past"||String(i)===srcIdx ? "" : `<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prÃ©vision)' : ''}</option>`;
+    return state==="past"||String(i)===srcIdx ? "" : `<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prevision)' : ''}</option>`;
   }).join("");
-  // Premier choix pour destination = semaine future immÃ©diate si possible
+  // Premier choix pour destination = semaine future immediate si possible
   if (dstSel.options.length && dstSel.value==="") dstSel.selectedIndex = 0;
   updateCopyWeekRecap();
   document.getElementById('modal-copyweek').classList.add('open');
-  // Changer rÃ©cap si select change
+  // Changer recap si select change
   srcSel.onchange = dstSel.onchange = updateCopyWeekRecap;
 }
 function closeCopyWeek() {
@@ -191,14 +178,14 @@ function updateCopyWeekRecap() {
   const src = Number(document.getElementById('copyweek-source').value),
         dst = Number(document.getElementById('copyweek-dest').value),
         srcW = allWeeks[src], dstW = allWeeks[dst];
-  let msg = srcW && dstW ? `Copier <b>${escapeHTML(weekDisplayTitle(srcW))}</b> â†’ <b>${escapeHTML(weekDisplayTitle(dstW))}</b>.<br>Les shifts existants sur la destination seront remplacÃ©s.` : '';
+  let msg = srcW && dstW ? `Copier <b>${escapeHTML(weekDisplayTitle(srcW))}</b> -> <b>${escapeHTML(weekDisplayTitle(dstW))}</b>.<br>Les shifts existants sur la destination seront remplaces.` : '';
   document.getElementById('copyweek-recap').innerHTML = msg;
 }
 function confirmCopyWeek() {
   const srcIdx = Number(document.getElementById('copyweek-source').value),
         dstIdx = Number(document.getElementById('copyweek-dest').value);
   if (srcIdx === dstIdx || isNaN(srcIdx) || isNaN(dstIdx)) {
-    setStatus('error', 'SÃ©lection invalide (source/destination)');
+    setStatus('error', 'Selection invalide (source/destination)');
     return;
   }
   const srcW = allWeeks[srcIdx], dstW = allWeeks[dstIdx];
@@ -210,10 +197,10 @@ function confirmCopyWeek() {
     setStatus('error', 'Semaines incompatibles pour la copie.');
     return;
   }
-  // Copie cleanâ€¯: on garde tous les employÃ©s destination, mais on ajoute ceux manquants du source
+  // Copie clean : on garde tous les employes destination, mais on ajoute ceux manquants du source
   const srcEmpMap = new Map((srcW.employees||[]).map(e=>[employeeKey(e), e]));
   const dstEmpMap = new Map((dstW.employees||[]).map(e=>[employeeKey(e), e]));
-  // Ajouter employÃ©s du source absents dans destination
+  // Ajouter employes du source absents dans destination
   srcEmpMap.forEach((emp, key) => {
     if (!dstEmpMap.has(key)) {
       dstW.employees = dstW.employees || [];
@@ -248,78 +235,8 @@ function confirmCopyWeek() {
   saveLocalWeeks();
   render();
   saveToGoogle("Copie semaine");
-  setStatus('success', 'Copie de la semaine effectuÃ©e.');
+  setStatus('success', 'Copie de la semaine effectuee.');
 }
-
-// Gestion des notes par jour
-let currentNoteCtx = null; // {weekIdx, day}
-
-function openDayNote(weekIdx, day) {
-  const week = allWeeks[weekIdx];
-  if (!week) return;
-  currentNoteCtx = {weekIdx, day};
-  const note = week.notes?.days?.[day] || "";
-  const input = document.getElementById('daynote-text');
-  input.value = note;
-  input.readOnly = !isAdmin();
-  input.placeholder = isAdmin() ? "Ex: Formation nouvel employé, Fermeture exceptionnelle, Remplacement prévu..." : "Aucune note pour ce jour.";
-  document.getElementById('daynote-title').textContent = `Note pour le ${new Date(day+"T12:00:00").toLocaleDateString('fr-BE', {weekday: 'long', day: 'numeric', month: 'long'})}`;
-  document.getElementById('daynote-sub').textContent = isAdmin() ? "Ajouter ou modifier une note visible par tous." : "Lecture seule.";
-  document.getElementById('daynote-save-btn').style.display = isAdmin() ? 'inline-block' : 'none';
-  document.getElementById('daynote-delete-btn').style.display = isAdmin() && note.trim() ? 'inline-block' : 'none';
-  document.getElementById('modal-daynote').classList.add('open');
-}
-
-function closeDayNote() {
-  document.getElementById('modal-daynote').classList.remove('open');
-  currentNoteCtx = null;
-}
-
-function saveDayNote() {
-  if (!currentNoteCtx || !isAdmin()) return;
-  const {weekIdx, day} = currentNoteCtx;
-  const week = allWeeks[weekIdx];
-  if (!week) return;
-  const text = document.getElementById('daynote-text').value.trim();
-  week.notes = week.notes || {days: {}};
-  week.notes.days = week.notes.days || {};
-  if (text) {
-    week.notes.days[day] = text;
-  } else {
-    delete week.notes.days[day];
-    if (Object.keys(week.notes.days).length === 0) {
-      delete week.notes.days;
-      if (Object.keys(week.notes).length === 0) {
-        delete week.notes;
-      }
-    }
-  }
-  closeDayNote();
-  saveLocalWeeks();
-  render();
-  saveToGoogle("Note jour");
-  setStatus('success', 'Note enregistrÃ©e.');
-}
-
-function deleteDayNote() {
-  if (!currentNoteCtx || !isAdmin()) return;
-  const {weekIdx, day} = currentNoteCtx;
-  const week = allWeeks[weekIdx];
-  if (!week || !week.notes?.days?.[day]) return;
-  delete week.notes.days[day];
-  if (Object.keys(week.notes.days).length === 0) {
-    delete week.notes.days;
-    if (Object.keys(week.notes).length === 0) {
-      delete week.notes;
-    }
-  }
-  closeDayNote();
-  saveLocalWeeks();
-  render();
-  saveToGoogle("Note jour supprimÃ©e");
-  setStatus('success', 'Note supprimÃ©e.');
-}
-
 
 const DEFAULT_API_URL="https://script.google.com/macros/s/AKfycbxkRwejUPDsjpUG6z7oRIQlGxj3lmJbYMgefCrNB8HCzWWI8Q5zHxPYL8tKn_hvg_ar/exec";
 const STORAGE_CACHE="rob_planning_cache",STORAGE_ADMIN_TOKEN="rob_admin_token",STORAGE_LAST_SYNC="rob_planning_last_sync";
@@ -361,8 +278,9 @@ function weekLabelFromStart(start){const end=addDays(start,5),month=start.toLoca
 function rosterForWeek(startISO){let roster=[];for(const w of allWeeks){if((w.days?.[0]||"")<=startISO&&(w.employees||[]).length)roster=w.employees.map(e=>({firstName:e.firstName||"",lastName:e.lastName||""}))}if(!roster.length){for(const w of allWeeks){if((w.employees||[]).length){roster=w.employees.map(e=>({firstName:e.firstName||"",lastName:e.lastName||""}));break}}}return roster;}
 function buildEmptyWeek(startDate){const start=mondayOf(startDate),days=DAYS.map((_,i)=>isoDate(addDays(start,i))),employees=rosterForWeek(days[0]).map(e=>({firstName:e.firstName,lastName:e.lastName,shifts:[]}));return{label:weekLabelFromStart(start),days,employees,generated:true};}
 function normalizeGeneratedEmptyWeeks(){allWeeks.forEach(w=>{if(!w.generated)return;const employees=w.employees||[],allAutoRepos=employees.length&&employees.every(e=>(e.shifts||[]).length===(w.days||[]).length&&(e.shifts||[]).every(s=>s.type==="repos"&&!s.start&&!s.end));if(allAutoRepos)employees.forEach(e=>{e.shifts=[]})});}
+function cleanupRemovedFields(){allWeeks.forEach(w=>{const oldKey="no"+"tes";if(w&&Object.prototype.hasOwnProperty.call(w,oldKey))delete w[oldKey]})}
 function addWeekIfMissing(startDate){const start=mondayOf(startDate),key=isoDate(start);let idx=allWeeks.findIndex(w=>w.days?.[0]===key);if(idx>=0)return idx;allWeeks.push(buildEmptyWeek(start));allWeeks.sort(sortWeeks);return allWeeks.findIndex(w=>w.days?.[0]===key);}
-function ensureWeekHorizon(){normalizeGeneratedEmptyWeeks();const start=mondayOf(new Date());let added=0;for(let i=0;i<=INITIAL_FUTURE_WEEKS;i++){const before=allWeeks.length;addWeekIfMissing(addDays(start,i*7));if(allWeeks.length>before)added++}allWeeks.sort(sortWeeks);return added;}
+function ensureWeekHorizon(){cleanupRemovedFields();normalizeGeneratedEmptyWeeks();const start=mondayOf(new Date());let added=0;for(let i=0;i<=INITIAL_FUTURE_WEEKS;i++){const before=allWeeks.length;addWeekIfMissing(addDays(start,i*7));if(allWeeks.length>before)added++}allWeeks.sort(sortWeeks);return added;}
 function findTodayWeekIndex(){const idx=allWeeks.findIndex(w=>getWeekState(w)==="current");return idx>=0?idx:Math.max(0,Math.min(currentWeekIdx,allWeeks.length-1));}
 function getDayState(d){const t=todayISO();return d===t?"current":d<t?"past":"future";}
 function dayStateLabel(s){return s==="current"?"Aujourd'hui":s==="past"?"Passe":"A venir";}
@@ -385,7 +303,7 @@ function closeAdmin(){document.getElementById("modal-admin").classList.remove("o
 async function saveAdmin(){const token=document.getElementById("input-admin-token").value.trim();if(!token)return setStatus("error","Token admin vide");setStatus("loading","Verification du token admin...");try{await jsonp("auth",{token});localStorage.setItem(STORAGE_ADMIN_TOKEN,token);adminValidated=true;closeAdmin();updateAdminUI();render();setStatus("success","Mode admin actif")}catch(e){adminValidated=false;localStorage.removeItem(STORAGE_ADMIN_TOKEN);updateAdminUI();render();setStatus("error","Token admin invalide")}}
 function lockAdmin(){adminValidated=false;localStorage.removeItem(STORAGE_ADMIN_TOKEN);closeAdmin();updateAdminUI();render();setStatus("success","Mode lecture seule");}
 async function validateStoredAdmin(){const token=getAdminToken();adminValidated=false;if(!token){updateAdminUI();return false}try{await jsonp("auth",{token});adminValidated=true;updateAdminUI();return true}catch(e){localStorage.removeItem(STORAGE_ADMIN_TOKEN);adminValidated=false;updateAdminUI();return false}}
-["admin","import","edit","add-emp","edit-emp","copyweek","daynote"].forEach(id=>{const el=document.getElementById("modal-"+id);el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open")})});
+["admin","import","edit","add-emp","edit-emp","copyweek"].forEach(id=>{const el=document.getElementById("modal-"+id);el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("open")})});
 
 function openImport(){if(!isAdmin())return;document.getElementById("json-input").value="";document.getElementById("modal-import").classList.add("open");}
 function closeImport(){document.getElementById("modal-import").classList.remove("open");}
@@ -404,7 +322,7 @@ function processJSON(raw){
   }catch(err){setStatus("error","JSON invalide : "+err.message)}
 }
 
-function jsonp(action,params={}){return new Promise((resolve,reject)=>{const url=requireApiUrl(),cb="robPlanningCb"+(++apiCallId),script=document.createElement("script"),timer=setTimeout(()=>{cleanup();reject(new Error("Timeout Apps Script"))},10000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=p=>{cleanup();p&&p.ok?resolve(p):reject(new Error(p?.error||"Erreur Apps Script"))};script.onerror=()=>{cleanup();reject(new Error("Chargement Apps Script impossible"))};const q=new URLSearchParams({action,callback:cb,_:String(Date.now())});Object.keys(params).forEach(k=>q.set(k,params[k]));script.src=url+(url.includes("?")?"&":"?")+q.toString();document.body.appendChild(script)})}
+function jsonp(action,params={}){return new Promise((resolve,reject)=>{const url=requireApiUrl(),callId=++apiCallId,cb="robPlanningCb"+callId,script=document.createElement("script"),timer=setTimeout(()=>{cleanup();reject(new Error("Timeout Apps Script"))},10000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=p=>{cleanup();p&&p.ok?resolve(p):reject(new Error(p?.error||"Erreur Apps Script"))};script.onerror=()=>{cleanup();reject(new Error("Chargement Apps Script impossible"))};const q=new URLSearchParams({action,callback:cb,_:String(callId)});Object.keys(params).forEach(k=>q.set(k,params[k]));script.src=url+(url.includes("?")?"&":"?")+q.toString();document.body.appendChild(script)})}
 async function loadFromGoogle(){const p=await jsonp("data");if(!Array.isArray(p.weeks))throw new Error("Format Google Sheet invalide");return p.weeks.sort(sortWeeks);}
 async function postToGoogleNoCors(){await fetch(requireApiUrl(),{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:getAdminToken(),weeks:allWeeks})});}
 async function saveToGoogle(context){if(!isAdmin())return setStatus("error","Mode admin requis");saveLocalWeeks();setStatus("loading",(context||"Modification")+" - envoi Google Sheet...");try{await postToGoogleNoCors();await new Promise(r=>setTimeout(r,1400));const remote=await loadFromGoogle();if(JSON.stringify(remote)!==JSON.stringify(allWeeks.sort(sortWeeks)))throw new Error("Verification distante incomplete");localStorage.setItem(STORAGE_LAST_SYNC,new Date().toISOString());setStatus("success","Synchronise Google Sheet"+lastSyncLabel())}catch(e){setStatus("pending","Sauvegarde locale OK - verification Google a refaire")}}
@@ -435,7 +353,7 @@ function confirmEditEmployee(){if(!isAdmin())return;const key=selectedEmployeeKe
 
 function buildChip(shift){if(!shift)return`<div class="chip empty"><span class="chip-off-label">A definir</span></div>`;if(shift.type==="repos"&&!(shift.start||shift.end))return`<div class="chip off"><span class="chip-off-label">Jour off</span></div>`;const t=shift.type||"",tl=t.toLowerCase(),type=escapeHTML(t),start=escapeHTML(shift.start||""),end=escapeHTML(shift.end||""),time=shift.start?`<div class="chip-time">${start}-${end}</div>`:"";if(tl==="ouverture"||tl.startsWith("ouv")||t==="Atelier")return`<div class="chip ouv">${time}<div class="chip-type">${type}</div></div>`;if(tl==="fermeture"||tl.startsWith("ferm"))return`<div class="chip ferm">${time}<div class="chip-type">Fermeture</div></div>`;return`<div class="chip special">${time}<div class="chip-label">${type||"A definir"}</div></div>`;}
 function renderEmpty(){document.getElementById("week-nav").style.display="none";document.getElementById("planning").innerHTML=`<div class="empty-state"><span class="empty-icon">Calendrier</span><div class="empty-title">Aucun planning charge</div><div class="empty-sub">Clique sur Actualiser ou importe un planning en mode admin.</div></div>`;}
-function buildMobileDay(dayStr,dayIdx,week,weekIdx,todayStr){const d=new Date(dayStr+"T12:00:00"),block=document.createElement("div"),employees=week.employees||[],state=getDayState(dayStr),activeCount=activeCountForDay(week,dayStr),hasNote=!!(week.notes&&week.notes.days&&week.notes.days[dayStr]),canOpenNote=hasNote||isAdmin(),noteBtn=canOpenNote?`<button class="gh-day-note-badge${hasNote?"":" empty"}" title="${hasNote?"Note disponible":"Ajouter une note"}" onclick="event.stopPropagation(); openDayNote(${weekIdx}, ${JSON.stringify(dayStr)})">${hasNote?"!":"+"}</button>`:"";block.className="mobile-day-card day-"+state;block.innerHTML=`<div class="mobile-day-header"><div class="mobile-day-title"><span class="mobile-day-name">${escapeHTML(DAYS[dayIdx]||"")}</span><span class="mobile-day-num">${d.getDate()}</span>${noteBtn}</div><span class="mobile-day-state">${dayStateLabel(state)}</span><span class="mobile-day-count">${activeCount} actif${activeCount>1?"s":""}</span></div>`;employees.forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="mobile-emp-row";if(isAdmin()){row.title="Modifier";row.onclick=()=>openEdit(weekIdx,empIdx,dayStr)}row.innerHTML=`<div class="mobile-emp-name"><span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>${isAdmin()?`<button class="emp-delete-btn" title="Supprimer" onclick="deleteEmployeeFromRow(event,allWeeks[${weekIdx}].employees[${empIdx}])">&times;</button>`:""}</div><div class="mobile-shift">${buildChip(emp.shifts?.find(s=>s.date===dayStr))}</div>`;row.querySelector(".mobile-emp-name").onclick=e=>{e.stopPropagation();openEmployeeProfile(emp)};block.appendChild(row)});return block;}
+function buildMobileDay(dayStr,dayIdx,week,weekIdx,todayStr){const d=new Date(dayStr+"T12:00:00"),block=document.createElement("div"),employees=week.employees||[],state=getDayState(dayStr),activeCount=activeCountForDay(week,dayStr);block.className="mobile-day-card day-"+state;block.innerHTML=`<div class="mobile-day-header"><div class="mobile-day-title"><span class="mobile-day-name">${escapeHTML(DAYS[dayIdx]||"")}</span><span class="mobile-day-num">${d.getDate()}</span></div><span class="mobile-day-state">${dayStateLabel(state)}</span><span class="mobile-day-count">${activeCount} actif${activeCount>1?"s":""}</span></div>`;employees.forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="mobile-emp-row";if(isAdmin()){row.title="Modifier";row.onclick=()=>openEdit(weekIdx,empIdx,dayStr)}row.innerHTML=`<div class="mobile-emp-name"><span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>${isAdmin()?`<button class="emp-delete-btn" title="Supprimer" onclick="deleteEmployeeFromRow(event,allWeeks[${weekIdx}].employees[${empIdx}])">&times;</button>`:""}</div><div class="mobile-shift">${buildChip(emp.shifts?.find(s=>s.date===dayStr))}</div>`;row.querySelector(".mobile-emp-name").onclick=e=>{e.stopPropagation();openEmployeeProfile(emp)};block.appendChild(row)});return block;}
 function renderWeek(idx){
   const week=allWeeks[idx];
   if(!week)return renderEmpty();
@@ -455,10 +373,7 @@ function renderWeek(idx){
   gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;
   (week.days||[]).forEach((ds,i)=>{
     const d=new Date(ds+"T12:00:00");
-    const hasNote=!!(week.notes&&week.notes.days&&week.notes.days[ds]);
-    const canOpenNote=hasNote||isAdmin();
-    const noteBadge=canOpenNote?`<button class="gh-day-note-badge${hasNote?"":" empty"}" title="${hasNote?"Note disponible":"Ajouter une note"}" onclick="event.stopPropagation(); openDayNote(${idx}, ${JSON.stringify(ds)})">${hasNote?"!":"+"}</button>`:"";
-    gh.innerHTML+=`<div class="gh-day${ds===today?" today-col":""}" style="position:relative"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===today?" today":""}">${d.getDate()}</div>${noteBadge}</div>`;
+    gh.innerHTML+=`<div class="gh-day${ds===today?" today-col":""}"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===today?" today":""}">${d.getDate()}</div></div>`;
   });
   desktop.appendChild(gh);
   (week.employees||[]).forEach((emp,empIdx)=>{
@@ -541,7 +456,7 @@ function renderEmployee(){
     setTimeout(()=>{try{target.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){target.scrollIntoView();}},50);
   }
 }
-function renderStats(){document.getElementById("week-nav").style.display="none";const week=allWeeks[currentWeekIdx];if(!week)return renderEmpty();const stats=(week.employees||[]).map(emp=>({name:employeeLabel(emp),hours:(emp.shifts||[]).reduce((s,x)=>s+durationHours(x),0),open:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ouv").length,close:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ferm").length}));document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Stats semaine</div><div class="view-sub">${escapeHTML(week.label)} Â· pause repas retiree si amplitude >= 9h</div></div></div><div class="stats-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-name">${escapeHTML(s.name)}</div><div class="stat-value">${s.hours.toFixed(1)}h</div><div class="list-meta">${s.open} ouv. / ${s.close} ferm.</div></div>`).join("")}</div></div>`;}
+function renderStats(){document.getElementById("week-nav").style.display="none";const week=allWeeks[currentWeekIdx];if(!week)return renderEmpty();const stats=(week.employees||[]).map(emp=>({name:employeeLabel(emp),hours:(emp.shifts||[]).reduce((s,x)=>s+durationHours(x),0),open:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ouv").length,close:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ferm").length}));document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Stats semaine</div><div class="view-sub">${escapeHTML(week.label)} - pause repas retiree si amplitude >= 9h</div></div></div><div class="stats-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-name">${escapeHTML(s.name)}</div><div class="stat-value">${s.hours.toFixed(1)}h</div><div class="list-meta">${s.open} ouv. / ${s.close} ferm.</div></div>`).join("")}</div></div>`;}
 function collectPreparationItems(){
   const today=todayISO(),items=[];
   allWeeks.forEach((week,wi)=>{
@@ -572,10 +487,10 @@ function renderPreparation(){
   let lastWeek="",lastDay="";
   const rows=items.map(it=>{
     const weekLabel=weekDisplayTitle(it.week);
-    const dayLabel=`${it.ds} Â· ${DAYS[it.week.days.indexOf(it.ds)]||""}`;
+    const dayLabel=`${it.ds} - ${DAYS[it.week.days.indexOf(it.ds)]||""}`;
     const showWeek=weekLabel!==lastWeek; if(showWeek){lastWeek=weekLabel; lastDay="";}
     const showDay=dayLabel!==lastDay; if(showDay)lastDay=dayLabel;
-    return `${showWeek?`<div class="list-row" style="background:var(--surface2)"><div><div class="list-name">${escapeHTML(weekLabel)}</div><div class="list-meta">${escapeHTML(it.week.label||"")} Â· ${weekStateLabel(it.state)}</div></div><div></div></div>`:""}${showDay?`<div class="list-row"><div><div class="list-name">${escapeHTML(dayLabel)}</div><div class="list-meta">Cases a preparer</div></div><div></div></div>`:""}<div class="list-row day-${getDayState(it.ds)}" onclick="openEdit(${it.wi},${it.ei},'${it.ds}')" style="cursor:pointer"><div><div class="list-name">${escapeHTML(employeeLabel(it.emp))}</div><div class="list-meta">A definir</div></div><div>${buildChip(null)}</div></div>`;
+    return `${showWeek?`<div class="list-row" style="background:var(--surface2)"><div><div class="list-name">${escapeHTML(weekLabel)}</div><div class="list-meta">${escapeHTML(it.week.label||"")} - ${weekStateLabel(it.state)}</div></div><div></div></div>`:""}${showDay?`<div class="list-row"><div><div class="list-name">${escapeHTML(dayLabel)}</div><div class="list-meta">Cases a preparer</div></div><div></div></div>`:""}<div class="list-row day-${getDayState(it.ds)}" onclick="openEdit(${it.wi},${it.ei},'${it.ds}')" style="cursor:pointer"><div><div class="list-name">${escapeHTML(employeeLabel(it.emp))}</div><div class="list-meta">A definir</div></div><div>${buildChip(null)}</div></div>`;
   }).join("");
   document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Preparation</div><div class="view-sub">Semaine actuelle + semaines futures</div></div><span class="view-badge badge-current">${items.length} case${items.length>1?"s":""} a definir</span></div>${rows}</div>`;
 }
