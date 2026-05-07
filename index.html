@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -135,8 +135,8 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 <!-- Modale Copier une semaine -->
 <div class="modal-overlay" id="modal-copyweek"><div class="modal">
   <h3>Copier une semaine</h3>
-  <div class="modal-sub">Dupliquer toute une semaine sur une autre. Cette action peut écraser les shifts existants.<br><b>Attention :</b> irréversible !</div>
-  <label class="field-label">Semaine à copier (source)</label>
+  <div class="modal-sub">Dupliquer toute une semaine sur une autre. Cette action peut Ã©craser les shifts existants.<br><b>Attentionâ€¯:</b> irrÃ©versibleâ€¯!</div>
+  <label class="field-label">Semaine Ã  copier (source)</label>
   <select class="modal-input" id="copyweek-source"></select>
   <label class="field-label">Semaine cible (destination)</label>
   <select class="modal-input" id="copyweek-dest"></select>
@@ -152,7 +152,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
   <h3 id="daynote-title">Note du jour</h3>
   <div class="modal-sub" id="daynote-sub">Ajouter une note pour ce jour (visible par tous).</div>
   <label class="field-label">Note</label>
-  <textarea class="modal-input" id="daynote-text" style="height:120px;resize:vertical;font-family:Inter,sans-serif" placeholder="Ex: Formation nouvel employé, Fermeture exceptionnelle, Remplacement prévu..."></textarea>
+  <textarea class="modal-input" id="daynote-text" style="height:120px;resize:vertical;font-family:Inter,sans-serif" placeholder="Ex: Formation nouvel employÃ©, Fermeture exceptionnelle, Remplacement prÃ©vu..."></textarea>
   <div class="modal-actions">
     <button class="btn-primary" id="daynote-save-btn" onclick="saveDayNote()">Enregistrer</button>
     <button class="btn-secondary" onclick="closeDayNote()">Annuler</button>
@@ -168,19 +168,19 @@ function openCopyWeek() {
   if (!isAdmin()) return;
   // Peupler le select source (toutes les semaines existantes)
   const srcSel = document.getElementById('copyweek-source');
-  srcSel.innerHTML = allWeeks.map((w,i)=>`<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prévision)' : ''}</option>`).join("");
-  // Destination: uniquement semaines != source (hors passée)
+  srcSel.innerHTML = allWeeks.map((w,i)=>`<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prÃ©vision)' : ''}</option>`).join("");
+  // Destination: uniquement semaines != source (hors passÃ©e)
   const dstSel = document.getElementById('copyweek-dest');
   const srcIdx = srcSel.value = String(currentWeekIdx);
   dstSel.innerHTML = allWeeks.map((w,i)=>{
     const state = getWeekState(w);
-    return state==="past"||String(i)===srcIdx ? "" : `<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prévision)' : ''}</option>`;
+    return state==="past"||String(i)===srcIdx ? "" : `<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prÃ©vision)' : ''}</option>`;
   }).join("");
-  // Premier choix pour destination = semaine future immédiate si possible
+  // Premier choix pour destination = semaine future immÃ©diate si possible
   if (dstSel.options.length && dstSel.value==="") dstSel.selectedIndex = 0;
   updateCopyWeekRecap();
   document.getElementById('modal-copyweek').classList.add('open');
-  // Changer récap si select change
+  // Changer rÃ©cap si select change
   srcSel.onchange = dstSel.onchange = updateCopyWeekRecap;
 }
 function closeCopyWeek() {
@@ -190,14 +190,14 @@ function updateCopyWeekRecap() {
   const src = Number(document.getElementById('copyweek-source').value),
         dst = Number(document.getElementById('copyweek-dest').value),
         srcW = allWeeks[src], dstW = allWeeks[dst];
-  let msg = srcW && dstW ? `Copier <b>${escapeHTML(weekDisplayTitle(srcW))}</b> → <b>${escapeHTML(weekDisplayTitle(dstW))}</b>.<br>Les shifts existants sur la destination seront remplacés.` : '';
+  let msg = srcW && dstW ? `Copier <b>${escapeHTML(weekDisplayTitle(srcW))}</b> â†’ <b>${escapeHTML(weekDisplayTitle(dstW))}</b>.<br>Les shifts existants sur la destination seront remplacÃ©s.` : '';
   document.getElementById('copyweek-recap').innerHTML = msg;
 }
 function confirmCopyWeek() {
   const srcIdx = Number(document.getElementById('copyweek-source').value),
         dstIdx = Number(document.getElementById('copyweek-dest').value);
   if (srcIdx === dstIdx || isNaN(srcIdx) || isNaN(dstIdx)) {
-    setStatus('error', 'Sélection invalide (source/destination)');
+    setStatus('error', 'SÃ©lection invalide (source/destination)');
     return;
   }
   const srcW = allWeeks[srcIdx], dstW = allWeeks[dstIdx];
@@ -209,10 +209,10 @@ function confirmCopyWeek() {
     setStatus('error', 'Semaines incompatibles pour la copie.');
     return;
   }
-  // Copie clean : on garde tous les employés destination, mais on ajoute ceux manquants du source
+  // Copie cleanâ€¯: on garde tous les employÃ©s destination, mais on ajoute ceux manquants du source
   const srcEmpMap = new Map((srcW.employees||[]).map(e=>[employeeKey(e), e]));
   const dstEmpMap = new Map((dstW.employees||[]).map(e=>[employeeKey(e), e]));
-  // Ajouter employés du source absents dans destination
+  // Ajouter employÃ©s du source absents dans destination
   srcEmpMap.forEach((emp, key) => {
     if (!dstEmpMap.has(key)) {
       dstW.employees = dstW.employees || [];
@@ -247,7 +247,7 @@ function confirmCopyWeek() {
   saveLocalWeeks();
   render();
   saveToGoogle("Copie semaine");
-  setStatus('success', 'Copie de la semaine effectuée.');
+  setStatus('success', 'Copie de la semaine effectuÃ©e.');
 }
 
 // Gestion des notes par jour
@@ -292,7 +292,7 @@ function saveDayNote() {
   saveLocalWeeks();
   render();
   saveToGoogle("Note jour");
-  setStatus('success', 'Note enregistrée.');
+  setStatus('success', 'Note enregistrÃ©e.');
 }
 
 function deleteDayNote() {
@@ -310,8 +310,8 @@ function deleteDayNote() {
   closeDayNote();
   saveLocalWeeks();
   render();
-  saveToGoogle("Note jour supprimée");
-  setStatus('success', 'Note supprimée.');
+  saveToGoogle("Note jour supprimÃ©e");
+  setStatus('success', 'Note supprimÃ©e.');
 }
 
 
@@ -430,8 +430,63 @@ function confirmEditEmployee(){if(!isAdmin())return;const key=selectedEmployeeKe
 function buildChip(shift){if(!shift)return`<div class="chip empty"><span class="chip-off-label">A definir</span></div>`;if(shift.type==="repos"&&!(shift.start||shift.end))return`<div class="chip off"><span class="chip-off-label">Jour off</span></div>`;const t=shift.type||"",tl=t.toLowerCase(),type=escapeHTML(t),start=escapeHTML(shift.start||""),end=escapeHTML(shift.end||""),time=shift.start?`<div class="chip-time">${start}-${end}</div>`:"";if(tl==="ouverture"||tl.startsWith("ouv")||t==="Atelier")return`<div class="chip ouv">${time}<div class="chip-type">${type}</div></div>`;if(tl==="fermeture"||tl.startsWith("ferm"))return`<div class="chip ferm">${time}<div class="chip-type">Fermeture</div></div>`;return`<div class="chip special">${time}<div class="chip-label">${type||"A definir"}</div></div>`;}
 function renderEmpty(){document.getElementById("week-nav").style.display="none";document.getElementById("planning").innerHTML=`<div class="empty-state"><span class="empty-icon">Calendrier</span><div class="empty-title">Aucun planning charge</div><div class="empty-sub">Clique sur Actualiser ou importe un planning en mode admin.</div></div>`;}
 function buildMobileDay(dayStr,dayIdx,week,weekIdx,todayStr){const d=new Date(dayStr+"T12:00:00"),block=document.createElement("div"),employees=week.employees||[],state=getDayState(dayStr),activeCount=activeCountForDay(week,dayStr);block.className="mobile-day-card day-"+state;block.innerHTML=`<div class="mobile-day-header"><div class="mobile-day-title"><span class="mobile-day-name">${escapeHTML(DAYS[dayIdx]||"")}</span><span class="mobile-day-num">${d.getDate()}</span></div><span class="mobile-day-state">${dayStateLabel(state)}</span><span class="mobile-day-count">${activeCount} actif${activeCount>1?"s":""}</span></div>`;employees.forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="mobile-emp-row";if(isAdmin()){row.title="Modifier";row.onclick=()=>openEdit(weekIdx,empIdx,dayStr)}row.innerHTML=`<div class="mobile-emp-name"><span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>${isAdmin()?`<button class="emp-delete-btn" title="Supprimer" onclick="deleteEmployeeFromRow(event,allWeeks[${weekIdx}].employees[${empIdx}])">&times;</button>`:""}</div><div class="mobile-shift">${buildChip(emp.shifts?.find(s=>s.date===dayStr))}</div>`;row.querySelector(".mobile-emp-name").onclick=e=>{e.stopPropagation();openEmployeeProfile(emp)};block.appendChild(row)});return block;}
-function renderWeek(idx){const week=allWeeks[idx];if(!week)return renderEmpty();currentWeekIdx=idx;const state=getWeekState(week),nav=document.getElementById("week-nav");nav.style.display="flex";nav.className="week-"+state;document.getElementById("week-title").innerHTML=`<span class="week-main-title">${escapeHTML(weekDisplayTitle(week))}</span><span class="week-sub-title">${escapeHTML(week.generated?"Semaine previsionnelle - "+week.label:week.label||"Planning")}</span><span class="week-state-badge">${week.generated?"A preparer":weekStateLabel(state)}</span>`;document.getElementById("prev-btn").disabled=idx===0;document.getElementById("next-btn").disabled=false;const today=todayISO(),card=document.createElement("div");card.className="planning-card week-"+state;const desktop=document.createElement("div");desktop.className="desktop-planning";const gh=document.createElement("div");gh.className="grid-header";gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;(week.days||[]).forEach((ds,i)=>{const d=new Date(ds+"T12:00:00");const hasNote=week.notes?.days?.[ds];gh.innerHTML+=`<div class="gh-day${ds===today?" today-col":""}" style="position:relative"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===today?" today":""}">${d.getDate()}</div>${hasNote?`<div class="gh-day-note-badge" title="Note disponible" onclick="event.stopPropagation(); openDayNote(${idx}, '${ds}')">!</div>`:"
-        }</div>`});desktop.appendChild(gh);(week.employees||[]).forEach((emp,empIdx)=>{const row=document.createElement("div");row.className="grid-row";const nameCell=document.createElement("div");nameCell.className="gr-name";nameCell.onclick=()=>openEmployeeProfile(emp);nameCell.innerHTML=`<span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>${isAdmin()?`<button class="emp-delete-btn" title="Supprimer" onclick="deleteEmployeeFromRow(event,allWeeks[${idx}].employees[${empIdx}])">&times;</button>`:""}`;row.appendChild(nameCell);(week.days||[]).forEach(ds=>{const cell=document.createElement("div");cell.className="gr-cell";if(isAdmin()){cell.title="Modifier";cell.onclick=()=>openEdit(idx,empIdx,ds)}cell.innerHTML=buildChip(emp.shifts?.find(s=>s.date===ds));row.appendChild(cell)});desktop.appendChild(row)});const footer=document.createElement("div");footer.className="grid-footer admin-only";footer.innerHTML=`<span class="edit-hint">Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;desktop.appendChild(footer);card.appendChild(desktop);const mobile=document.createElement("div");mobile.className="mobile-planning";(week.days||[]).forEach((ds,i)=>mobile.appendChild(buildMobileDay(ds,i,week,idx,today)));const mf=document.createElement("div");mf.className="mobile-footer admin-only";mf.innerHTML=`<button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;mobile.appendChild(mf);card.appendChild(mobile);document.getElementById("planning").innerHTML="";document.getElementById("planning").appendChild(card);}
+function renderWeek(idx){
+  const week=allWeeks[idx];
+  if(!week)return renderEmpty();
+  currentWeekIdx=idx;
+  const state=getWeekState(week),nav=document.getElementById("week-nav");
+  nav.style.display="flex";
+  nav.className="week-"+state;
+  document.getElementById("week-title").innerHTML=`<span class="week-main-title">${escapeHTML(weekDisplayTitle(week))}</span><span class="week-sub-title">${escapeHTML(week.generated?"Semaine previsionnelle - "+week.label:week.label||"Planning")}</span><span class="week-state-badge">${week.generated?"A preparer":weekStateLabel(state)}</span>`;
+  document.getElementById("prev-btn").disabled=idx===0;
+  document.getElementById("next-btn").disabled=false;
+  const today=todayISO(),card=document.createElement("div");
+  card.className="planning-card week-"+state;
+  const desktop=document.createElement("div");
+  desktop.className="desktop-planning";
+  const gh=document.createElement("div");
+  gh.className="grid-header";
+  gh.innerHTML=`<div class="gh-name"><span>Employe</span></div>`;
+  (week.days||[]).forEach((ds,i)=>{
+    const d=new Date(ds+"T12:00:00");
+    const hasNote=!!(week.notes&&week.notes.days&&week.notes.days[ds]);
+    gh.innerHTML+=`<div class="gh-day${ds===today?" today-col":""}" style="position:relative"><div class="gh-day-label">${escapeHTML(DAYS[i]||"")}</div><div class="gh-day-date${ds===today?" today":""}">${d.getDate()}</div>${hasNote?`<div class="gh-day-note-badge" title="Note disponible" onclick="event.stopPropagation(); openDayNote(${idx}, ${JSON.stringify(ds)})">!</div>`:""}</div>`;
+  });
+  desktop.appendChild(gh);
+  (week.employees||[]).forEach((emp,empIdx)=>{
+    const row=document.createElement("div");
+    row.className="grid-row";
+    const nameCell=document.createElement("div");
+    nameCell.className="gr-name";
+    nameCell.onclick=()=>openEmployeeProfile(emp);
+    nameCell.innerHTML=`<span class="fn">${escapeHTML(emp.firstName)}</span><span class="ln">${escapeHTML(emp.lastName)}</span>${isAdmin()?`<button class="emp-delete-btn" title="Supprimer" onclick="deleteEmployeeFromRow(event,allWeeks[${idx}].employees[${empIdx}])">&times;</button>`:""}`;
+    row.appendChild(nameCell);
+    (week.days||[]).forEach(ds=>{
+      const cell=document.createElement("div");
+      cell.className="gr-cell";
+      if(isAdmin()){cell.title="Modifier";cell.onclick=()=>openEdit(idx,empIdx,ds)}
+      cell.innerHTML=buildChip(emp.shifts?.find(s=>s.date===ds));
+      row.appendChild(cell)
+    });
+    desktop.appendChild(row)
+  });
+  const footer=document.createElement("div");
+  footer.className="grid-footer admin-only";
+  footer.innerHTML=`<span class="edit-hint">Cliquer sur une case pour modifier</span><button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;
+  desktop.appendChild(footer);
+  card.appendChild(desktop);
+  const mobile=document.createElement("div");
+  mobile.className="mobile-planning";
+  (week.days||[]).forEach((ds,i)=>mobile.appendChild(buildMobileDay(ds,i,week,idx,today)));
+  const mf=document.createElement("div");
+  mf.className="mobile-footer admin-only";
+  mf.innerHTML=`<button class="btn-add-emp" onclick="openAddEmployee()">+ Ajouter un employe</button>`;
+  mobile.appendChild(mf);
+  card.appendChild(mobile);
+  document.getElementById("planning").innerHTML="";
+  document.getElementById("planning").appendChild(card);
+}
+
 function getTodayEntries(){const today=todayISO(),week=allWeeks.find(w=>(w.days||[]).includes(today));if(!week)return{week:null,entries:[]};const entries=(week.employees||[]).map((emp,empIdx)=>({emp,empIdx,shift:emp.shifts?.find(s=>s.date===today),weekIdx:allWeeks.indexOf(week)})).filter(e=>isWorkingShift(e.shift));entries.sort((a,b)=>(parseMinutes(a.shift?.start)??9999)-(parseMinutes(b.shift?.start)??9999));return{week,entries};}
 function renderToday(){document.getElementById("week-nav").style.display="none";const {week,entries}=getTodayEntries(),today=todayISO(),d=new Date(today+"T12:00:00"),dateLabel=d.toLocaleDateString("fr-BE",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});if(!week){document.getElementById("planning").innerHTML=`<div class="view-card"><div class="empty-state"><div class="empty-title">Aucun planning pour aujourd'hui</div><div class="empty-sub">${escapeHTML(dateLabel)}</div></div></div>`;return}document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Aujourd'hui</div><div class="today-date-big">${escapeHTML(dateLabel)}</div><div class="view-sub">${escapeHTML(week.label)}</div></div><span class="view-badge badge-current">${entries.length} pers.</span></div>${entries.map(e=>`<div class="list-row${!e.shift||e.shift.type==="repos"?" muted-row":""}" ${isAdmin()?`onclick="openEdit(${e.weekIdx},${e.empIdx},'${today}')" style="cursor:pointer"`:""}><div><div class="list-name">${escapeHTML(employeeLabel(e.emp))}</div><div class="list-meta">${escapeHTML(e.emp.lastName||"")}</div></div><div>${buildChip(e.shift)}</div></div>`).join("")}</div>`;}
 function renderEmployee(){
@@ -440,7 +495,7 @@ function renderEmployee(){
   if(!key){document.getElementById("planning").innerHTML=`<div class="view-card"><div class="empty-state"><div class="empty-title">Choisis un employe</div><div class="empty-sub">Utilise le menu en haut a droite ou clique sur un nom dans la semaine.</div></div></div>`;return}
   let rows=[],label="";
   allWeeks.forEach((w,wi)=>(w.employees||[]).forEach((emp,ei)=>{if(employeeKey(emp)===key){label=employeeLabel(emp);(w.days||[]).forEach(ds=>rows.push({week:w,wi,ei,ds,shift:emp.shifts?.find(s=>s.date===ds)}))}}));
-  const html=`<div class="view-card"><div class="view-head"><div><div class="view-title">${escapeHTML(label||"Employe")}</div><div class="view-sub">${rows.length} jour(s)</div></div>${isAdmin()?`<div class="modal-actions"><button class="btn-secondary" onclick="openEditEmployee()">Modifier</button><button class="danger-btn" onclick="deleteSelectedEmployee()">Supprimer</button></div>`:""}</div>${rows.map(r=>`<div class="list-row day-${getDayState(r.ds)}" data-date="${r.ds}" ${isAdmin()?`onclick="openEdit(${r.wi},${r.ei},'${r.ds}')" style="cursor:pointer"`:""}><div><div class="list-name">${escapeHTML(r.ds)}</div><div class="list-meta">${escapeHTML(r.week.label)} · ${dayStateLabel(getDayState(r.ds))}</div></div><div>${buildChip(r.shift)}</div></div>`).join("")}</div>`;
+  const html=`<div class="view-card"><div class="view-head"><div><div class="view-title">${escapeHTML(label||"Employe")}</div><div class="view-sub">${rows.length} jour(s)</div></div>${isAdmin()?`<div class="modal-actions"><button class="btn-secondary" onclick="openEditEmployee()">Modifier</button><button class="danger-btn" onclick="deleteSelectedEmployee()">Supprimer</button></div>`:""}</div>${rows.map(r=>`<div class="list-row day-${getDayState(r.ds)}" data-date="${r.ds}" ${isAdmin()?`onclick="openEdit(${r.wi},${r.ei},'${r.ds}')" style="cursor:pointer"`:""}><div><div class="list-name">${escapeHTML(r.ds)}</div><div class="list-meta">${escapeHTML(r.week.label)} Â· ${dayStateLabel(getDayState(r.ds))}</div></div><div>${buildChip(r.shift)}</div></div>`).join("")}</div>`;
   document.getElementById("planning").innerHTML=html;
   // scroller vers la date actuelle si presente, sinon vers la premiere date future
   const today=todayISO();
@@ -458,7 +513,7 @@ function renderEmployee(){
     setTimeout(()=>{try{target.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){target.scrollIntoView();}},50);
   }
 }
-function renderStats(){document.getElementById("week-nav").style.display="none";const week=allWeeks[currentWeekIdx];if(!week)return renderEmpty();const stats=(week.employees||[]).map(emp=>({name:employeeLabel(emp),hours:(emp.shifts||[]).reduce((s,x)=>s+durationHours(x),0),open:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ouv").length,close:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ferm").length}));document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Stats semaine</div><div class="view-sub">${escapeHTML(week.label)} · pause repas retiree si amplitude >= 9h</div></div></div><div class="stats-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-name">${escapeHTML(s.name)}</div><div class="stat-value">${s.hours.toFixed(1)}h</div><div class="list-meta">${s.open} ouv. / ${s.close} ferm.</div></div>`).join("")}</div></div>`;}
+function renderStats(){document.getElementById("week-nav").style.display="none";const week=allWeeks[currentWeekIdx];if(!week)return renderEmpty();const stats=(week.employees||[]).map(emp=>({name:employeeLabel(emp),hours:(emp.shifts||[]).reduce((s,x)=>s+durationHours(x),0),open:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ouv").length,close:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ferm").length}));document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Stats semaine</div><div class="view-sub">${escapeHTML(week.label)} Â· pause repas retiree si amplitude >= 9h</div></div></div><div class="stats-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-name">${escapeHTML(s.name)}</div><div class="stat-value">${s.hours.toFixed(1)}h</div><div class="list-meta">${s.open} ouv. / ${s.close} ferm.</div></div>`).join("")}</div></div>`;}
 function collectPreparationItems(){
   const today=todayISO(),items=[];
   allWeeks.forEach((week,wi)=>{
@@ -489,10 +544,10 @@ function renderPreparation(){
   let lastWeek="",lastDay="";
   const rows=items.map(it=>{
     const weekLabel=weekDisplayTitle(it.week);
-    const dayLabel=`${it.ds} · ${DAYS[it.week.days.indexOf(it.ds)]||""}`;
+    const dayLabel=`${it.ds} Â· ${DAYS[it.week.days.indexOf(it.ds)]||""}`;
     const showWeek=weekLabel!==lastWeek; if(showWeek){lastWeek=weekLabel; lastDay="";}
     const showDay=dayLabel!==lastDay; if(showDay)lastDay=dayLabel;
-    return `${showWeek?`<div class="list-row" style="background:var(--surface2)"><div><div class="list-name">${escapeHTML(weekLabel)}</div><div class="list-meta">${escapeHTML(it.week.label||"")} · ${weekStateLabel(it.state)}</div></div><div></div></div>`:""}${showDay?`<div class="list-row"><div><div class="list-name">${escapeHTML(dayLabel)}</div><div class="list-meta">Cases a preparer</div></div><div></div></div>`:""}<div class="list-row day-${getDayState(it.ds)}" onclick="openEdit(${it.wi},${it.ei},'${it.ds}')" style="cursor:pointer"><div><div class="list-name">${escapeHTML(employeeLabel(it.emp))}</div><div class="list-meta">A definir</div></div><div>${buildChip(null)}</div></div>`;
+    return `${showWeek?`<div class="list-row" style="background:var(--surface2)"><div><div class="list-name">${escapeHTML(weekLabel)}</div><div class="list-meta">${escapeHTML(it.week.label||"")} Â· ${weekStateLabel(it.state)}</div></div><div></div></div>`:""}${showDay?`<div class="list-row"><div><div class="list-name">${escapeHTML(dayLabel)}</div><div class="list-meta">Cases a preparer</div></div><div></div></div>`:""}<div class="list-row day-${getDayState(it.ds)}" onclick="openEdit(${it.wi},${it.ei},'${it.ds}')" style="cursor:pointer"><div><div class="list-name">${escapeHTML(employeeLabel(it.emp))}</div><div class="list-meta">A definir</div></div><div>${buildChip(null)}</div></div>`;
   }).join("");
   document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Preparation</div><div class="view-sub">Semaine actuelle + semaines futures</div></div><span class="view-badge badge-current">${items.length} case${items.length>1?"s":""} a definir</span></div>${rows}</div>`;
 }
@@ -508,3 +563,4 @@ window.addEventListener("DOMContentLoaded",()=>{adminValidated=false;updateAdmin
 </script>
 </body>
 </html>
+
