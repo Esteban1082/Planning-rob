@@ -42,6 +42,8 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 @media print{body{background:#fff}.app{max-width:none;padding:0}header,.toolbar,#status,.week-nav-actions,.admin-only,.modal-overlay{display:none!important}.planning-card,.view-card{box-shadow:none;border-color:#999}.mobile-planning{display:none!important}.desktop-planning{display:block!important}.grid-header,.grid-row{grid-template-columns:120px repeat(6,1fr)}}
 /* Highlight discret pour la ligne du jour dans la fiche employe */
 .list-row.today-highlight{box-shadow:inset 0 0 0 1px rgba(59,130,246,0.12);background:linear-gradient(90deg,rgba(59,130,246,0.03),rgba(255,255,255,0));border-radius:8px}
+/* Styles pour le mode preparation */
+.prep-week-title{font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px;padding-top:10px;}.prep-day-list{margin-bottom:15px;}.prep-day-title{font-size:12px;font-weight:700;color:var(--muted2);margin-bottom:6px;font-family:'DM Mono',monospace;}.prep-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);cursor:pointer;}.prep-item:hover{background:var(--accent-light);}.prep-item-emp{font-weight:600;font-size:13px;}.prep-item-date{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}.prep-empty{text-align:center;padding:40px 20px;font-size:14px;color:var(--muted2);}
 </style>
 </head>
 <body>
@@ -62,6 +64,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <button class="tab-btn" id="tab-today" onclick="setView('today')">Aujourd'hui</button>
       <button class="tab-btn" id="tab-employee" onclick="setView('employee')">Employe</button>
       <button class="tab-btn" id="tab-stats" onclick="setView('stats')">Stats</button>
+      <button class="tab-btn admin-only" id="tab-preparation" onclick="setView('preparation')">Preparation</button>
     </div>
     <div class="toolbar-right">
       <select class="select-input" id="employee-filter" onchange="selectedEmployeeKey=this.value;setView('employee')"></select>
@@ -175,7 +178,7 @@ function dayStateLabel(s){return s==="current"?"Aujourd'hui":s==="past"?"Passe":
 function setStatus(type,msg){const el=document.getElementById("status");el.className=type||"";el.innerHTML=type==="loading"?`<span class="spinner"></span>${escapeHTML(msg)}`:escapeHTML(msg||"");}
 
 function setView(view){currentView=view;render();}
-function setActiveTabs(){["week","today","employee","stats"].forEach(v=>document.getElementById("tab-"+v)?.classList.toggle("active",currentView===v));}
+function setActiveTabs(){["week","today","employee","stats","preparation"].forEach(v=>document.getElementById("tab-"+v)?.classList.toggle("active",currentView===v));}
 function goToday(){if(!allWeeks.length)return setStatus("pending","Aucun planning charge");currentWeekIdx=findTodayWeekIndex();currentView="week";render();}
 function changeWeek(dir){if(dir>0&&currentWeekIdx>=allWeeks.length-1){const last=allWeeks[allWeeks.length-1],nextStart=last?.days?.[0]?addDays(new Date(last.days[0]+"T12:00:00"),7):mondayOf(new Date());currentWeekIdx=addWeekIfMissing(nextStart);saveLocalWeeks()}else{currentWeekIdx=Math.max(0,currentWeekIdx+dir)}currentView="week";render();}
 
@@ -270,7 +273,44 @@ function renderEmployee(){
   }
 }
 function renderStats(){document.getElementById("week-nav").style.display="none";const week=allWeeks[currentWeekIdx];if(!week)return renderEmpty();const stats=(week.employees||[]).map(emp=>({name:employeeLabel(emp),hours:(emp.shifts||[]).reduce((s,x)=>s+durationHours(x),0),open:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ouv").length,close:(emp.shifts||[]).filter(s=>shiftFamily(s)==="ferm").length}));document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Stats semaine</div><div class="view-sub">${escapeHTML(week.label)} · pause repas retiree si amplitude >= 9h</div></div></div><div class="stats-grid">${stats.map(s=>`<div class="stat-card"><div class="stat-name">${escapeHTML(s.name)}</div><div class="stat-value">${s.hours.toFixed(1)}h</div><div class="list-meta">${s.open} ouv. / ${s.close} ferm.</div></div>`).join("")}</div></div>`;}
-function render(){updateAdminUI();refreshEmployeeFilter();setActiveTabs();document.getElementById("app").classList.toggle("view-employee",currentView==="employee");if(currentView==="today")renderToday();else if(currentView==="employee")renderEmployee();else if(currentView==="stats")renderStats();else renderWeek(currentWeekIdx);}
+function collectPreparationItems(){
+  const today=todayISO(),items=[];
+  allWeeks.forEach((week,wi)=>{
+    const state=getWeekState(week);
+    if(state==="past")return;
+    (week.employees||[]).forEach((emp,ei)=>{
+      (week.days||[]).forEach(ds=>{
+        const shift=emp.shifts?.find(s=>s.date===ds);
+        if(!shift||!String(shift.type||"").trim()||String(shift.type).toLowerCase()==="a definir"){
+          items.push({wi,ei,week,emp,ds,state});
+        }
+      });
+    });
+  });
+  return items.sort((a,b)=>a.ds.localeCompare(b.ds)||employeeLabel(a.emp).localeCompare(employeeLabel(b.emp)));
+}
+function renderPreparation(){
+  document.getElementById("week-nav").style.display="none";
+  if(!isAdmin()){
+    document.getElementById("planning").innerHTML=`<div class="view-card"><div class="empty-state"><div class="empty-title">Mode admin requis</div><div class="empty-sub">Active le mode admin pour acceder a la preparation.</div></div></div>`;
+    return;
+  }
+  const items=collectPreparationItems();
+  if(!items.length){
+    document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Preparation</div><div class="view-sub">Aucune case a definir</div></div><span class="view-badge badge-current">0 case</span></div><div class="empty-state"><div class="empty-title">Tout est complete</div><div class="empty-sub">Aucune case vide sur la semaine actuelle et les semaines futures.</div></div></div>`;
+    return;
+  }
+  let lastWeek="",lastDay="";
+  const rows=items.map(it=>{
+    const weekLabel=weekDisplayTitle(it.week);
+    const dayLabel=`${it.ds} · ${DAYS[it.week.days.indexOf(it.ds)]||""}`;
+    const showWeek=weekLabel!==lastWeek; if(showWeek){lastWeek=weekLabel; lastDay="";}
+    const showDay=dayLabel!==lastDay; if(showDay)lastDay=dayLabel;
+    return `${showWeek?`<div class="list-row" style="background:var(--surface2)"><div><div class="list-name">${escapeHTML(weekLabel)}</div><div class="list-meta">${escapeHTML(it.week.label||"")} · ${weekStateLabel(it.state)}</div></div><div></div></div>`:""}${showDay?`<div class="list-row"><div><div class="list-name">${escapeHTML(dayLabel)}</div><div class="list-meta">Cases a preparer</div></div><div></div></div>`:""}<div class="list-row day-${getDayState(it.ds)}" onclick="openEdit(${it.wi},${it.ei},'${it.ds}')" style="cursor:pointer"><div><div class="list-name">${escapeHTML(employeeLabel(it.emp))}</div><div class="list-meta">A definir</div></div><div>${buildChip(null)}</div></div>`;
+  }).join("");
+  document.getElementById("planning").innerHTML=`<div class="view-card"><div class="view-head"><div><div class="view-title">Preparation</div><div class="view-sub">Semaine actuelle + semaines futures</div></div><span class="view-badge badge-current">${items.length} case${items.length>1?"s":""} a definir</span></div>${rows}</div>`;
+}
+function render(){updateAdminUI();refreshEmployeeFilter();setActiveTabs();document.getElementById("app").classList.toggle("view-employee",currentView==="employee");if(currentView==="today")renderToday();else if(currentView==="employee")renderEmployee();else if(currentView==="stats")renderStats();else if(currentView==="preparation")renderPreparation();else renderWeek(currentWeekIdx);}
 window.addEventListener("DOMContentLoaded",()=>{adminValidated=false;updateAdminUI();const cached=loadLocalWeeks();if(cached.length){allWeeks=cached;ensureWeekHorizon();saveLocalWeeks();refreshEmployeeFilter();currentWeekIdx=findTodayWeekIndex();}else{allWeeks=[];ensureWeekHorizon();saveLocalWeeks();refreshEmployeeFilter();currentWeekIdx=findTodayWeekIndex();}
   // ouvrir directement sur Aujourd'hui au demarrage
   currentView = 'today';
