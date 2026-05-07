@@ -192,6 +192,10 @@ function confirmCopyWeek() {
     setStatus('error', 'Semaine manquante.');
     return;
   }
+  if (!Array.isArray(srcW.days) || !Array.isArray(dstW.days) || srcW.days.length !== dstW.days.length) {
+    setStatus('error', 'Semaines incompatibles pour la copie.');
+    return;
+  }
   // Copie clean : on garde tous les employés destination, mais on ajoute ceux manquants du source
   const srcEmpMap = new Map((srcW.employees||[]).map(e=>[employeeKey(e), e]));
   const dstEmpMap = new Map((dstW.employees||[]).map(e=>[employeeKey(e), e]));
@@ -207,20 +211,25 @@ function confirmCopyWeek() {
       dstEmpMap.set(key, dstW.employees[dstW.employees.length-1]);
     }
   });
-  // Pour chaque employé, remplace shifts si présent dans le source
+  // Pour chaque employe, remplace shifts si present dans le source
   dstW.employees.forEach(emp => {
     const srcEmp = srcEmpMap.get(employeeKey(emp));
     if (srcEmp) {
-      // reconstruire les shifts pour chaque jour (semaine destination)
-      emp.shifts = (dstW.days||[]).map(ds => {
-        // trouver le shift correspondant dans la semaine source
-        const s = (srcEmp.shifts||[]).find(x=>x.date===ds);
-        // on clone le shift (hors ref)
-        return s ? {...s} : {date: ds, type: "repos"};
+      // Reconstruire les shifts destination en se basant sur l'index du jour (Lu..Sa)
+      // et non sur la date ISO (les dates source/destination sont differentes).
+      emp.shifts = (dstW.days || []).map((dstDate, dayIdx) => {
+        const srcDate = srcW.days[dayIdx];
+        const srcShift = (srcEmp.shifts || []).find(x => x.date === srcDate);
+        if (!srcShift) return {date: dstDate, type: "repos"};
+        return {
+          ...srcShift,
+          date: dstDate
+        };
       });
     }
-    // Sinon, ne pas toucher à l’employé qui existe en plus dans la destination
+    // Sinon, ne pas toucher a l'employe qui existe en plus dans la destination
   });
+  dstW.generated = true;
   closeCopyWeek();
   saveLocalWeeks();
   render();
@@ -245,7 +254,10 @@ function isoDate(d){return d.toISOString().split("T")[0];}
 function addDays(date,days){const d=new Date(date);d.setDate(d.getDate()+days);return d;}
 function mondayOf(date){const d=new Date(date),day=d.getDay()||7;d.setDate(d.getDate()-day+1);d.setHours(12,0,0,0);return d;}
 function isoWeekNumber(date){const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())),day=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-day);const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil((((d-yearStart)/86400000)+1)/7);}
-function employeeKey(emp){return `${emp.firstName||""}|${emp.lastName||""}`.toLowerCase();}
+function employeeKey(emp){
+  const norm=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim().toLowerCase();
+  return `${norm(emp.firstName)}|${norm(emp.lastName)}`;
+}
 function employeeLabel(emp){return `${emp.firstName||""} ${emp.lastName||""}`.trim();}
 function loadLocalWeeks(){try{const c=JSON.parse(localStorage.getItem(STORAGE_CACHE)||"[]");return Array.isArray(c)?c:[]}catch(e){return[]}}
 function saveLocalWeeks(){localStorage.setItem(STORAGE_CACHE,JSON.stringify(allWeeks));}
