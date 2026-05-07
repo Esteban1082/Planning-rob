@@ -65,6 +65,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
       <button class="tab-btn" id="tab-employee" onclick="setView('employee')">Employe</button>
       <button class="tab-btn" id="tab-stats" onclick="setView('stats')">Stats</button>
       <button class="tab-btn admin-only" id="tab-preparation" onclick="setView('preparation')">Preparation</button>
+<button class="tab-btn admin-only" id="tab-copyweek" onclick="openCopyWeek()">Copier semaine</button>
     </div>
     <div class="toolbar-right">
       <select class="select-input" id="employee-filter" onchange="selectedEmployeeKey=this.value;setView('employee')"></select>
@@ -131,8 +132,103 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
   <div class="modal-actions"><button class="btn-primary" onclick="confirmEditEmployee()">Enregistrer</button><button class="btn-secondary" onclick="closeEditEmployee()">Annuler</button></div>
 </div></div>
 
+<!-- Modale Copier une semaine -->
+<div class="modal-overlay" id="modal-copyweek"><div class="modal">
+  <h3>Copier une semaine</h3>
+  <div class="modal-sub">Dupliquer toute une semaine sur une autre. Cette action peut écraser les shifts existants.<br><b>Attention :</b> irréversible !</div>
+  <label class="field-label">Semaine à copier (source)</label>
+  <select class="modal-input" id="copyweek-source"></select>
+  <label class="field-label">Semaine cible (destination)</label>
+  <select class="modal-input" id="copyweek-dest"></select>
+  <div id="copyweek-recap" style="font-size:12px;color:var(--muted2);margin:12px 0 0 0;"></div>
+  <div class="modal-actions">
+    <button class="btn-primary" onclick="confirmCopyWeek()">Copier</button>
+    <button class="btn-secondary" onclick="closeCopyWeek()">Annuler</button>
+  </div>
+</div></div>
+
 <script>
 const DAYS=["Lu","Ma","Me","Je","Ve","Sa"],INITIAL_FUTURE_WEEKS=12;
+
+// Copie semaine modal
+function openCopyWeek() {
+  if (!isAdmin()) return;
+  // Peupler le select source (toutes les semaines existantes)
+  const srcSel = document.getElementById('copyweek-source');
+  srcSel.innerHTML = allWeeks.map((w,i)=>`<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prévision)' : ''}</option>`).join("");
+  // Destination: uniquement semaines != source (hors passée)
+  const dstSel = document.getElementById('copyweek-dest');
+  const srcIdx = srcSel.value = String(currentWeekIdx);
+  dstSel.innerHTML = allWeeks.map((w,i)=>{
+    const state = getWeekState(w);
+    return state==="past"||String(i)===srcIdx ? "" : `<option value="${i}">${escapeHTML(weekDisplayTitle(w))}${w.generated ? ' (prévision)' : ''}</option>`;
+  }).join("");
+  // Premier choix pour destination = semaine future immédiate si possible
+  if (dstSel.options.length && dstSel.value==="") dstSel.selectedIndex = 0;
+  updateCopyWeekRecap();
+  document.getElementById('modal-copyweek').classList.add('open');
+  // Changer récap si select change
+  srcSel.onchange = dstSel.onchange = updateCopyWeekRecap;
+}
+function closeCopyWeek() {
+  document.getElementById('modal-copyweek').classList.remove('open');
+}
+function updateCopyWeekRecap() {
+  const src = Number(document.getElementById('copyweek-source').value),
+        dst = Number(document.getElementById('copyweek-dest').value),
+        srcW = allWeeks[src], dstW = allWeeks[dst];
+  let msg = srcW && dstW ? `Copier <b>${escapeHTML(weekDisplayTitle(srcW))}</b> → <b>${escapeHTML(weekDisplayTitle(dstW))}</b>.<br>Les shifts existants sur la destination seront remplacés.` : '';
+  document.getElementById('copyweek-recap').innerHTML = msg;
+}
+function confirmCopyWeek() {
+  const srcIdx = Number(document.getElementById('copyweek-source').value),
+        dstIdx = Number(document.getElementById('copyweek-dest').value);
+  if (srcIdx === dstIdx || isNaN(srcIdx) || isNaN(dstIdx)) {
+    setStatus('error', 'Sélection invalide (source/destination)');
+    return;
+  }
+  const srcW = allWeeks[srcIdx], dstW = allWeeks[dstIdx];
+  if (!srcW || !dstW) {
+    setStatus('error', 'Semaine manquante.');
+    return;
+  }
+  // Copie clean : on garde tous les employés destination, mais on ajoute ceux manquants du source
+  const srcEmpMap = new Map((srcW.employees||[]).map(e=>[employeeKey(e), e]));
+  const dstEmpMap = new Map((dstW.employees||[]).map(e=>[employeeKey(e), e]));
+  // Ajouter employés du source absents dans destination
+  srcEmpMap.forEach((emp, key) => {
+    if (!dstEmpMap.has(key)) {
+      dstW.employees = dstW.employees || [];
+      dstW.employees.push({
+        firstName: emp.firstName,
+        lastName: emp.lastName,
+        shifts: []
+      });
+      dstEmpMap.set(key, dstW.employees[dstW.employees.length-1]);
+    }
+  });
+  // Pour chaque employé, remplace shifts si présent dans le source
+  dstW.employees.forEach(emp => {
+    const srcEmp = srcEmpMap.get(employeeKey(emp));
+    if (srcEmp) {
+      // reconstruire les shifts pour chaque jour (semaine destination)
+      emp.shifts = (dstW.days||[]).map(ds => {
+        // trouver le shift correspondant dans la semaine source
+        const s = (srcEmp.shifts||[]).find(x=>x.date===ds);
+        // on clone le shift (hors ref)
+        return s ? {...s} : {date: ds, type: "repos"};
+      });
+    }
+    // Sinon, ne pas toucher à l’employé qui existe en plus dans la destination
+  });
+  closeCopyWeek();
+  saveLocalWeeks();
+  render();
+  saveToGoogle("Copie semaine");
+  setStatus('success', 'Copie de la semaine effectuée.');
+}
+
+
 const DEFAULT_API_URL="https://script.google.com/macros/s/AKfycbxkRwejUPDsjpUG6z7oRIQlGxj3lmJbYMgefCrNB8HCzWWI8Q5zHxPYL8tKn_hvg_ar/exec";
 const STORAGE_CACHE="rob_planning_cache",STORAGE_ADMIN_TOKEN="rob_admin_token",STORAGE_LAST_SYNC="rob_planning_last_sync";
 let allWeeks=[],currentWeekIdx=0,editCtx=null,currentType="repos",syncInProgress=false,apiCallId=0,currentView="week",selectedEmployeeKey="",adminValidated=false;
