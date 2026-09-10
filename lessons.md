@@ -1,0 +1,29 @@
+# Lessons
+
+- [2026-05] [Rob.Planning/lecture planning] : les infos horaires d'une personne commencent au cadre jaune de sa ligne et continuent jusqu'au prochain cadre jaune/personne -> ne pas rattacher un libelle comme "Atelier" a la ligne du dessous.
+- [2026-05] [Rob.Planning/stats] : une amplitude de 9h inclut 1h de pause repas non payee -> compter 8h travaillees.
+- [2026-05] [Rob.Planning/stats ouverture-fermeture] : si le type n'est pas explicitement Ouverture/Fermeture mais qu'une heure existe, avant midi = ouverture, apres midi = fermeture.
+- [2026-05] [Rob.Planning/admin] : un token stocke en local ne doit pas suffire a afficher les actions admin -> valider le token via Apps Script pendant la session avant d'activer l'UI admin.
+- [2026-05] [Rob.Planning/design] : quand un brand spec existe, reprendre les tokens et details visuels du spec avant de juger la refonte actuelle -> evite d'ecraser une direction esthetique deja validee.
+- [2026-05] [Rob.Planning/employes] : tout ajout manuel d'employe doit avoir son action inverse -> proposer une suppression admin avec confirmation et sync Google Sheet.
+- [2026-05] [Rob.Planning/employes UX] : une action employee cachee dans un onglet n'est pas assez decouvrable -> rendre les noms cliquables et exposer modifier/supprimer depuis la fiche.
+- [2026-05] [Rob.Planning/preparation] : le planning ne doit pas dependre uniquement de l'import photo -> generer des semaines futures vides pour poser vacances/absences avant le JSON officiel.
+- [2026-05] [Rob.Planning/navigation] : un horizon fixe de semaines futures bloque la preparation long terme -> generer la semaine suivante a la demande via le bouton Suiv.
+- [2026-05] [Rob.Planning/cases vierges] : une case vide ne doit pas etre assimilee a un repos -> afficher "A definir" pour absence de shift et garder "Jour off" pour repos explicite.
+- [2026-05] [Rob.Planning/compteurs actifs] : compter toute l'equipe dans Aujourd'hui/mobile rend le badge trompeur -> compter uniquement les shifts avec horaires et exclure repos/cases vides/absences.
+- [2026-05] [Rob.Planning/recherche employe] : un select employe seul n'est pas assez decouvrable -> ajouter un champ de recherche reactif a cote pour filtrer en temps reel par prenom/nom.
+- [2026-05] [Rob.Planning/recherche employe] : pour petites equipes, le select suffit -> retirer le champ de recherche et garder le select simple.
+ - [2026-05] [Rob.Planning/employee-view] : ouvrir la fiche employe doit centrer sur aujourd'hui pour eviter les scrolls manuels -> renderEmployee scrollIntoView sur la date courante ou premiere date future.
+  - [2026-05] [Rob.Planning/preparation] : preparer manuellement les semaines futures est lent depuis la vue semaine -> ajouter une vue admin Preparation qui liste uniquement les cases A definir, groupees par semaine/jour, avec acces direct a la modale d'edition.
+- [2026-05] [Rob.Planning/copie semaine bug] : la copie ne marchait pas car la recherche des shifts source utilisait la date ISO de la destination (x.date===ds) au lieu de mapper par index de jour (Lu..Sa). Correction : mapping par index, réécriture date destination, normalisation clé employés (accents, espaces, casse).
+- [2026-05] [Rob.Planning/notes jour] : notes par jour stockées dans week.notes.days, affichage pastille violet dans header jour, modale lecture/édition admin-only, sauvegarde locale+Google, persistance vérifiée. Pas de notes par employé pour l'instant (à valider).
+- [2026-05] [Rob.Planning/vue employe] : la liste continue de tous les jours devient illisible -> regrouper les résultats par semaine avec un bloc titre par semaine et les jours triés dedans.
+- [2026-05] [Rob.Planning/renderWeek] : template literal imbrique casse dans renderWeek() -> reecrire le bloc en version multiline simple avec echappement explicite, surtout quand on injecte une pastille optionnelle.
+- [2026-05] [Rob.Planning/mobile paysage] : en portrait les cartes par jour restent les plus lisibles, mais en paysage la grille complete redevient pertinente -> media query max-width 900px + orientation landscape, colonne employe reduite et chips compactes.
+- [2026-05] [Rob.Planning/notes jour UX] : une note existante doit etre lisible hors admin, mais l'ajout/modification doit rester admin-only -> textarea readOnly hors admin, boutons save/delete caches, bouton + visible uniquement admin.
+- [2026-05] [Rob.Planning/commentaires internes] : les notes de jour ajoutent du bruit et ne servent pas l'usage actuel -> retirer l'UI, la modale et nettoyer les anciennes donnees au chargement.
+- [2026-05] [Rob.Planning/PWA cache] : apres retrait d'une fonctionnalite front, l'ancien service worker peut resservir l'UI obsolète -> bumper CACHE_NAME pour forcer le rafraichissement.
+- [2026-05] [Rob.Planning/service worker] : fetch handler trop large peut tenter de cacher des URLs non-http -> ignorer tout request.url qui ne commence pas par http.
+- [2026-05] [Rob.Planning/JSONP] : cache-buster Date.now() restait dans jsonp() -> utiliser le meme compteur apiCallId que le callback pour eviter collisions et rester deterministe.
+- [2026-05] [Rob.Planning/publication] : une semaine future preparee en admin ne doit pas etre visible equipe par defaut -> ajouter un etat published et filtrer les vues publiques tant que la semaine est verrouillee.
+- [2026-09] [Rob.Planning/import semaines] : remplacer une semaine par son seul libelle laisse coexister une semaine generee "A definir" et son import officiel -> identifier la semaine par son lundi, dedoublonner a l'import/cache/sync et conserver la version ayant le plus de shifts renseignes.
